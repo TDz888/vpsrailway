@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Environment — KHÔNG commit password thật
+.env
+.env.local
+.env.*.local
+
+# Runtime data (nếu chạy local, volume mount sẽ ghi đè)
+data/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*~
