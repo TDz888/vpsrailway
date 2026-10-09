@@ -1,15 +1,14 @@
 {
   "name": "vps-control",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "Password-protected dashboard for controlling a VPS: multi-tab terminal, code editor, live metrics.",
+  "description": "Password-protected dashboard for controlling a VPS with multi-tab terminal, code editor, and live metrics.",
   "main": "server.js",
   "engines": {
     "node": ">=20.0.0"
   },
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.21.2",
