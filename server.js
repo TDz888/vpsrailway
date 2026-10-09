@@ -1,19 +1,3 @@
-/**
- * VPS Control — Backend Server
- * ────────────────────────────────────────────────────────────────────────────
- * Kiến trúc:
- *   • Auth      : password → HMAC-signed cookie (stateless, không cần DB/Redis)
- *   • HTTP APIs : /api/auth/*, /api/metrics, /api/files/*, /api/terminal/*
- *   • WebSocket : /ws/terminal — mỗi connection = 1 PTY, có thể attach vào
- *                 tmux session để giữ state qua reload / mất mạng
- *
- * Biến môi trường:
- *   DASHBOARD_PASSWORD  (bắt buộc)          — mật khẩu đăng nhập
- *   PORT                (mặc định 3000)     — cổng HTTP
- *   DATA_DIR            (mặc định ./data)   — thư mục lưu file lâu dài
- *   SHELL               (mặc định /bin/bash) — shell cho PTY (khi không có tmux)
- */
-
 'use strict';
 
 const express = require('express');
@@ -26,113 +10,169 @@ const os = require('os');
 const fs = require('fs');
 const path = require('path');
 
-/* ══════════════════════════════════════════════════════════════════════════
-   1. CONFIG
-   ══════════════════════════════════════════════════════════════════════════ */
+const PORT = parseInt(process.env.PORT || '3000', 10);
+const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
+const FILES_DIR = path.join(DATA_DIR, 'files');
+const VIEWS_DIR = path.join(__dirname, 'views');
+const PUBLIC_DIR = path.join(__dirname, 'public');
+const PASSWORD = process.env.DASHBOARD_PASSWORD;
 
-const PORT         = parseInt(process.env.PORT || '3000', 10);
-const DATA_DIR     = process.env.DATA_DIR || path.join(__dirname, 'data');
-const FILES_DIR    = path.join(DATA_DIR, 'files');
-const PASSWORD     = process.env.DASHBOARD_PASSWORD;
-
-const SESSION_MAX_AGE_MS  = 7  * 24 * 60 * 60 * 1000;  // 7 ngày
-const REMEMBER_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;  // 30 ngày ("remember me")
+const SESSION_TTL = 7 * 24 * 60 * 60 * 1000;
+const REMEMBER_TTL = 30 * 24 * 60 * 60 * 1000;
+const SESSION_HARD_CAP = 30 * 24 * 60 * 60 * 1000;
 
 const COOKIE_NAME = 'vps_session';
-const MAX_ATTEMPTS = 5;
-const ATTEMPT_WINDOW_MS = 15 * 60 * 1000;              // 15 phút
+const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_WINDOW = 15 * 60 * 1000;
 
-// SECRET được derive từ password → đổi password = invalidate toàn bộ session cũ.
-// Không cần thêm env var, không cần lưu secret ở đâu.
-const SECRET = PASSWORD
-  ? crypto.createHash('sha256').update('vps-control:' + PASSWORD).digest()
-  : null;
-
-/* ══════════════════════════════════════════════════════════════════════════
-   2. STARTUP VALIDATION — fail fast nếu thiếu password
-   ══════════════════════════════════════════════════════════════════════════ */
+const LOGIN_PAGE = '/login';
+const DEFAULT_PAGE = '/dashboard';
+const PROTECTED_PAGES = ['/dashboard', '/terminal', '/code', '/metrics'];
 
 if (!PASSWORD) {
-  console.error('\x1b[31m✗ FATAL: DASHBOARD_PASSWORD is required.\x1b[0m');
-  console.error('  Local   : export DASHBOARD_PASSWORD="your-strong-password"');
-  console.error('  Railway : Settings → Variables → DASHBOARD_PASSWORD');
+  console.error('[fatal] DASHBOARD_PASSWORD is required');
   process.exit(1);
 }
-
 if (PASSWORD.length < 12) {
-  console.warn('\x1b[33m⚠ DASHBOARD_PASSWORD is shorter than 12 characters. Use a longer one.\x1b[0m');
+  console.error('[warn] DASHBOARD_PASSWORD should be at least 12 characters');
 }
 
-fs.mkdirSync(FILES_DIR, { recursive: true });
+const SECRET = crypto.createHash('sha256').update('vps-control:' + PASSWORD).digest();
 
-/* ══════════════════════════════════════════════════════════════════════════
-   3. EXPRESS APP
-   ══════════════════════════════════════════════════════════════════════════ */
+fs.mkdirSync(FILES_DIR, { recursive: true });
+if (!fs.existsSync(VIEWS_DIR)) fs.mkdirSync(VIEWS_DIR, { recursive: true });
+if (!fs.existsSync(PUBLIC_DIR)) fs.mkdirSync(PUBLIC_DIR, { recursive: true });
+
+function q(s) {
+  return "'" + String(s).replace(/'/g, "'\\''") + "'";
+}
+
+const RUNNERS = {
+  '.py':   { lang: 'Python',   bin: 'python3', cmd: f => `python3 ${q(f)}` },
+  '.pyw':  { lang: 'Python',   bin: 'python3', cmd: f => `python3 ${q(f)}` },
+  '.js':   { lang: 'Node.js',  bin: 'node',    cmd: f => `node ${q(f)}` },
+  '.mjs':  { lang: 'Node.js',  bin: 'node',    cmd: f => `node ${q(f)}` },
+  '.cjs':  { lang: 'Node.js',  bin: 'node',    cmd: f => `node ${q(f)}` },
+  '.sh':   { lang: 'Bash',     bin: 'bash',    cmd: f => `bash ${q(f)}` },
+  '.bash': { lang: 'Bash',     bin: 'bash',    cmd: f => `bash ${q(f)}` },
+  '.c':    { lang: 'C',        bin: 'gcc',     cmd: f => `gcc -O2 -o /tmp/vps-run.out ${q(f)} && /tmp/vps-run.out` },
+  '.cpp':  { lang: 'C++',      bin: 'g++',     cmd: f => `g++ -O2 -std=c++17 -o /tmp/vps-run.out ${q(f)} && /tmp/vps-run.out` },
+  '.cc':   { lang: 'C++',      bin: 'g++',     cmd: f => `g++ -O2 -std=c++17 -o /tmp/vps-run.out ${q(f)} && /tmp/vps-run.out` },
+  '.cxx':  { lang: 'C++',      bin: 'g++',     cmd: f => `g++ -O2 -std=c++17 -o /tmp/vps-run.out ${q(f)} && /tmp/vps-run.out` },
+  '.go':   { lang: 'Go',       bin: 'go',      cmd: f => `go run ${q(f)}` },
+};
+
+const availableRunners = new Map();
+
+function detectRuntimes() {
+  const cache = new Map();
+  for (const [ext, cfg] of Object.entries(RUNNERS)) {
+    let ok = cache.get(cfg.bin);
+    if (ok === undefined) {
+      const r = spawnSync('command', ['-v', cfg.bin], { shell: true, stdio: 'ignore' });
+      ok = r.status === 0;
+      cache.set(cfg.bin, ok);
+    }
+    if (ok) availableRunners.set(ext, cfg);
+  }
+}
+detectRuntimes();
+
+let tmuxCache = null;
+function hasTmux() {
+  if (tmuxCache !== null) return tmuxCache;
+  const r = spawnSync('command', ['-v', 'tmux'], { shell: true, stdio: 'ignore' });
+  tmuxCache = r.status === 0;
+  return tmuxCache;
+}
+
+function audit(action, req, extra) {
+  const ip = (req && (req.ip || (req.socket && req.socket.remoteAddress))) || '-';
+  const ua = req && req.headers ? String(req.headers['user-agent'] || '-').slice(0, 90) : '-';
+  const payload = extra ? ' ' + JSON.stringify(extra) : '';
+  console.log(`[audit] ${new Date().toISOString()} ${action} ip=${ip}${payload}`);
+}
 
 const app = express();
 const server = http.createServer(app);
 
-app.set('trust proxy', 1);       // Railway terminate TLS ở edge → cần trust proxy
-app.disable('x-powered-by');     // giảm fingerprinting
+app.disable('x-powered-by');
+app.set('trust proxy', 1);
 
-app.use(express.json({ limit: '10mb' }));
-app.use(express.static(path.join(__dirname, 'public'), {
-  index: 'index.html',
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '0');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=(), usb=()');
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+  res.setHeader('Origin-Agent-Cluster', '?1');
+  if (req.secure || req.headers['x-forwarded-proto'] === 'https') {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  }
+  next();
+});
+
+app.use('/api', (req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  if (!['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) return next();
+  const origin = req.headers.origin;
+  if (!origin) return next();
+  const host = req.headers.host;
+  try {
+    const o = new URL(origin);
+    if (o.host !== host) {
+      audit('csrf.block', req, { origin, host });
+      return res.status(403).json({ error: 'Cross-origin request blocked' });
+    }
+  } catch {
+    return res.status(403).json({ error: 'Invalid origin' });
+  }
+  next();
+});
+
+app.use(express.json({ limit: '4mb' }));
+app.use('/static', express.static(PUBLIC_DIR, {
+  index: false,
+  maxAge: '1h',
   etag: true,
-  maxAge: '5m',
+  dotfiles: 'deny',
 }));
-
-/* ══════════════════════════════════════════════════════════════════════════
-   4. SESSION — HMAC-signed stateless cookie
-   ──────────────────────────────────────────────────────────────────────────
-   Format:  base64url(JSON({exp})) + "." + base64url(HMAC-SHA256(payload, SECRET))
-   Verify:  tính lại HMAC, so sánh timing-safe, check exp
-   ══════════════════════════════════════════════════════════════════════════ */
 
 function b64urlEncode(buf) {
   return Buffer.from(buf).toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
 function b64urlDecode(str) {
-  str = str.replace(/-/g, '+').replace(/_/g, '/');
+  str = String(str).replace(/-/g, '+').replace(/_/g, '/');
   while (str.length % 4) str += '=';
   return Buffer.from(str, 'base64');
 }
 
 function signSession(expiresAt) {
-  const payload = b64urlEncode(JSON.stringify({ exp: expiresAt }));
-  const sig = b64urlEncode(
-    crypto.createHmac('sha256', SECRET).update(payload).digest()
-  );
-  return `${payload}.${sig}`;
+  const payload = b64urlEncode(JSON.stringify({ exp: expiresAt, iat: Date.now() }));
+  const sig = b64urlEncode(crypto.createHmac('sha256', SECRET).update(payload).digest());
+  return payload + '.' + sig;
 }
 
-function verifySessionToken(token) {
+function verifySession(token) {
   if (typeof token !== 'string') return null;
-
   const dot = token.indexOf('.');
   if (dot < 1) return null;
-
   const payload = token.slice(0, dot);
   const sig = token.slice(dot + 1);
   if (!payload || !sig) return null;
-
-  const expected = b64urlEncode(
-    crypto.createHmac('sha256', SECRET).update(payload).digest()
-  );
-
-  // timingSafeEqual yêu cầu cùng độ dài → check trước
+  const expected = b64urlEncode(crypto.createHmac('sha256', SECRET).update(payload).digest());
   const a = Buffer.from(sig);
   const b = Buffer.from(expected);
   if (a.length !== b.length) return null;
   if (!crypto.timingSafeEqual(a, b)) return null;
-
   try {
     const data = JSON.parse(b64urlDecode(payload).toString('utf8'));
     if (typeof data.exp !== 'number' || data.exp < Date.now()) return null;
+    if (typeof data.iat === 'number' && Date.now() - data.iat > SESSION_HARD_CAP) return null;
     return data;
   } catch {
     return null;
@@ -140,7 +180,7 @@ function verifySessionToken(token) {
 }
 
 function parseCookies(header) {
-  const out = {};
+  const out = Object.create(null);
   if (!header) return out;
   for (const part of header.split(';')) {
     const eq = part.indexOf('=');
@@ -148,192 +188,222 @@ function parseCookies(header) {
     const k = part.slice(0, eq).trim();
     if (!k) continue;
     const v = part.slice(eq + 1).trim();
-    try { out[k] = decodeURIComponent(v); }
-    catch { out[k] = v; }
+    try { out[k] = decodeURIComponent(v); } catch { out[k] = v; }
   }
   return out;
 }
 
 function getSession(req) {
   const cookies = parseCookies(req.headers.cookie);
-  return verifySessionToken(cookies[COOKIE_NAME]);
+  return verifySession(cookies[COOKIE_NAME]);
 }
 
-function setSessionCookie(req, res, maxAgeMs) {
-  const token = signSession(Date.now() + maxAgeMs);
+function setSessionCookie(req, res, maxAge) {
+  const token = signSession(Date.now() + maxAge);
   const secure = req.secure || req.headers['x-forwarded-proto'] === 'https';
-
   const parts = [
-    `${COOKIE_NAME}=${encodeURIComponent(token)}`,
+    COOKIE_NAME + '=' + encodeURIComponent(token),
     'Path=/',
-    'HttpOnly',           // JS không đọc được → chống XSS đánh cắp session
-    'SameSite=Lax',       // chống CSRF cơ bản
-    `Max-Age=${Math.floor(maxAgeMs / 1000)}`,
+    'HttpOnly',
+    'SameSite=Lax',
+    'Max-Age=' + Math.floor(maxAge / 1000),
   ];
-  if (secure) parts.push('Secure');   // chỉ gửi qua HTTPS
-
+  if (secure) parts.push('Secure');
   res.setHeader('Set-Cookie', parts.join('; '));
 }
 
 function clearSessionCookie(res) {
-  res.setHeader('Set-Cookie',
-    `${COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`);
+  res.setHeader('Set-Cookie', COOKIE_NAME + '=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0');
 }
 
-function requireAuth(req, res, next) {
+function requireAuthApi(req, res, next) {
   if (!getSession(req)) return res.status(401).json({ error: 'Unauthorized' });
   next();
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
-   5. RATE LIMIT LOGIN — in-memory, per IP
-   ══════════════════════════════════════════════════════════════════════════ */
+function requireAuthPage(req, res, next) {
+  if (!getSession(req)) {
+    const target = encodeURIComponent(req.originalUrl || DEFAULT_PAGE);
+    return res.redirect(LOGIN_PAGE + '?next=' + target);
+  }
+  next();
+}
 
-const loginAttempts = new Map();   // ip → { count, resetAt }
+function safeNext(target) {
+  if (typeof target !== 'string' || !target) return DEFAULT_PAGE;
+  const candidates = [target];
+  try { candidates.push(decodeURIComponent(target)); } catch {}
+  for (const c of candidates) {
+    if (!c.startsWith('/')) return DEFAULT_PAGE;
+    if (c.startsWith('//')) return DEFAULT_PAGE;
+    if (c.includes('\\')) return DEFAULT_PAGE;
+    if (c.startsWith('/login')) return DEFAULT_PAGE;
+  }
+  return target;
+}
+
+const attempts = new Map();
 
 function checkRateLimit(ip) {
   const now = Date.now();
-  const rec = loginAttempts.get(ip);
-
+  const rec = attempts.get(ip);
   if (!rec || rec.resetAt < now) {
-    loginAttempts.set(ip, { count: 1, resetAt: now + ATTEMPT_WINDOW_MS });
-    return { ok: true, remaining: MAX_ATTEMPTS - 1 };
+    attempts.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
+    return { ok: true, remaining: RATE_LIMIT_MAX - 1 };
   }
-
-  if (rec.count >= MAX_ATTEMPTS) {
+  if (rec.count >= RATE_LIMIT_MAX) {
     return { ok: false, retryAfter: Math.ceil((rec.resetAt - now) / 1000) };
   }
-
   rec.count++;
-  return { ok: true, remaining: MAX_ATTEMPTS - rec.count };
+  return { ok: true, remaining: RATE_LIMIT_MAX - rec.count };
 }
 
-function clearRateLimit(ip) {
-  loginAttempts.delete(ip);
-}
-
-// Cleanup định kỳ để Map không phình to
 setInterval(() => {
   const now = Date.now();
-  for (const [ip, rec] of loginAttempts) {
-    if (rec.resetAt < now) loginAttempts.delete(ip);
+  for (const [ip, rec] of attempts) {
+    if (rec.resetAt < now) attempts.delete(ip);
   }
-}, 60_000).unref();
-
-/* ══════════════════════════════════════════════════════════════════════════
-   6. AUTH ROUTES
-   ══════════════════════════════════════════════════════════════════════════ */
+}, 60000).unref();
 
 app.post('/api/auth/login', (req, res) => {
   const ip = req.ip || req.socket.remoteAddress || 'unknown';
-
   const rl = checkRateLimit(ip);
   if (!rl.ok) {
+    audit('login.ratelimited', req, { retryAfter: rl.retryAfter });
     res.set('Retry-After', String(rl.retryAfter));
-    return res.status(429).json({
-      error: `Too many attempts. Try again in ${rl.retryAfter}s.`,
-    });
+    return res.status(429).json({ error: `Too many attempts. Retry in ${rl.retryAfter}s.` });
   }
 
-  const { password, remember } = req.body || {};
+  const body = req.body || {};
+  const password = body.password;
+  const remember = !!body.remember;
+  const next = safeNext(body.next);
+
   if (typeof password !== 'string' || password.length === 0) {
-    return res.status(400).json({ error: 'Password is required.' });
+    return res.status(400).json({ error: 'Password required' });
   }
 
-  // Hash cả hai để có cùng độ dài → timingSafeEqual hoạt động đúng
-  const given  = crypto.createHash('sha256').update(password).digest();
+  const given = crypto.createHash('sha256').update(password).digest();
   const actual = crypto.createHash('sha256').update(PASSWORD).digest();
-  const ok = crypto.timingSafeEqual(given, actual);
 
-  if (!ok) {
-    return res.status(401).json({
-      error: 'Invalid password.',
-      remaining: rl.remaining,
-    });
+  if (!crypto.timingSafeEqual(given, actual)) {
+    audit('login.fail', req, { remaining: rl.remaining });
+    return res.status(401).json({ error: 'Invalid password', remaining: rl.remaining });
   }
 
-  clearRateLimit(ip);
-  const maxAge = remember ? REMEMBER_MAX_AGE_MS : SESSION_MAX_AGE_MS;
-  setSessionCookie(req, res, maxAge);
-
-  res.json({ ok: true, expiresIn: maxAge });
+  attempts.delete(ip);
+  setSessionCookie(req, res, remember ? REMEMBER_TTL : SESSION_TTL);
+  audit('login.ok', req, { remember, next });
+  res.json({ ok: true, next, expiresIn: remember ? REMEMBER_TTL : SESSION_TTL });
 });
 
 app.post('/api/auth/logout', (req, res) => {
   clearSessionCookie(res);
+  audit('logout', req);
   res.json({ ok: true });
 });
 
 app.get('/api/auth/me', (req, res) => {
-  const session = getSession(req);
-  if (!session) return res.status(401).json({ error: 'Not authenticated' });
-  res.json({ ok: true, exp: session.exp });
+  const s = getSession(req);
+  if (!s) return res.status(401).json({ error: 'Not authenticated' });
+  res.json({ ok: true, exp: s.exp, iat: s.iat });
 });
-
-/* ══════════════════════════════════════════════════════════════════════════
-   7. HEALTH — public, cho Railway/Docker healthcheck
-   ══════════════════════════════════════════════════════════════════════════ */
 
 app.get('/api/health', (req, res) => {
-  res.json({ ok: true, uptime: process.uptime() });
+  res.json({ ok: true, uptime: process.uptime(), tmux: hasTmux() });
 });
 
-/* ══════════════════════════════════════════════════════════════════════════
-   8. METRICS
-   ══════════════════════════════════════════════════════════════════════════ */
+app.get('/', (req, res) => {
+  if (getSession(req)) return res.redirect(DEFAULT_PAGE);
+  res.redirect(LOGIN_PAGE);
+});
 
-app.get('/api/metrics', requireAuth, (req, res) => {
+app.get(LOGIN_PAGE, (req, res) => {
+  if (getSession(req)) {
+    return res.redirect(safeNext(req.query.next));
+  }
+  res.sendFile(path.join(VIEWS_DIR, 'login.html'));
+});
+
+for (const page of PROTECTED_PAGES) {
+  app.get(page, requireAuthPage, (req, res) => {
+    res.sendFile(path.join(VIEWS_DIR, 'app.html'));
+  });
+}
+
+app.get('/api/metrics', requireAuthApi, (req, res) => {
   const cpus = os.cpus();
   const load = os.loadavg();
   const totalMem = os.totalmem();
-  const freeMem  = os.freemem();
-  const usedMem  = totalMem - freeMem;
-
+  const freeMem = os.freemem();
+  const usedMem = totalMem - freeMem;
   res.json({
     cpu: {
-      cores:  cpus.length,
-      load1:  load[0],
-      load5:  load[1],
+      cores: cpus.length,
+      model: cpus[0] ? cpus[0].model : 'unknown',
+      speed: cpus[0] ? cpus[0].speed : 0,
+      load1: load[0],
+      load5: load[1],
       load15: load[2],
-      usage:  Math.min(100, (load[0] / cpus.length) * 100),
+      usage: Math.min(100, (load[0] / Math.max(1, cpus.length)) * 100),
     },
     mem: {
-      total:   totalMem,
-      used:    usedMem,
-      free:    freeMem,
-      percent: (usedMem / totalMem) * 100,
+      total: totalMem,
+      used: usedMem,
+      free: freeMem,
+      percent: totalMem > 0 ? (usedMem / totalMem) * 100 : 0,
     },
-    uptime:   os.uptime(),
+    uptime: os.uptime(),
     hostname: os.hostname(),
     platform: os.platform(),
-    arch:     os.arch(),
-    node:     process.version,
+    arch: os.arch(),
+    release: os.release(),
+    node: process.version,
+    tmux: hasTmux(),
+    runners: Array.from(availableRunners.keys()),
   });
 });
-
-/* ══════════════════════════════════════════════════════════════════════════
-   9. FILE APIs
-   ──────────────────────────────────────────────────────────────────────────
-   Whitelist tên file để chống path traversal & command injection
-   ══════════════════════════════════════════════════════════════════════════ */
 
 function safeFilename(raw) {
   if (typeof raw !== 'string' || !raw) return null;
   const base = path.basename(raw);
-  if (base !== raw) return null;                  // chặn "a/../b"
+  if (base !== raw) return null;
   if (base.length > 200) return null;
   if (base === '.' || base === '..') return null;
+  if (base.startsWith('.')) return null;
   if (!/^[a-zA-Z0-9._\- ]+$/.test(base)) return null;
   return base;
 }
 
-app.get('/api/files', requireAuth, (req, res) => {
+function fileMeta(name) {
+  const full = path.join(FILES_DIR, name);
+  const st = fs.statSync(full);
+  const ext = path.extname(name).toLowerCase();
+  const runner = availableRunners.get(ext);
+  const entry = {
+    name,
+    size: st.size,
+    mtime: st.mtime,
+    ext,
+    language: runner ? runner.lang : null,
+  };
+  if (runner) {
+    entry.run = { lang: runner.lang, cmd: runner.cmd(full) };
+  }
+  return entry;
+}
+
+app.get('/api/files', requireAuthApi, (req, res) => {
   try {
     const files = fs.readdirSync(FILES_DIR)
       .map(name => {
-        const st = fs.statSync(path.join(FILES_DIR, name));
-        return { name, size: st.size, mtime: st.mtime };
+        try {
+          const full = path.join(FILES_DIR, name);
+          if (!fs.statSync(full).isFile()) return null;
+          return fileMeta(name);
+        } catch { return null; }
       })
+      .filter(Boolean)
       .sort((a, b) => new Date(b.mtime) - new Date(a.mtime));
     res.json(files);
   } catch (err) {
@@ -341,70 +411,46 @@ app.get('/api/files', requireAuth, (req, res) => {
   }
 });
 
-app.get('/api/files/:name', requireAuth, (req, res) => {
+app.get('/api/files/:name', requireAuthApi, (req, res) => {
   const name = safeFilename(req.params.name);
   if (!name) return res.status(400).json({ error: 'Invalid filename' });
-
-  const p = path.join(FILES_DIR, name);
-  if (!fs.existsSync(p)) return res.status(404).json({ error: 'Not found' });
-
+  const full = path.join(FILES_DIR, name);
+  if (!fs.existsSync(full)) return res.status(404).json({ error: 'Not found' });
   try {
-    res.json({ name, content: fs.readFileSync(p, 'utf8') });
+    const content = fs.readFileSync(full, 'utf8');
+    const meta = fileMeta(name);
+    res.json({ ...meta, content });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-app.post('/api/files', requireAuth, (req, res) => {
-  const { name, content } = req.body || {};
-  const safe = safeFilename(name);
+app.post('/api/files', requireAuthApi, (req, res) => {
+  const body = req.body || {};
+  const safe = safeFilename(body.name);
   if (!safe) return res.status(400).json({ error: 'Invalid filename' });
-
   try {
-    fs.writeFileSync(path.join(FILES_DIR, safe), content || '', 'utf8');
-    res.json({ ok: true, name: safe });
+    const content = typeof body.content === 'string' ? body.content : '';
+    fs.writeFileSync(path.join(FILES_DIR, safe), content, 'utf8');
+    audit('file.write', req, { name: safe, bytes: content.length });
+    res.json({ ok: true, name: safe, meta: fileMeta(safe) });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-app.delete('/api/files/:name', requireAuth, (req, res) => {
+app.delete('/api/files/:name', requireAuthApi, (req, res) => {
   const name = safeFilename(req.params.name);
   if (!name) return res.status(400).json({ error: 'Invalid filename' });
-
-  const p = path.join(FILES_DIR, name);
+  const full = path.join(FILES_DIR, name);
   try {
-    if (fs.existsSync(p)) fs.unlinkSync(p);
+    if (fs.existsSync(full)) fs.unlinkSync(full);
+    audit('file.delete', req, { name });
     res.json({ ok: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
-
-/* ══════════════════════════════════════════════════════════════════════════
-   10. TERMINAL — tmux session management
-   ──────────────────────────────────────────────────────────────────────────
-   Mỗi tab terminal = 1 tmux session tên "vps-<sid>".
-   Client tạo sid (UUID), lưu localStorage.
-   Reload trang → client gửi lại sid → attach vào tmux cũ → state nguyên vẹn.
-   ══════════════════════════════════════════════════════════════════════════ */
-
-let tmuxAvailableCache = null;
-
-function hasTmux() {
-  if (tmuxAvailableCache !== null) return tmuxAvailableCache;
-
-  const r = spawnSync('command', ['-v', 'tmux'], {
-    shell: true,
-    stdio: 'ignore',
-  });
-  tmuxAvailableCache = r.status === 0;
-
-  if (!tmuxAvailableCache) {
-    console.warn('\x1b[33m⚠ tmux not found — terminal sessions will NOT persist across reloads.\x1b[0m');
-  }
-  return tmuxAvailableCache;
-}
 
 function safeSid(raw) {
   if (typeof raw !== 'string') return null;
@@ -412,103 +458,65 @@ function safeSid(raw) {
   return raw;
 }
 
-function tmuxSessionName(sid) {
-  return `vps-${sid}`;
-}
+function tmuxName(sid) { return 'vps-' + sid; }
 
 function listTmuxSessions() {
   if (!hasTmux()) return [];
-
-  const r = spawnSync(
-    'tmux',
-    ['list-sessions', '-F', '#{session_name}'],
-    { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }
-  );
+  const r = spawnSync('tmux', ['list-sessions', '-F', '#{session_name}'], {
+    encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'],
+  });
   if (r.status !== 0) return [];
-
-  return (r.stdout || '')
-    .split('\n')
-    .map(s => s.trim())
+  return String(r.stdout || '')
+    .split('\n').map(s => s.trim())
     .filter(s => s.startsWith('vps-'))
     .map(s => s.slice(4));
 }
 
-app.get('/api/terminal/sessions', requireAuth, (req, res) => {
-  res.json({
-    tmux: hasTmux(),
-    sessions: listTmuxSessions(),
-  });
+app.get('/api/terminal/sessions', requireAuthApi, (req, res) => {
+  res.json({ tmux: hasTmux(), sessions: listTmuxSessions() });
 });
 
-app.delete('/api/terminal/:sid', requireAuth, (req, res) => {
+app.delete('/api/terminal/:sid', requireAuthApi, (req, res) => {
   const sid = safeSid(req.params.sid);
   if (!sid) return res.status(400).json({ error: 'Invalid session id' });
-
   if (!hasTmux()) return res.json({ ok: true, killed: false });
-
-  const r = spawnSync(
-    'tmux',
-    ['kill-session', '-t', tmuxSessionName(sid)],
-    { stdio: 'ignore' }
-  );
+  const r = spawnSync('tmux', ['kill-session', '-t', tmuxName(sid)], { stdio: 'ignore' });
+  audit('terminal.kill', req, { sid, killed: r.status === 0 });
   res.json({ ok: true, killed: r.status === 0 });
 });
 
-/* ══════════════════════════════════════════════════════════════════════════
-   11. PTY SPAWN
-   ──────────────────────────────────────────────────────────────────────────
-   Quan trọng: KHÔNG truyền DASHBOARD_PASSWORD xuống shell con
-   ══════════════════════════════════════════════════════════════════════════ */
-
 function buildChildEnv() {
   const env = { ...process.env };
-
-  // Xoá secret khỏi môi trường shell con
   delete env.DASHBOARD_PASSWORD;
-  delete env.PORT;
   delete env.NODE_ENV;
-
-  env.TERM       = 'xterm-256color';
-  env.COLORTERM  = 'truecolor';
-  env.LANG       = 'en_US.UTF-8';
-  env.LC_ALL     = 'en_US.UTF-8';
-
+  env.TERM = 'xterm-256color';
+  env.COLORTERM = 'truecolor';
+  env.LANG = 'en_US.UTF-8';
+  env.LC_ALL = 'en_US.UTF-8';
   return env;
 }
 
-function spawnShellForSid(sid, cols, rows) {
+function spawnShell(sid, cols, rows) {
   const env = buildChildEnv();
   const cwd = FILES_DIR;
-
   if (sid && hasTmux()) {
-    // tmux new-session -A -s <name>:
-    //   - nếu session tồn tại → attach
-    //   - nếu chưa → tạo mới
-    return pty.spawn(
-      'tmux',
-      ['new-session', '-A', '-s', tmuxSessionName(sid)],
-      { name: 'xterm-256color', cols, rows, cwd, env }
-    );
+    return pty.spawn('tmux', ['new-session', '-A', '-s', tmuxName(sid)], {
+      name: 'xterm-256color', cols, rows, cwd, env,
+    });
   }
-
-  // Fallback: shell thô, không có persistence
   const shell = process.env.SHELL || '/bin/bash';
-  return pty.spawn(shell, [], {
-    name: 'xterm-256color', cols, rows, cwd, env,
-  });
+  return pty.spawn(shell, [], { name: 'xterm-256color', cols, rows, cwd, env });
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
-   12. WEBSOCKET SERVER
-   ──────────────────────────────────────────────────────────────────────────
-   Cookie auth được check trong 'upgrade' event — trước khi bắt tay WS.
-   Browser tự gửi cookie trong WS handshake nên không cần token query.
-   ══════════════════════════════════════════════════════════════════════════ */
+function clampInt(v, min, max, fallback) {
+  const n = parseInt(v, 10);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.max(min, Math.min(max, n));
+}
 
 const wss = new WebSocketServer({ noServer: true });
 
 server.on('upgrade', (req, socket, head) => {
-  // Kiểm tra path
   let pathname;
   try {
     pathname = new URL(req.url, 'http://localhost').pathname;
@@ -516,132 +524,114 @@ server.on('upgrade', (req, socket, head) => {
     socket.write('HTTP/1.1 400 Bad Request\r\n\r\n');
     return socket.destroy();
   }
-
   if (pathname !== '/ws/terminal') {
     socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
     return socket.destroy();
   }
-
-  // Cookie auth
   if (!getSession(req)) {
     socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
     return socket.destroy();
   }
-
-  wss.handleUpgrade(req, socket, head, ws => {
-    wss.emit('connection', ws, req);
-  });
+  wss.handleUpgrade(req, socket, head, ws => wss.emit('connection', ws, req));
 });
 
 wss.on('connection', (ws, req) => {
   const url = new URL(req.url, 'http://localhost');
   const sid = safeSid(url.searchParams.get('sid'));
-  const initCols = clampInt(url.searchParams.get('cols'), 20, 500, 80);
-  const initRows = clampInt(url.searchParams.get('rows'), 5, 200, 24);
+  const cols = clampInt(url.searchParams.get('cols'), 20, 500, 80);
+  const rows = clampInt(url.searchParams.get('rows'), 5, 200, 24);
 
   let ptyProcess;
   try {
-    ptyProcess = spawnShellForSid(sid, initCols, initRows);
+    ptyProcess = spawnShell(sid, cols, rows);
   } catch (err) {
-    sendControl(ws, 'error', { message: `Cannot spawn shell: ${err.message}` });
+    try { ws.send(JSON.stringify({ type: 'control', event: 'error', message: String(err.message) })); } catch {}
     return ws.close();
   }
 
-  sendControl(ws, 'ready', { sid, tmux: hasTmux() });
+  audit('terminal.open', req, { sid, tmux: hasTmux() });
 
-  // PTY → browser (raw bytes — xterm.js tự parse ANSI)
+  try {
+    ws.send(JSON.stringify({ type: 'control', event: 'ready', sid, tmux: hasTmux() }));
+  } catch {}
+
   ptyProcess.onData(data => {
-    if (ws.readyState === ws.OPEN) ws.send(data);
-  });
-
-  ptyProcess.onExit(({ exitCode, signal }) => {
-    sendControl(ws, 'exit', { code: exitCode, signal });
-    if (ws.readyState === ws.OPEN) ws.close();
-  });
-
-  // Browser → PTY
-  ws.on('message', raw => {
-    try {
-      const msg = JSON.parse(raw.toString());
-
-      if (msg.type === 'input' && typeof msg.data === 'string') {
-        ptyProcess.write(msg.data);
-
-      } else if (msg.type === 'resize') {
-        const c = clampInt(msg.cols, 20, 500, 80);
-        const r = clampInt(msg.rows, 5, 200, 24);
-        try { ptyProcess.resize(c, r); } catch { /* race condition khi đóng */ }
-      }
-    } catch {
-      // Fallback: cho phép raw keystroke (tiện debug bằng CLI)
-      try { ptyProcess.write(raw.toString()); } catch {}
+    if (ws.readyState === ws.OPEN) {
+      try { ws.send(data); } catch {}
     }
   });
 
-  // Cleanup — lưu ý: tmux session KHÔNG chết khi client disconnect,
-  // vì tmux chạy như daemon. Chỉ có tmux client (PTY process) bị kill.
+  ptyProcess.onExit(({ exitCode, signal }) => {
+    try { ws.send(JSON.stringify({ type: 'control', event: 'exit', code: exitCode, signal })); } catch {}
+    try { ws.close(); } catch {}
+  });
+
+  ws.on('message', raw => {
+    let msg;
+    try {
+      msg = JSON.parse(raw.toString());
+    } catch {
+      try { ptyProcess.write(raw.toString()); } catch {}
+      return;
+    }
+    if (!msg || typeof msg !== 'object') return;
+
+    if (msg.type === 'input' && typeof msg.data === 'string') {
+      try { ptyProcess.write(msg.data); } catch {}
+
+    } else if (msg.type === 'resize') {
+      const c = clampInt(msg.cols, 20, 500, 80);
+      const r = clampInt(msg.rows, 5, 200, 24);
+      try { ptyProcess.resize(c, r); } catch {}
+
+    } else if (msg.type === 'run' && typeof msg.file === 'string') {
+      const name = safeFilename(msg.file);
+      if (!name) return;
+      const ext = path.extname(name).toLowerCase();
+      const runner = availableRunners.get(ext);
+      if (!runner) return;
+      const full = path.join(FILES_DIR, name);
+      if (!fs.existsSync(full)) return;
+      const cmd = runner.cmd(full);
+      try { ptyProcess.write(cmd + '\n'); } catch {}
+      audit('terminal.run', req, { sid, file: name, lang: runner.lang });
+    }
+  });
+
   const cleanup = () => {
     try { ptyProcess.kill(); } catch {}
   };
   ws.on('close', cleanup);
   ws.on('error', cleanup);
 
-  // Heartbeat để giữ kết nối qua proxy
-  const pingInterval = setInterval(() => {
+  const ping = setInterval(() => {
     if (ws.readyState === ws.OPEN) {
-      try { ws.ping(); }
-      catch { clearInterval(pingInterval); }
+      try { ws.ping(); } catch { clearInterval(ping); }
     } else {
-      clearInterval(pingInterval);
+      clearInterval(ping);
     }
-  }, 30_000);
-
-  ws.on('close', () => clearInterval(pingInterval));
+  }, 30000);
+  ws.on('close', () => clearInterval(ping));
 });
 
-function sendControl(ws, event, data = {}) {
-  if (ws.readyState !== ws.OPEN) return;
-  try {
-    ws.send(JSON.stringify({ type: 'control', event, ...data }));
-  } catch {}
-}
-
-function clampInt(value, min, max, fallback) {
-  const n = parseInt(value, 10);
-  if (!Number.isFinite(n)) return fallback;
-  return Math.max(min, Math.min(max, n));
-}
-
-/* ══════════════════════════════════════════════════════════════════════════
-   13. SPA FALLBACK
-   ──────────────────────────────────────────────────────────────────────────
-   Mọi route không phải /api/* hoặc /ws/* → trả index.html (client-side routing)
-   ══════════════════════════════════════════════════════════════════════════ */
-
-app.get('*', (req, res, next) => {
+app.use((req, res, next) => {
   if (req.path.startsWith('/api/') || req.path.startsWith('/ws/')) {
     return res.status(404).json({ error: 'Not found' });
   }
-  res.sendFile(path.join(__dirname, 'public', 'index.html'), err => {
-    if (err) next();
-  });
+  if (getSession(req)) return res.redirect(DEFAULT_PAGE);
+  res.redirect(LOGIN_PAGE);
 });
 
-// Error handler — không rò rỉ stack trace ra ngoài
 app.use((err, req, res, next) => {
-  console.error('[error]', err);
-  res.status(500).json({ error: 'Internal server error' });
+  console.error('[error]', err && err.message);
+  if (res.headersSent) return next(err);
+  if (req.path.startsWith('/api/')) return res.status(500).json({ error: 'Internal server error' });
+  res.status(500).type('text/plain').send('Internal server error');
 });
-
-/* ══════════════════════════════════════════════════════════════════════════
-   14. START
-   ══════════════════════════════════════════════════════════════════════════ */
 
 server.listen(PORT, '0.0.0.0', () => {
-  console.log('\x1b[32m✓ VPS Control running\x1b[0m');
-  console.log(`  Port       : ${PORT}`);
-  console.log(`  Shell      : ${process.env.SHELL || '/bin/bash'}`);
-  console.log(`  tmux       : ${hasTmux() ? 'available (session persistence ON)' : 'missing'}`);
-  console.log(`  Data dir   : ${DATA_DIR}`);
-  console.log(`  Auth       : password (${PASSWORD.length} chars)`);
+  console.log('[ready] vps-control listening on :' + PORT);
+  console.log('[ready] shell=' + (process.env.SHELL || '/bin/bash') + ' tmux=' + hasTmux());
+  console.log('[ready] runners=' + (Array.from(availableRunners.keys()).join(',') || 'none'));
+  console.log('[ready] data=' + DATA_DIR);
 });
