@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0B1220" />
+<title>Sign in · VPS Control</title>
+<meta name="description" content="Password-protected access to the VPS Control dashboard." />
+<meta name="robots" content="noindex, nofollow" />
+<meta property="og:title" content="Sign in · VPS Control" />
+<meta property="og:description" content="Secure access to your infrastructure control plane." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%2300A1E0'/%3E%3Cpath d='M6 8h12M6 12h12M6 16h8' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['JetBrains Mono', 'ui-monospace', 'Menlo', 'monospace'],
+      },
+      colors: {
+        biz: {
+          blue: '#00A1E0',
+          deep: '#0077A8',
+          dark: '#0B1220',
+          ink: '#1A2332',
+          light: '#F2F6FA',
+        }
+      }
+    }
+  }
+};
+</script>
+
+<style>
+  :root {
+    --biz-blue: #00A1E0;
+    --biz-deep: #0077A8;
+    --dark: #0B1220;
+    --ink: #1A2332;
+    --glow: rgba(0,161,224,0.35);
+  }
+  * { -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #F7F9FC;
+    color: #1A2332;
+    font-feature-settings: 'cv02','cv03','cv04','cv11';
+    overflow-x: hidden;
+  }
+  ::selection { background: rgba(0,161,224,0.28); }
+
+  .grid-lines-dark {
+    background-image:
+      linear-gradient(rgba(0,161,224,0.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,161,224,0.055) 1px, transparent 1px);
+    background-size: 44px 44px;
+    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 30% 40%, black 0%, transparent 80%);
+    mask-image: radial-gradient(ellipse 90% 70% at 30% 40%, black 0%, transparent 80%);
+  }
+  .grid-lines-light {
+    background-image:
+      linear-gradient(rgba(0,161,224,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,161,224,0.05) 1px, transparent 1px);
+    background-size: 44px 44px;
+    -webkit-mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 0%, transparent 75%);
+    mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 0%, transparent 75%);
+  }
+
+  @keyframes float-slow {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(20px, -30px, 0) scale(1.06); }
+  }
+  .orb-float-a { animation: float-slow 14s ease-in-out infinite; }
+  .orb-float-b { animation: float-slow 18s ease-in-out infinite reverse; }
+  .orb-float-c { animation: float-slow 22s ease-in-out infinite; }
+
+  @keyframes pulse-ring {
+    0%   { box-shadow: 0 0 0 0 rgba(34,197,94,0.55); }
+    70%  { box-shadow: 0 0 0 10px rgba(34,197,94,0); }
+    100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+  }
+  .pulse-dot { animation: pulse-ring 2.4s ease-out infinite; }
+
+  @keyframes pulse-blue {
+    0%   { box-shadow: 0 0 0 0 rgba(0,161,224,0.55); }
+    70%  { box-shadow: 0 0 0 12px rgba(0,161,224,0); }
+    100% { box-shadow: 0 0 0 0 rgba(0,161,224,0); }
+  }
+  .pulse-blue { animation: pulse-blue 2.4s ease-out infinite; }
+
+  @keyframes flow-dash { to { stroke-dashoffset: -60; } }
+  .flow-line { stroke-dasharray: 6 8; animation: flow-dash 3s linear infinite; }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .shimmer {
+    background: linear-gradient(90deg, transparent, rgba(0,161,224,0.15), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2.4s infinite;
+  }
+
+  @keyframes shimmer-headline {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  .headline-gradient {
+    background: linear-gradient(90deg, #00A1E0 0%, #38BDF8 30%, #8B5CF6 60%, #00A1E0 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: shimmer-headline 8s ease-in-out infinite;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+  }
+  .shake { animation: shake .42s cubic-bezier(.36,.07,.19,.97); }
+
+  @keyframes card-in {
+    from { opacity: 0; transform: translateY(12px) scale(.985); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .card-in { animation: card-in .55s cubic-bezier(.4, 0, .2, 1); }
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up-1 { animation: fade-up .5s cubic-bezier(.4,0,.2,1) .05s both; }
+  .fade-up-2 { animation: fade-up .5s cubic-bezier(.4,0,.2,1) .12s both; }
+  .fade-up-3 { animation: fade-up .5s cubic-bezier(.4,0,.2,1) .19s both; }
+  .fade-up-4 { animation: fade-up .5s cubic-bezier(.4,0,.2,1) .26s both; }
+  .fade-up-5 { animation: fade-up .5s cubic-bezier(.4,0,.2,1) .33s both; }
+  .fade-up-6 { animation: fade-up .5s cubic-bezier(.4,0,.2,1) .40s both; }
+
+  .login-input {
+    background: #F8FAFC;
+    border: 1px solid rgba(16,42,67,0.10);
+    transition: all .25s cubic-bezier(.4,0,.2,1);
+  }
+  .login-input:hover { border-color: rgba(16,42,67,0.18); }
+  .login-input:focus {
+    background: #fff;
+    border-color: #00A1E0;
+    box-shadow: 0 0 0 4px rgba(0,161,224,0.12);
+    outline: none;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #00A1E0 0%, #0077A8 100%);
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 4px 14px rgba(0,161,224,0.32), inset 0 1px 0 rgba(255,255,255,0.18);
+    transition: all .25s cubic-bezier(.4,0,.2,1);
+  }
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 28px rgba(0,161,224,0.45), inset 0 1px 0 rgba(255,255,255,0.2);
+  }
+  .btn-primary:active:not(:disabled) { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.65; cursor: not-allowed; }
+  .btn-primary:hover:not(:disabled) .arrow-slide { transform: translateX(3px); }
+  .arrow-slide { transition: transform .25s cubic-bezier(.4,0,.2,1); }
+
+  .feature-icon {
+    background: linear-gradient(135deg, rgba(0,161,224,0.16), rgba(0,161,224,0.06));
+    border: 1px solid rgba(0,161,224,0.22);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+
+  .status-chip {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(8px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<main class="min-h-screen lg:grid lg:grid-cols-[1.05fr_1fr]">
+
+  <section class="relative hidden lg:flex flex-col justify-between overflow-hidden bg-biz-dark p-10 xl:p-14">
+
+    <div class="absolute inset-0 grid-lines-dark"></div>
+
+    <div class="absolute -top-40 -left-40 w-[640px] h-[640px] rounded-full orb-float-a pointer-events-none"
+         style="background: radial-gradient(circle, rgba(0,161,224,0.32) 0%, rgba(0,161,224,0.06) 40%, transparent 70%); filter: blur(40px);"></div>
+
+    <div class="absolute -bottom-40 -right-32 w-[560px] h-[560px] rounded-full orb-float-b pointer-events-none"
+         style="background: radial-gradient(circle, rgba(139,92,246,0.28) 0%, rgba(139,92,246,0.05) 40%, transparent 70%); filter: blur(40px);"></div>
+
+    <div class="absolute top-1/3 left-1/2 w-[420px] h-[420px] rounded-full orb-float-c pointer-events-none"
+         style="background: radial-gradient(circle, rgba(34,197,94,0.14) 0%, transparent 65%); filter: blur(50px);"></div>
+
+    <div class="relative flex items-center gap-3 fade-up-1">
+      <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-biz-blue to-biz-deep flex items-center justify-center"
+           style="box-shadow: 0 0 0 1px rgba(0,161,224,0.35), 0 12px 40px rgba(0,161,224,0.45);">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3V6.75a3 3 0 013-3h13.5a3 3 0 013 3v4.5a3 3 0 01-3 3m-13.5 0v3a3 3 0 003 3h10.5a3 3 0 003-3v-3"/>
+        </svg>
+      </div>
+      <div>
+        <div class="font-black text-[17px] text-white leading-none tracking-tight">VPS<span class="text-biz-blue">Control</span></div>
+        <div class="text-[10px] text-slate-400 font-semibold tracking-[0.22em] uppercase mt-1">AI Runtime · 2026</div>
+      </div>
+    </div>
+
+    <div class="relative max-w-xl my-auto py-12">
+
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full status-chip mb-7 fade-up-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-biz-blue pulse-blue"></span>
+        <span class="text-[11px] font-bold text-biz-blue tracking-wide uppercase">Control Plane Access</span>
+      </div>
+
+      <h1 class="text-4xl xl:text-[3.4rem] font-black text-white tracking-tight leading-[1.05] fade-up-3">
+        Command your server<br>
+        with <span class="headline-gradient">intelligence</span>,<br>
+        not chaos.
+      </h1>
+
+      <p class="mt-6 text-slate-400 text-[15px] xl:text-base leading-relaxed max-w-lg fade-up-4">
+        A unified control plane for multi-tab terminal sessions, multi-language code editing, and real-time infrastructure observability — powered by tmux persistence.
+      </p>
+
+      <div class="mt-10 space-y-4 fade-up-5">
+
+        <div class="flex items-start gap-3.5">
+          <div class="feature-icon w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg class="w-4 h-4 text-biz-blue" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="text-white font-bold text-sm">Multi-tab terminal with tmux</div>
+            <div class="text-slate-500 text-xs mt-1 leading-relaxed">Every session survives reloads, network drops, and redeploys.</div>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3.5">
+          <div class="feature-icon w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg class="w-4 h-4 text-biz-blue" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/>
+            </svg>
+          </div>
+          <div>
+            <div class="text-white font-bold text-sm">Six languages, one editor</div>
+            <div class="text-slate-500 text-xs mt-1 leading-relaxed">Write, save, and execute Python, C, C++, JavaScript, Bash, and Go in place.</div>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3.5">
+          <div class="feature-icon w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg class="w-4 h-4 text-biz-blue" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="text-white font-bold text-sm">Live CPU &amp; memory telemetry</div>
+            <div class="text-slate-500 text-xs mt-1 leading-relaxed">Two-second polling with gradient-filled charts and smart status pills.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="mt-12 flex flex-wrap items-center gap-x-6 gap-y-3 fade-up-6">
+        <div class="flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 pulse-dot"></span>
+          <span class="text-[11px] text-slate-400 font-medium">Encrypted session</span>
+        </div>
+        <div class="w-px h-3 bg-slate-700"></div>
+        <div class="flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-biz-blue"></span>
+          <span class="text-[11px] text-slate-400 font-medium">HttpOnly cookies</span>
+        </div>
+        <div class="w-px h-3 bg-slate-700"></div>
+        <div class="flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span>
+          <span class="text-[11px] text-slate-400 font-medium">Rate-limited login</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="relative flex items-center justify-between text-[11px] text-slate-500 fade-up-6">
+      <span>© 2026 VPSControl</span>
+      <div class="flex items-center gap-5">
+        <a href="#" class="hover:text-slate-300 transition-colors">Privacy</a>
+        <a href="#" class="hover:text-slate-300 transition-colors">Terms</a>
+        <a href="#" class="hover:text-slate-300 transition-colors">Status</a>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="relative flex items-center justify-center p-5 sm:p-8 lg:p-12 min-h-screen bg-gradient-to-br from-white via-[#F8FBFE] to-[#F2F6FA] overflow-hidden">
+
+    <div class="absolute inset-0 grid-lines-light lg:hidden"></div>
+    <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full orb-float-a pointer-events-none lg:hidden"
+         style="background: radial-gradient(circle, rgba(0,161,224,0.18) 0%, transparent 65%); filter: blur(40px);"></div>
+    <div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full orb-float-b pointer-events-none lg:hidden"
+         style="background: radial-gradient(circle, rgba(139,92,246,0.14) 0%, transparent 65%); filter: blur(40px);"></div>
+
+    <div class="relative w-full max-w-md">
+
+      <div class="lg:hidden flex items-center justify-center gap-3 mb-8 fade-up-1">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-biz-blue to-biz-deep flex items-center justify-center"
+             style="box-shadow: 0 0 0 1px rgba(0,161,224,0.35), 0 12px 32px rgba(0,161,224,0.35);">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3V6.75a3 3 0 013-3h13.5a3 3 0 013 3v4.5a3 3 0 01-3 3m-13.5 0v3a3 3 0 003 3h10.5a3 3 0 003-3v-3"/>
+          </svg>
+        </div>
+        <div>
+          <div class="font-black text-base text-biz-dark leading-none tracking-tight">VPS<span class="text-biz-blue">Control</span></div>
+          <div class="text-[9px] text-slate-500 font-semibold tracking-[0.2em] uppercase mt-1">AI Runtime</div>
+        </div>
+      </div>
+
+      <div id="loginCard" class="card-in relative bg-white rounded-3xl p-8 sm:p-10 shadow-2xl border border-white/80"
+           style="box-shadow: 0 20px 60px -12px rgba(16,42,67,0.18), 0 8px 24px -8px rgba(0,161,224,0.12);">
+
+        <div class="absolute -top-px left-8 right-8 h-px bg-gradient-to-r from-transparent via-biz-blue/40 to-transparent"></div>
+
+        <div class="relative">
+
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-biz-blue/8 border border-biz-blue/20 mb-5">
+            <svg class="w-3 h-3 text-biz-blue" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/>
+            </svg>
+            <span class="text-[10px] font-bold text-biz-blue tracking-widest uppercase">Secure Access</span>
+          </div>
+
+          <h2 class="text-[1.75rem] sm:text-3xl font-black text-biz-dark tracking-tight leading-tight">Welcome back</h2>
+          <p class="text-sm text-slate-500 mt-2 leading-relaxed">Enter your dashboard password to unlock the control plane.</p>
+
+          <form id="loginForm" novalidate class="mt-8" autocomplete="on">
+
+            <div>
+              <label for="password" class="block text-[11px] font-bold text-slate-500 uppercase tracking-[0.14em] mb-2.5">
+                Password
+              </label>
+              <div class="relative">
+                <div class="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"/>
+                  </svg>
+                </div>
+
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  autofocus
+                  autocomplete="current-password"
+                  spellcheck="false"
+                  autocapitalize="off"
+                  placeholder="••••••••••••"
+                  class="login-input w-full pl-11 pr-12 py-3.5 rounded-xl text-[15px] font-mono tracking-[0.15em] text-biz-dark placeholder:text-slate-300 placeholder:tracking-[0.3em]"
+                  aria-describedby="errorBox"
+                />
+
+                <button
+                  type="button"
+                  id="togglePw"
+                  tabindex="-1"
+                  aria-label="Toggle password visibility"
+                  class="absolute right-2.5 top-1/2 -translate-y-1/2 p-2 rounded-lg hover:bg-slate-100 transition-all cursor-pointer group">
+                  <svg id="eyeOn" class="w-4 h-4 text-slate-400 group-hover:text-biz-blue transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  </svg>
+                  <svg id="eyeOff" class="w-4 h-4 text-slate-400 group-hover:text-biz-blue transition-colors hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-4 flex items-center justify-between">
+              <label class="flex items-center gap-2.5 cursor-pointer select-none group">
+                <input
+                  id="remember"
+                  type="checkbox"
+                  class="w-4 h-4 rounded border-slate-300 text-biz-blue focus:ring-biz-blue/30 focus:ring-offset-0 cursor-pointer"
+                />
+                <span class="text-xs text-slate-600 font-medium group-hover:text-biz-blue transition-colors">Keep me signed in for 30 days</span>
+              </label>
+            </div>
+
+            <div id="errorBox" class="hidden mt-5 p-3.5 rounded-xl bg-red-50 border border-red-200/80 items-start gap-2.5" role="alert" aria-live="polite">
+              <svg class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-500" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/>
+              </svg>
+              <span id="errorText" class="text-xs font-semibold text-red-700 leading-relaxed flex-1"></span>
+            </div>
+
+            <button
+              type="submit"
+              id="submitBtn"
+              class="btn-primary w-full mt-6 py-3.5 rounded-xl text-sm inline-flex items-center justify-center gap-2.5 cursor-pointer">
+              <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9l-3 3m0 0l3 3m-3-3h12.75"/>
+              </svg>
+              <span id="submitText">Unlock Dashboard</span>
+              <svg class="arrow-slide w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+              </svg>
+            </button>
+
+          </form>
+
+          <div class="mt-7 pt-6 border-t border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-[11px] text-slate-500 font-medium">Timing-safe verification</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-3.5 h-3.5 text-biz-blue" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/>
+              </svg>
+              <span class="text-[11px] text-slate-500 font-medium">HMAC-signed session</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="mt-6 flex items-center justify-center gap-2 text-[11px] text-slate-400">
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
+        </svg>
+        <span>Password is configured via the <code class="font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">DASHBOARD_PASSWORD</code> environment variable</span>
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+<noscript>
+  <div style="position:fixed;inset:0;background:rgba(11,18,32,0.9);color:white;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;font-family:system-ui,sans-serif;z-index:9999;">
+    <div>
+      <div style="font-size:20px;font-weight:800;margin-bottom:12px;">JavaScript Required</div>
+      <div style="font-size:14px;opacity:0.75;max-width:420px;line-height:1.6;">This control plane requires JavaScript for secure authentication. Please enable it to continue.</div>
+    </div>
+  </div>
+</noscript>
+
+<script>
+(function () {
+  'use strict';
+
+  var form = document.getElementById('loginForm');
+  var passwordInput = document.getElementById('password');
+  var rememberInput = document.getElementById('remember');
+  var submitBtn = document.getElementById('submitBtn');
+  var submitText = document.getElementById('submitText');
+  var errorBox = document.getElementById('errorBox');
+  var errorText = document.getElementById('errorText');
+  var togglePw = document.getElementById('togglePw');
+  var eyeOn = document.getElementById('eyeOn');
+  var eyeOff = document.getElementById('eyeOff');
+  var loginCard = document.getElementById('loginCard');
+
+  var DEFAULT_NEXT = '/dashboard';
+  var nextParam = new URLSearchParams(location.search).get('next') || '';
+
+  function safeNext(raw) {
+    if (!raw) return DEFAULT_NEXT;
+    var candidates = [raw];
+    try { candidates.push(decodeURIComponent(raw)); } catch (e) {}
+    for (var i = 0; i < candidates.length; i++) {
+      var c = candidates[i];
+      if (typeof c !== 'string') continue;
+      if (c.charAt(0) !== '/') return DEFAULT_NEXT;
+      if (c.charAt(1) === '/') return DEFAULT_NEXT;
+      if (c.indexOf('\\') !== -1) return DEFAULT_NEXT;
+      if (c.indexOf('/login') === 0) return DEFAULT_NEXT;
+      return c;
+    }
+    return DEFAULT_NEXT;
+  }
+
+  togglePw.addEventListener('click', function () {
+    var isPw = passwordInput.type === 'password';
+    passwordInput.type = isPw ? 'text' : 'password';
+    eyeOn.classList.toggle('hidden', isPw);
+    eyeOff.classList.toggle('hidden', !isPw);
+    passwordInput.focus();
+    var len = passwordInput.value.length;
+    try { passwordInput.setSelectionRange(len, len); } catch (e) {}
+  });
+
+  function showError(message) {
+    errorText.textContent = message;
+    errorBox.classList.remove('hidden');
+    errorBox.classList.add('flex');
+    loginCard.classList.remove('shake');
+    void loginCard.offsetWidth;
+    loginCard.classList.add('shake');
+  }
+
+  function hideError() {
+    errorBox.classList.add('hidden');
+    errorBox.classList.remove('flex');
+  }
+
+  var countdownTimer = null;
+
+  function setBusy(busy, label) {
+    submitBtn.disabled = busy;
+    submitText.textContent = label;
+  }
+
+  function startCountdown(seconds) {
+    if (countdownTimer) clearInterval(countdownTimer);
+    var left = Math.max(0, parseInt(seconds, 10) || 0);
+    submitBtn.disabled = true;
+    var tick = function () {
+      if (left <= 0) {
+        clearInterval(countdownTimer);
+        countdownTimer = null;
+        submitBtn.disabled = false;
+        submitText.textContent = 'Unlock Dashboard';
+        return;
+      }
+      submitText.textContent = 'Retry in ' + left + 's';
+      left -= 1;
+    };
+    tick();
+    countdownTimer = setInterval(tick, 1000);
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    var password = passwordInput.value;
+    if (!password) {
+      showError('Password is required.');
+      passwordInput.focus();
+      return;
+    }
+
+    hideError();
+    setBusy(true, 'Verifying…');
+
+    try {
+      var res = await fetch('/api/auth/login', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          password: password,
+          remember: rememberInput.checked,
+          next: nextParam
+        })
+      });
+
+      var data = {};
+      try { data = await res.json(); } catch (e) {}
+
+      if (res.ok) {
+        setBusy(true, 'Welcome');
+        var dest = safeNext(data && data.next ? data.next : nextParam);
+        window.location.replace(dest);
+        return;
+      }
+
+      if (res.status === 429) {
+        var retry = parseInt(res.headers.get('Retry-After') || '60', 10);
+        showError(data.error || ('Too many attempts. Retry in ' + retry + 's.'));
+        startCountdown(retry);
+        return;
+      }
+
+      if (res.status === 401) {
+        var remaining = typeof data.remaining === 'number' ? data.remaining : null;
+        var msg;
+        if (remaining !== null && remaining > 0) {
+          msg = 'Invalid password. ' + remaining + ' attempt' + (remaining === 1 ? '' : 's') + ' remaining.';
+        } else {
+          msg = data.error || 'Invalid password.';
+        }
+        showError(msg);
+        passwordInput.select();
+        setBusy(false, 'Unlock Dashboard');
+        return;
+      }
+
+      if (res.status === 400) {
+        showError(data.error || 'Invalid request. Reload the page and try again.');
+        setBusy(false, 'Unlock Dashboard');
+        return;
+      }
+
+      showError(data.error || 'Login failed. Try again.');
+      setBusy(false, 'Unlock Dashboard');
+
+    } catch (err) {
+      showError('Network error. Check your connection and retry.');
+      setBusy(false, 'Unlock Dashboard');
+    }
+  });
+
+  passwordInput.addEventListener('input', function () {
+    if (!errorBox.classList.contains('hidden') && passwordInput.value.length > 0) {
+      hideError();
+    }
+  });
+
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) {
+      setBusy(false, 'Unlock Dashboard');
+    }
+  });
+
+})();
+</script>
+
+</body>
+</html>
