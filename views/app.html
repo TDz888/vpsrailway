@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#0B1220" />
 <title>VPS Control · Dashboard</title>
-<meta name="description" content="Control plane: multi-tab terminal, code editor, live metrics, and package shop." />
+<meta name="description" content="Control plane: terminal, code editor, metrics, and package shop." />
 <meta name="robots" content="noindex, nofollow" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%2300A1E0'/%3E%3Cpath d='M6 8h12M6 12h12M6 16h8' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E" />
 
@@ -52,15 +52,63 @@ tailwind.config = {
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 <style>
-  :root { --biz-blue: #00A1E0; --biz-deep: #0077A8; --dark: #0B1220; --ink: #1A2332; --light: #F2F6FA; }
+  :root {
+    --biz-blue: #00A1E0;
+    --biz-deep: #0077A8;
+    --dark: #0B1220;
+    --ink: #1A2332;
+    --light: #F2F6FA;
+    --emerald: #22C55E;
+    --amber: #F59E0B;
+    --rose: #EF4444;
+    --violet: #8B5CF6;
+  }
   * { -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; }
-  body { font-family: 'Inter', system-ui, sans-serif; background: #F7F9FC; color: #1A2332; font-feature-settings: 'cv02','cv03','cv04','cv11'; overflow-x: hidden; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #F7F9FC;
+    color: var(--ink);
+    font-feature-settings: 'cv02','cv03','cv04','cv11';
+    overflow-x: hidden;
+  }
   ::selection { background: rgba(0,161,224,0.25); }
-  .ambient { position: fixed; inset: 0; pointer-events: none; z-index: 0; background: radial-gradient(1200px 600px at 8% -20%, rgba(0,161,224,0.10), transparent 60%), radial-gradient(900px 500px at 100% 0%, rgba(139,92,246,0.07), transparent 55%), radial-gradient(800px 600px at 50% 120%, rgba(0,161,224,0.06), transparent 60%); }
-  .grid-lines { position: fixed; inset: 0; pointer-events: none; z-index: 0; background-image: linear-gradient(rgba(0,161,224,0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(0,161,224,0.045) 1px, transparent 1px); background-size: 48px 48px; -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 75%); mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 75%); }
-  .glass { background: rgba(255,255,255,0.78); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border-color: rgba(255,255,255,0.6); }
-  .card { background: #fff; border: 1px solid rgba(16,42,67,0.06); border-radius: 16px; box-shadow: 0 4px 16px rgba(16,42,67,0.06); transition: box-shadow .28s cubic-bezier(.4,0,.2,1), transform .28s cubic-bezier(.4,0,.2,1); }
+
+  .ambient {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(1200px 600px at 8% -20%, rgba(0,161,224,0.10), transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, rgba(139,92,246,0.07), transparent 55%),
+      radial-gradient(800px 600px at 50% 120%, rgba(0,161,224,0.06), transparent 60%);
+  }
+  .grid-lines {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      linear-gradient(rgba(0,161,224,0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,161,224,0.045) 1px, transparent 1px);
+    background-size: 48px 48px;
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 75%);
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 75%);
+  }
+
+  .glass {
+    background: rgba(255,255,255,0.78);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-color: rgba(255,255,255,0.6);
+  }
+  .glass-dark {
+    background: rgba(11,18,32,0.72);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+  }
+  .card {
+    background: #fff;
+    border: 1px solid rgba(16,42,67,0.06);
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(16,42,67,0.06);
+    transition: box-shadow .28s cubic-bezier(.4,0,.2,1), transform .28s cubic-bezier(.4,0,.2,1);
+  }
   .card-hover:hover { box-shadow: 0 16px 44px rgba(16,42,67,0.11); transform: translateY(-2px); }
 
   @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.55); } 70% { box-shadow: 0 0 0 9px rgba(34,197,94,0); } 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } }
@@ -72,33 +120,139 @@ tailwind.config = {
   @keyframes spin { to { transform: rotate(360deg); } }
   .spin { animation: spin 1s linear infinite; }
   @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-  .skeleton { background: linear-gradient(90deg, #E2E8F0 0%, #F1F5F9 50%, #E2E8F0 100%); background-size: 200% 100%; animation: shimmer 1.6s infinite; border-radius: 8px; }
+  .skeleton {
+    background: linear-gradient(90deg, #E2E8F0 0%, #F1F5F9 50%, #E2E8F0 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.6s infinite;
+    border-radius: 8px;
+  }
 
-  .nav-item { position: relative; border-radius: 10px; transition: all .22s cubic-bezier(.4,0,.2,1); color: #4A5568; display: flex; align-items: center; gap: 12px; padding: 10px 12px; font-size: 13px; font-weight: 500; text-decoration: none; cursor: pointer; }
+  .nav-item {
+    position: relative;
+    border-radius: 10px;
+    transition: all .22s cubic-bezier(.4,0,.2,1);
+    color: #4A5568;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+  }
   .nav-item:hover { background: rgba(0,161,224,0.06); color: #0B1220; transform: translateX(1px); }
-  .nav-item.active { background: linear-gradient(135deg, rgba(0,161,224,0.14), rgba(0,161,224,0.05)); color: #00A1E0; font-weight: 600; box-shadow: inset 0 0 0 1px rgba(0,161,224,0.16); }
-  .nav-item.active::before { content: ''; position: absolute; left: -14px; top: 50%; transform: translateY(-50%); width: 3px; height: 20px; background: #00A1E0; border-radius: 2px; box-shadow: 0 0 12px rgba(0,161,224,0.6); }
+  .nav-item.active {
+    background: linear-gradient(135deg, rgba(0,161,224,0.14), rgba(0,161,224,0.05));
+    color: #00A1E0;
+    font-weight: 600;
+    box-shadow: inset 0 0 0 1px rgba(0,161,224,0.16);
+  }
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 20px;
+    background: #00A1E0;
+    border-radius: 2px;
+    box-shadow: 0 0 12px rgba(0,161,224,0.6);
+  }
   .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
-  .nav-item .nav-badge { margin-left: auto; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: rgba(0,161,224,0.14); color: #00A1E0; }
+  .nav-item .nav-badge {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 6px;
+    background: rgba(0,161,224,0.14);
+    color: #00A1E0;
+  }
   .nav-item .nav-dot { margin-left: auto; width: 6px; height: 6px; border-radius: 999px; background: #F59E0B; }
 
-  .btn-primary { background: linear-gradient(135deg, #00A1E0 0%, #0077A8 100%); color: #fff; font-weight: 600; box-shadow: 0 4px 14px rgba(0,161,224,0.28), inset 0 1px 0 rgba(255,255,255,0.18); transition: all .25s cubic-bezier(.4,0,.2,1); }
-  .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(0,161,224,0.38); }
+  .btn-primary {
+    background: linear-gradient(135deg, #00A1E0 0%, #0077A8 100%);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 4px 14px rgba(0,161,224,0.28), inset 0 1px 0 rgba(255,255,255,0.18);
+    transition: all .25s cubic-bezier(.4,0,.2,1);
+  }
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 28px rgba(0,161,224,0.38);
+  }
   .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-  .btn-ghost { background: #fff; color: #1A2332; border: 1px solid rgba(16,42,67,0.10); transition: all .25s cubic-bezier(.4,0,.2,1); }
+  .btn-ghost {
+    background: #fff;
+    color: #1A2332;
+    border: 1px solid rgba(16,42,67,0.10);
+    transition: all .25s cubic-bezier(.4,0,.2,1);
+  }
   .btn-ghost:hover { border-color: #00A1E0; color: #00A1E0; background: rgba(0,161,224,0.03); }
-  .btn-danger { background: #fff; color: #EF4444; border: 1px solid rgba(239,68,68,0.28); transition: all .25s; }
+  .btn-danger {
+    background: #fff;
+    color: #EF4444;
+    border: 1px solid rgba(239,68,68,0.28);
+    transition: all .25s;
+  }
   .btn-danger:hover { background: #FEF2F2; border-color: #EF4444; }
 
   #terminal-shell { background: #0B1220; border-radius: 16px; }
-  .term-tab { display: inline-flex; align-items: center; gap: 8px; padding: 7px 10px 7px 12px; font-size: 12px; font-weight: 500; color: #94A3B8; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-bottom: none; border-radius: 10px 10px 0 0; cursor: pointer; transition: all .2s cubic-bezier(.4,0,.2,1); max-width: 210px; position: relative; user-select: none; flex-shrink: 0; }
+  .term-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px 7px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #94A3B8;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    cursor: pointer;
+    transition: all .2s cubic-bezier(.4,0,.2,1);
+    max-width: 210px;
+    position: relative;
+    user-select: none;
+    flex-shrink: 0;
+  }
   .term-tab:hover { background: rgba(255,255,255,0.05); color: #CBD5E1; }
-  .term-tab.active { background: #0B1220; color: #fff; border-color: rgba(0,161,224,0.4); box-shadow: 0 -2px 12px rgba(0,161,224,0.15); }
-  .term-tab.active::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: -1px; height: 2px; background: #00A1E0; border-radius: 1px; box-shadow: 0 0 8px rgba(0,161,224,0.8); }
-  .term-tab .tab-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px; }
-  .term-tab .tab-close { width: 16px; height: 16px; border-radius: 4px; display: flex; align-items: center; justify-content: center; opacity: 0.5; transition: all .15s; flex-shrink: 0; }
+  .term-tab.active {
+    background: #0B1220;
+    color: #fff;
+    border-color: rgba(0,161,224,0.4);
+    box-shadow: 0 -2px 12px rgba(0,161,224,0.15);
+  }
+  .term-tab.active::after {
+    content: '';
+    position: absolute;
+    left: 12px; right: 12px; bottom: -1px;
+    height: 2px;
+    background: #00A1E0;
+    border-radius: 1px;
+    box-shadow: 0 0 8px rgba(0,161,224,0.8);
+  }
+  .term-tab .tab-name {
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    max-width: 140px;
+  }
+  .term-tab .tab-close {
+    width: 16px; height: 16px;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.5;
+    transition: all .15s;
+    flex-shrink: 0;
+  }
   .term-tab .tab-close:hover { opacity: 1; background: rgba(255,80,80,0.28); }
-  .term-tab input.tab-edit { background: transparent; border: none; outline: none; color: #fff; font: inherit; width: 100px; padding: 0; }
+  .term-tab input.tab-edit {
+    background: transparent; border: none; outline: none;
+    color: #fff; font: inherit;
+    width: 100px; padding: 0;
+  }
   .term-status-dot { width: 6px; height: 6px; border-radius: 999px; flex-shrink: 0; }
   .term-status-connecting { background: #F59E0B; animation: pulse-blue 1.4s infinite; }
   .term-status-connected { background: #22C55E; box-shadow: 0 0 8px rgba(34,197,94,0.7); }
@@ -108,7 +262,14 @@ tailwind.config = {
   .xterm-container[hidden] { display: none; }
   .xterm .xterm-viewport { background: #0B1220 !important; }
 
-  .CodeMirror { height: 100%; font-size: 13.5px; font-family: 'JetBrains Mono', ui-monospace, monospace; background: #0B1220 !important; color: #E2E8F0; line-height: 1.7; }
+  .CodeMirror {
+    height: 100%;
+    font-size: 13.5px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    background: #0B1220 !important;
+    color: #E2E8F0;
+    line-height: 1.7;
+  }
   .CodeMirror-gutters { background: #0B1220 !important; border-right: 1px solid rgba(255,255,255,0.05); }
   .CodeMirror-linenumber { color: #475569 !important; }
   .CodeMirror-cursor { border-left: 2px solid #00A1E0 !important; }
@@ -122,27 +283,88 @@ tailwind.config = {
   .cm-s-material-darker .cm-variable { color: #EEFFFF; }
   .cm-s-material-darker .cm-operator { color: #89DDFF; }
 
-  .file-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; cursor: pointer; transition: all .18s; font-size: 12.5px; color: #4A5568; border: 1px solid transparent; }
+  .file-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .18s;
+    font-size: 12.5px;
+    color: #4A5568;
+    border: 1px solid transparent;
+  }
   .file-item:hover { background: rgba(0,161,224,0.06); color: #0B1220; }
-  .file-item.active { background: linear-gradient(135deg, rgba(0,161,224,0.12), rgba(0,161,224,0.04)); border-color: rgba(0,161,224,0.20); color: #00A1E0; font-weight: 600; }
+  .file-item.active {
+    background: linear-gradient(135deg, rgba(0,161,224,0.12), rgba(0,161,224,0.04));
+    border-color: rgba(0,161,224,0.20);
+    color: #00A1E0;
+    font-weight: 600;
+  }
   .file-item .ext-dot { width: 6px; height: 6px; border-radius: 999px; flex-shrink: 0; }
   .file-item .file-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .file-item .file-actions { display: none; gap: 2px; align-items: center; }
   .file-item:hover .file-actions { display: flex; }
-  .file-item .file-action { width: 22px; height: 22px; border-radius: 5px; display: flex; align-items: center; justify-content: center; transition: all .15s; color: #94A3B8; }
+  .file-item .file-action {
+    width: 22px; height: 22px;
+    border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+    color: #94A3B8;
+  }
   .file-item .file-action:hover { background: rgba(0,161,224,0.15); color: #00A1E0; }
   .file-item .file-action.danger:hover { background: rgba(239,68,68,0.15); color: #EF4444; }
 
-  .editor-tab { display: inline-flex; align-items: center; gap: 8px; padding: 8px 10px 8px 12px; font-size: 12px; font-weight: 500; color: #64748B; background: transparent; border-right: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: all .18s; position: relative; max-width: 200px; flex-shrink: 0; user-select: none; }
+  .editor-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px 8px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #64748B;
+    background: transparent;
+    border-right: 1px solid rgba(255,255,255,0.05);
+    cursor: pointer;
+    transition: all .18s;
+    position: relative;
+    max-width: 200px;
+    flex-shrink: 0;
+    user-select: none;
+  }
   .editor-tab:hover { background: rgba(255,255,255,0.03); color: #CBD5E1; }
   .editor-tab.active { background: #0B1220; color: #fff; }
-  .editor-tab.active::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: #00A1E0; box-shadow: 0 0 8px rgba(0,161,224,0.6); }
+  .editor-tab.active::after {
+    content: '';
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 2px;
+    background: #00A1E0;
+    box-shadow: 0 0 8px rgba(0,161,224,0.6);
+  }
   .editor-tab .tab-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px; }
   .editor-tab .tab-dot { width: 6px; height: 6px; border-radius: 999px; background: #F59E0B; flex-shrink: 0; }
-  .editor-tab .tab-close { width: 16px; height: 16px; border-radius: 4px; display: flex; align-items: center; justify-content: center; opacity: 0.5; transition: all .15s; flex-shrink: 0; }
+  .editor-tab .tab-close {
+    width: 16px; height: 16px;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.5;
+    transition: all .15s;
+    flex-shrink: 0;
+  }
   .editor-tab .tab-close:hover { opacity: 1; background: rgba(255,80,80,0.28); }
 
-  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; transition: all .15s; cursor: pointer; border: 1px solid transparent; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    transition: all .15s;
+    cursor: pointer;
+    border: 1px solid transparent;
+    white-space: nowrap;
+  }
   .chip-blue { background: rgba(0,161,224,0.10); color: #0077A8; }
   .chip-green { background: rgba(34,197,94,0.12); color: #15803D; }
   .chip-orange { background: rgba(245,158,11,0.12); color: #B45309; }
@@ -162,35 +384,193 @@ tailwind.config = {
   .view { animation: view-in .34s cubic-bezier(.4,0,.2,1); }
   .view[hidden] { display: none !important; }
 
-  .quickrun-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; cursor: pointer; transition: all .15s; font-size: 12px; }
+  .quickrun-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .15s;
+    font-size: 12px;
+  }
   .quickrun-item:hover { background: rgba(0,161,224,0.10); }
-  .lang-badge { font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 4px; letter-spacing: 0.06em; text-transform: uppercase; flex-shrink: 0; }
+  .lang-badge {
+    font-size: 9px; font-weight: 800;
+    padding: 3px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
 
-  .modal-backdrop { position: fixed; inset: 0; background: rgba(11,18,32,0.55); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 16px; animation: view-in .2s ease-out; }
-  .modal-card { background: #fff; border-radius: 20px; width: 100%; max-width: 480px; box-shadow: 0 30px 80px -20px rgba(16,42,67,0.35); overflow: hidden; animation: toast-in .3s cubic-bezier(.34,1.56,.64,1); max-height: calc(100vh - 32px); display: flex; flex-direction: column; }
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(11,18,32,0.55);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px;
+    animation: view-in .2s ease-out;
+  }
+  .modal-card {
+    background: #fff;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 30px 80px -20px rgba(16,42,67,0.35);
+    overflow: hidden;
+    animation: toast-in .3s cubic-bezier(.34,1.56,.64,1);
+    max-height: calc(100vh - 32px);
+    display: flex;
+    flex-direction: column;
+  }
   .modal-card.modal-wide { max-width: 640px; }
   .modal-card.modal-xl { max-width: 880px; }
 
-  .search-input { background: #F8FAFC; border: 1px solid rgba(16,42,67,0.08); transition: all .2s; }
-  .search-input:focus { background: #fff; border-color: #00A1E0; box-shadow: 0 0 0 3px rgba(0,161,224,0.10); outline: none; }
+  .search-input {
+    background: #F8FAFC;
+    border: 1px solid rgba(16,42,67,0.08);
+    transition: all .2s;
+  }
+  .search-input:focus {
+    background: #fff;
+    border-color: #00A1E0;
+    box-shadow: 0 0 0 3px rgba(0,161,224,0.10);
+    outline: none;
+  }
 
-  .shop-card { position: relative; background: #fff; border: 1px solid rgba(16,42,67,0.06); border-radius: 16px; padding: 18px; transition: all .25s cubic-bezier(.4,0,.2,1); display: flex; flex-direction: column; min-height: 240px; }
-  .shop-card:hover { transform: translateY(-3px); box-shadow: 0 16px 44px rgba(16,42,67,0.11); border-color: rgba(0,161,224,0.22); }
-  .shop-card .pkg-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; color: #fff; letter-spacing: -0.5px; flex-shrink: 0; }
-  .shop-card .pkg-cat { font-size: 9px; font-weight: 800; padding: 3px 7px; border-radius: 5px; text-transform: uppercase; letter-spacing: 0.08em; }
-  .shop-status { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
+  .shop-card {
+    position: relative;
+    background: #fff;
+    border: 1px solid rgba(16,42,67,0.06);
+    border-radius: 16px;
+    padding: 18px;
+    transition: all .25s cubic-bezier(.4,0,.2,1);
+    display: flex;
+    flex-direction: column;
+    min-height: 260px;
+  }
+  .shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 44px rgba(16,42,67,0.11);
+    border-color: rgba(0,161,224,0.22);
+  }
+  .shop-card.selected {
+    border-color: #00A1E0;
+    box-shadow: 0 0 0 3px rgba(0,161,224,0.14), 0 12px 32px rgba(0,161,224,0.14);
+  }
+  .shop-card .pkg-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: 17px;
+    color: #fff;
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.14);
+  }
+  .shop-card .pkg-cat {
+    font-size: 9px;
+    font-weight: 800;
+    padding: 3px 7px;
+    border-radius: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .shop-card .pkg-priority {
+    font-size: 9px;
+    font-weight: 800;
+    padding: 3px 7px;
+    border-radius: 5px;
+    letter-spacing: 0.08em;
+  }
+  .pkg-priority.essential { background: #FEF3C7; color: #B45309; }
+  .pkg-priority.recommended { background: #DBEAFE; color: #1D4ED8; }
+  .pkg-priority.optional { background: #F1F5F9; color: #64748B; }
+
+  .shop-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
   .shop-status.installed { background: rgba(34,197,94,0.12); color: #15803D; }
   .shop-status.not-installed { background: rgba(148,163,184,0.16); color: #475569; }
   .shop-status.installing { background: rgba(245,158,11,0.14); color: #B45309; }
   .shop-status.error { background: rgba(239,68,68,0.12); color: #B91C1C; }
-  .shop-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all .2s; border: 1px solid transparent; width: 100%; }
-  .shop-btn.install { background: linear-gradient(135deg, #00A1E0, #0077A8); color: #fff; box-shadow: 0 4px 12px rgba(0,161,224,0.28); }
-  .shop-btn.install:hover:not(:disabled) { box-shadow: 0 8px 22px rgba(0,161,224,0.40); transform: translateY(-1px); }
-  .shop-btn.remove { background: #fff; color: #EF4444; border-color: rgba(239,68,68,0.28); }
+
+  .shop-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 9px 12px;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+    border: 1px solid transparent;
+    width: 100%;
+  }
+  .shop-btn.install {
+    background: linear-gradient(135deg, #00A1E0, #0077A8);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0,161,224,0.28);
+  }
+  .shop-btn.install:hover:not(:disabled) {
+    box-shadow: 0 8px 22px rgba(0,161,224,0.40);
+    transform: translateY(-1px);
+  }
+  .shop-btn.remove {
+    background: #fff;
+    color: #EF4444;
+    border-color: rgba(239,68,68,0.28);
+  }
   .shop-btn.remove:hover:not(:disabled) { background: #FEF2F2; border-color: #EF4444; }
   .shop-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
-  .console-log { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.55; color: #CBD5E1; background: #0B1220; border-radius: 10px; padding: 14px; max-height: 320px; overflow-y: auto; white-space: pre-wrap; word-break: break-word; }
+  .shop-checkbox {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 22px;
+    height: 22px;
+    border-radius: 7px;
+    border: 2px solid rgba(16,42,67,0.18);
+    background: #fff;
+    cursor: pointer;
+    transition: all .18s;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 2;
+  }
+  .shop-checkbox:hover { border-color: #00A1E0; }
+  .shop-checkbox.checked {
+    background: #00A1E0;
+    border-color: #00A1E0;
+    color: #fff;
+  }
+  .shop-checkbox svg { opacity: 0; transition: opacity .15s; }
+  .shop-checkbox.checked svg { opacity: 1; }
+
+  .console-log {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: #CBD5E1;
+    background: #0B1220;
+    border-radius: 10px;
+    padding: 14px;
+    max-height: 320px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
   .console-log .log-info { color: #93C5FD; }
   .console-log .log-success { color: #86EFAC; }
   .console-log .log-error { color: #FCA5A5; }
@@ -198,16 +578,95 @@ tailwind.config = {
   .console-log .log-cmd { color: #F0ABFC; }
   .console-log .log-dim { color: #64748B; }
 
-  .cmdk-backdrop { position: fixed; inset: 0; background: rgba(11,18,32,0.60); backdrop-filter: blur(10px); z-index: 300; display: flex; align-items: flex-start; justify-content: center; padding: 12vh 16px 16px; animation: view-in .16s ease-out; }
-  .cmdk-card { background: #fff; border-radius: 18px; width: 100%; max-width: 620px; box-shadow: 0 40px 100px -20px rgba(16,42,67,0.40); overflow: hidden; }
-  .cmdk-input-wrap { display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1px solid rgba(16,42,67,0.06); }
-  .cmdk-input { flex: 1; background: transparent; border: none; outline: none; font-size: 16px; font-weight: 500; color: #1A2332; }
+  .cmdk-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(11,18,32,0.60);
+    backdrop-filter: blur(10px);
+    z-index: 300;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 12vh 16px 16px;
+    animation: view-in .16s ease-out;
+  }
+  .cmdk-card {
+    background: #fff;
+    border-radius: 18px;
+    width: 100%;
+    max-width: 620px;
+    box-shadow: 0 40px 100px -20px rgba(16,42,67,0.40);
+    overflow: hidden;
+  }
+  .cmdk-input-wrap {
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(16,42,67,0.06);
+  }
+  .cmdk-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    font-weight: 500;
+    color: #1A2332;
+  }
   .cmdk-input::placeholder { color: #94A3B8; }
-  .cmdk-item { display: flex; align-items: center; gap: 12px; padding: 11px 20px; cursor: pointer; transition: background .12s; font-size: 13px; color: #4A5568; }
+  .cmdk-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 20px;
+    cursor: pointer;
+    transition: background .12s;
+    font-size: 13px;
+    color: #4A5568;
+  }
   .cmdk-item:hover, .cmdk-item.selected { background: rgba(0,161,224,0.08); color: #0B1220; }
-  .cmdk-item .cmdk-icon { width: 28px; height: 28px; border-radius: 8px; background: rgba(0,161,224,0.10); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #00A1E0; }
+  .cmdk-item .cmdk-icon {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: rgba(0,161,224,0.10);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    color: #00A1E0;
+  }
   .cmdk-item .cmdk-label { flex: 1; min-width: 0; }
   .cmdk-item .cmdk-hint { font-size: 10.5px; color: #94A3B8; font-family: 'JetBrains Mono', monospace; }
+
+  .batch-bar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0B1220;
+    color: #fff;
+    border-radius: 14px;
+    padding: 14px 18px;
+    box-shadow: 0 20px 60px -12px rgba(11,18,32,0.55);
+    z-index: 180;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    animation: toast-in .3s cubic-bezier(.34,1.56,.64,1);
+    max-width: calc(100vw - 32px);
+  }
+  .batch-bar button {
+    padding: 8px 14px;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+    border: 1px solid transparent;
+  }
+  .batch-bar .bb-primary {
+    background: linear-gradient(135deg, #00A1E0, #0077A8);
+    color: #fff;
+  }
+  .batch-bar .bb-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(0,161,224,0.4); }
+  .batch-bar .bb-ghost {
+    background: rgba(255,255,255,0.06);
+    color: #CBD5E1;
+    border-color: rgba(255,255,255,0.12);
+  }
+  .batch-bar .bb-ghost:hover { background: rgba(255,255,255,0.12); color: #fff; }
 
   ::-webkit-scrollbar { width: 9px; height: 9px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -220,11 +679,30 @@ tailwind.config = {
   .hide-scroll { scrollbar-width: none; }
   .hide-scroll::-webkit-scrollbar { display: none; }
 
-  kbd { display: inline-block; padding: 2px 6px; font-size: 10px; font-family: 'JetBrains Mono', monospace; font-weight: 600; background: #F2F6FA; border: 1px solid rgba(16,42,67,0.10); border-bottom-width: 2px; border-radius: 4px; color: #475569; }
-  #terminal-shell kbd, .dark-scroll kbd { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.10); color: #CBD5E1; }
+  kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    background: #F2F6FA;
+    border: 1px solid rgba(16,42,67,0.10);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    color: #475569;
+  }
+  #terminal-shell kbd, .dark-scroll kbd, .console-log kbd {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.10);
+    color: #CBD5E1;
+  }
 
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 </style>
 </head>
@@ -243,8 +721,7 @@ tailwind.config = {
         </svg>
       </button>
       <a href="/dashboard" class="flex items-center gap-2.5 cursor-pointer no-underline">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-biz-blue to-biz-deep flex items-center justify-center"
-             style="box-shadow: 0 0 0 1px rgba(0,161,224,0.3), 0 8px 24px rgba(0,161,224,0.35);">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-biz-blue to-biz-deep flex items-center justify-center" style="box-shadow: 0 0 0 1px rgba(0,161,224,0.3), 0 8px 24px rgba(0,161,224,0.35);">
           <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3V6.75a3 3 0 013-3h13.5a3 3 0 013 3v4.5a3 3 0 01-3 3m-13.5 0v3a3 3 0 003 3h10.5a3 3 0 003-3v-3"/>
           </svg>
@@ -324,7 +801,7 @@ tailwind.config = {
 
       <a href="/shop" data-route="/shop" class="nav-item">
         <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z"/>
         </svg>
         <span>App Shop</span>
         <span id="navShopBadge" class="nav-badge hidden">0</span>
@@ -375,11 +852,9 @@ tailwind.config = {
 
   <main class="flex-1 min-w-0 p-4 md:p-6 lg:p-8">
 
-    <!-- ═══ DASHBOARD ═══ -->
     <section id="view-dashboard" class="view" hidden>
       <div class="card p-6 md:p-10 mb-6 relative overflow-hidden">
-        <div class="absolute inset-0 opacity-40 pointer-events-none"
-             style="background-image: linear-gradient(rgba(0,161,224,0.06) 1px,transparent 1px), linear-gradient(90deg,rgba(0,161,224,0.06) 1px,transparent 1px); background-size: 32px 32px; -webkit-mask-image: radial-gradient(ellipse at 70% 50%, black, transparent 70%); mask-image: radial-gradient(ellipse at 70% 50%, black, transparent 70%);"></div>
+        <div class="absolute inset-0 opacity-40 pointer-events-none" style="background-image: linear-gradient(rgba(0,161,224,0.06) 1px,transparent 1px), linear-gradient(90deg,rgba(0,161,224,0.06) 1px,transparent 1px); background-size: 32px 32px; -webkit-mask-image: radial-gradient(ellipse at 70% 50%, black, transparent 70%); mask-image: radial-gradient(ellipse at 70% 50%, black, transparent 70%);"></div>
 
         <div class="relative z-10 max-w-3xl">
           <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-biz-blue/10 border border-biz-blue/20 mb-5">
@@ -529,7 +1004,6 @@ tailwind.config = {
       </div>
     </section>
 
-    <!-- ═══ TERMINAL ═══ -->
     <section id="view-terminal" class="view" hidden>
       <div class="mb-4 flex items-center justify-between flex-wrap gap-3">
         <div>
@@ -568,8 +1042,7 @@ tailwind.config = {
       <div id="terminal-shell" class="card !bg-[#0B1220] !border-white/5 overflow-hidden" style="height: calc(100vh - 220px); min-height: 480px;">
         <div class="flex items-end gap-1 px-3 pt-2.5 bg-black/30 border-b border-white/5 overflow-x-auto hide-scroll">
           <div id="termTabs" class="flex items-end gap-1 flex-1 min-w-0"></div>
-          <button onclick="createTerminalTab()" title="New tab (Ctrl+Shift+T)"
-                  class="flex-shrink-0 mb-1.5 w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer">
+          <button onclick="createTerminalTab()" title="New tab (Ctrl+Shift+T)" class="flex-shrink-0 mb-1.5 w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
             </svg>
@@ -596,7 +1069,6 @@ tailwind.config = {
       </div>
     </section>
 
-    <!-- ═══ CODE EDITOR ═══ -->
     <section id="view-code" class="view" hidden>
       <div class="mb-4 flex items-center justify-between flex-wrap gap-3">
         <div>
@@ -624,7 +1096,6 @@ tailwind.config = {
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-4" style="height: calc(100vh - 240px); min-height: 520px;">
-
         <div class="lg:col-span-3 card flex flex-col overflow-hidden" style="min-height: 400px;">
           <div class="p-3 border-b border-slate-100">
             <div class="relative">
@@ -757,7 +1228,6 @@ tailwind.config = {
       </div>
     </section>
 
-    <!-- ═══ METRICS ═══ -->
     <section id="view-metrics" class="view" hidden>
       <div class="mb-5">
         <h1 class="text-2xl md:text-3xl font-black text-biz-dark tracking-tight">System Metrics</h1>
@@ -824,7 +1294,7 @@ tailwind.config = {
             <div class="text-sm font-bold text-biz-dark mt-2 font-mono" id="infoNode">—</div>
           </div>
           <div class="p-4 rounded-xl bg-biz-light border border-white">
-            <div class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Load 1m/5m/15m</div>
+            <div class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Load 1m / 5m / 15m</div>
             <div class="text-sm font-bold text-biz-dark mt-2 font-mono" id="infoLoads">—</div>
           </div>
           <div class="p-4 rounded-xl bg-biz-light border border-white">
@@ -841,41 +1311,66 @@ tailwind.config = {
       </div>
     </section>
 
-    <!-- ═══ APP SHOP ═══ -->
     <section id="view-shop" class="view" hidden>
-      <div class="mb-5">
-        <div class="flex items-center justify-between flex-wrap gap-3">
-          <div>
-            <h1 class="text-2xl md:text-3xl font-black text-biz-dark tracking-tight">App Shop</h1>
-            <p class="text-sm text-slate-500 mt-1">Install languages, tools, and libraries with one click. Auto-verified after installation.</p>
-          </div>
-          <div class="flex items-center gap-2">
-            <button onclick="refreshShopStatus()" class="btn-ghost px-3.5 py-2 rounded-lg text-xs font-semibold cursor-pointer inline-flex items-center gap-1.5">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/>
-              </svg>
-              Refresh Status
-            </button>
-          </div>
+      <div class="mb-5 flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h1 class="text-2xl md:text-3xl font-black text-biz-dark tracking-tight">App Shop</h1>
+          <p class="text-sm text-slate-500 mt-1" id="shopSubtitle">Loading catalog…</p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="installEssentials()" class="btn-ghost px-3.5 py-2 rounded-lg text-xs font-semibold cursor-pointer inline-flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/>
+            </svg>
+            Install Essentials
+          </button>
+          <button onclick="refreshShopStatus()" class="btn-ghost px-3.5 py-2 rounded-lg text-xs font-semibold cursor-pointer inline-flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/>
+            </svg>
+            Refresh
+          </button>
+          <button onclick="toggleBatchMode()" id="batchToggleBtn" class="btn-ghost px-3.5 py-2 rounded-lg text-xs font-semibold cursor-pointer inline-flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span id="batchToggleText">Batch Mode</span>
+          </button>
         </div>
       </div>
 
       <div class="card p-4 mb-5">
-        <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
+        <div class="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center">
           <div class="relative flex-1">
             <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
             </svg>
-            <input id="shopSearch" type="text" placeholder="Search packages…" class="search-input w-full pl-10 pr-3 py-2.5 rounded-lg text-sm font-medium" />
+            <input id="shopSearch" type="text" placeholder="Search packages by name, description, or tag…" class="search-input w-full pl-10 pr-3 py-2.5 rounded-lg text-sm font-medium" />
           </div>
-          <div id="shopCategories" class="flex items-center gap-1.5 flex-wrap"></div>
+          <div class="flex items-center gap-2">
+            <select id="shopSort" class="search-input px-3 py-2.5 rounded-lg text-sm font-medium cursor-pointer">
+              <option value="priority">Sort: Priority</option>
+              <option value="name">Sort: Name (A-Z)</option>
+              <option value="size">Sort: Size (smallest)</option>
+              <option value="size-desc">Sort: Size (largest)</option>
+            </select>
+          </div>
         </div>
+        <div id="shopCategories" class="flex items-center gap-1.5 flex-wrap mt-3"></div>
       </div>
 
       <div id="shopGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
 
       <div id="shopEmpty" class="hidden card p-12 text-center">
-        <p class="text-slate-400 text-sm">No packages match your filters.</p>
+        <div class="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
+          <svg class="w-7 h-7 text-slate-400" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+          </svg>
+        </div>
+        <p class="text-slate-500 text-sm font-medium">No packages match your filters.</p>
+        <button onclick="resetShopFilters()" class="btn-ghost px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer mt-4">
+          Clear filters
+        </button>
       </div>
     </section>
 
@@ -896,13 +1391,11 @@ tailwind.config = {
 
 <div id="toasts" class="fixed bottom-5 right-5 z-[400] space-y-2 pointer-events-none"></div>
 <div id="modalRoot"></div>
+<div id="batchBarRoot"></div>
 
 <script>
 'use strict';
 
-/* ═══════════════════════════════════════════════════════════════════════
-   Global config
-   ═══════════════════════════════════════════════════════════════════════ */
 const ROUTE = location.pathname;
 const VIEW_MAP = {
   '/dashboard': 'view-dashboard',
@@ -941,14 +1434,15 @@ const state = {
     categories: [],
     filter: 'all',
     search: '',
+    sort: 'priority',
     status: {},
-    installing: new Set()
+    installing: new Set(),
+    batchMode: false,
+    selected: new Set(),
+    total: 0
   }
 };
 
-/* ═══════════════════════════════════════════════════════════════════════
-   Utilities
-   ═══════════════════════════════════════════════════════════════════════ */
 function $(id) { return document.getElementById(id); }
 
 function escapeHtml(s) {
@@ -992,22 +1486,22 @@ function saveJSON(key, value) {
 }
 
 const EXT_META = {
-  '.py':   { color: '#3776AB', lang: 'python', name: 'Python' },
-  '.pyw':  { color: '#3776AB', lang: 'python', name: 'Python' },
-  '.js':   { color: '#F7DF1E', lang: 'javascript', name: 'JavaScript' },
-  '.mjs':  { color: '#F7DF1E', lang: 'javascript', name: 'JavaScript' },
-  '.cjs':  { color: '#F7DF1E', lang: 'javascript', name: 'JavaScript' },
-  '.sh':   { color: '#4EAA25', lang: 'shell', name: 'Bash' },
-  '.bash': { color: '#4EAA25', lang: 'shell', name: 'Bash' },
+  '.py':   { color: '#3776AB', lang: 'python',      name: 'Python' },
+  '.pyw':  { color: '#3776AB', lang: 'python',      name: 'Python' },
+  '.js':   { color: '#F7DF1E', lang: 'javascript',  name: 'JavaScript' },
+  '.mjs':  { color: '#F7DF1E', lang: 'javascript',  name: 'JavaScript' },
+  '.cjs':  { color: '#F7DF1E', lang: 'javascript',  name: 'JavaScript' },
+  '.sh':   { color: '#4EAA25', lang: 'shell',       name: 'Bash' },
+  '.bash': { color: '#4EAA25', lang: 'shell',       name: 'Bash' },
   '.c':    { color: '#00599C', lang: 'text/x-c++src', name: 'C' },
   '.cpp':  { color: '#00599C', lang: 'text/x-c++src', name: 'C++' },
   '.cc':   { color: '#00599C', lang: 'text/x-c++src', name: 'C++' },
   '.cxx':  { color: '#00599C', lang: 'text/x-c++src', name: 'C++' },
   '.h':    { color: '#00599C', lang: 'text/x-c++src', name: 'C Header' },
-  '.go':   { color: '#00ADD8', lang: 'go', name: 'Go' },
-  '.md':   { color: '#64748B', lang: 'markdown', name: 'Markdown' },
-  '.json': { color: '#F59E0B', lang: 'javascript', name: 'JSON' },
-  '.txt':  { color: '#94A3B8', lang: null, name: 'Text' }
+  '.go':   { color: '#00ADD8', lang: 'go',          name: 'Go' },
+  '.md':   { color: '#64748B', lang: 'markdown',    name: 'Markdown' },
+  '.json': { color: '#F59E0B', lang: 'javascript',  name: 'JSON' },
+  '.txt':  { color: '#94A3B8', lang: null,          name: 'Text' }
 };
 
 function extOf(name) {
@@ -1036,9 +1530,14 @@ function api(url, opts) {
   });
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
-   Toasts
-   ═══════════════════════════════════════════════════════════════════════ */
+function debounce(fn, ms) {
+  let t;
+  return function (...args) {
+    clearTimeout(t);
+    t = setTimeout(() => fn.apply(this, args), ms);
+  };
+}
+
 function toast(msg, type, duration) {
   type = type || 'info';
   duration = duration || 2600;
@@ -1059,20 +1558,21 @@ function toast(msg, type, duration) {
   el.style.cssText = 'display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:600;box-shadow:0 18px 48px -12px rgba(16,42,67,0.28);pointer-events:auto;max-width:380px;' + styles[type];
   el.innerHTML = icons[type] + '<span>' + escapeHtml(msg) + '</span>';
   $('toasts').appendChild(el);
-  setTimeout(() => { el.style.transition = 'all .3s cubic-bezier(.4,0,.2,1)'; el.style.opacity = '0'; el.style.transform = 'translateX(20px)'; }, duration - 400);
+  setTimeout(() => {
+    el.style.transition = 'all .3s cubic-bezier(.4,0,.2,1)';
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(20px)';
+  }, duration - 400);
   setTimeout(() => el.remove(), duration);
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
-   Modal system
-   ═══════════════════════════════════════════════════════════════════════ */
 function openModal(title, bodyHtml, opts) {
   opts = opts || {};
   const wrap = document.createElement('div');
   wrap.className = 'modal-backdrop';
   wrap.innerHTML =
     '<div class="modal-card' + (opts.size === 'lg' ? ' modal-wide' : opts.size === 'xl' ? ' modal-xl' : '') + '">' +
-      '<div class="px-6 pt-6 pb-4 flex items-center justify-between border-b border-slate-100">' +
+      '<div class="px-6 pt-6 pb-4 flex items-center justify-between border-b border-slate-100 flex-shrink-0">' +
         '<h3 class="text-lg font-black text-biz-dark">' + escapeHtml(title) + '</h3>' +
         '<button class="modal-close p-1.5 rounded-lg hover:bg-slate-100 transition-all cursor-pointer" aria-label="Close">' +
           '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>' +
@@ -1082,35 +1582,32 @@ function openModal(title, bodyHtml, opts) {
     '</div>';
   $('modalRoot').appendChild(wrap);
 
+  let closed = false;
   function close() {
+    if (closed) return;
+    closed = true;
     if (opts.onClose) opts.onClose();
     wrap.style.opacity = '0';
     wrap.style.transition = 'opacity .18s';
     setTimeout(() => wrap.remove(), 180);
+    document.removeEventListener('keydown', escHandler);
+  }
+  function escHandler(e) {
+    if (e.key === 'Escape') { close(); }
   }
   wrap.querySelector('.modal-close').addEventListener('click', close);
   wrap.addEventListener('click', e => { if (e.target === wrap) close(); });
-  const escHandler = e => {
-    if (e.key === 'Escape') { close(); document.removeEventListener('keydown', escHandler); }
-  };
   document.addEventListener('keydown', escHandler);
-
   if (opts.onMount) opts.onMount(wrap, close);
   return { el: wrap, close };
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
-   LOGOUT
-   ═══════════════════════════════════════════════════════════════════════ */
 $('logoutBtn').addEventListener('click', () => {
   api('/api/auth/logout', { method: 'POST' }).catch(() => {}).then(() => {
     window.location.replace('/login');
   });
 });
 
-/* ═══════════════════════════════════════════════════════════════════════
-   NAVIGATION
-   ═══════════════════════════════════════════════════════════════════════ */
 document.querySelectorAll('.nav-item[data-route]').forEach(el => {
   if (el.getAttribute('data-route') === ROUTE) el.classList.add('active');
 });
@@ -1125,9 +1622,6 @@ $('sidebarOverlay').addEventListener('click', () => {
   $('sidebarOverlay').classList.add('hidden');
 });
 
-/* ═══════════════════════════════════════════════════════════════════════
-   METRICS + CHARTS
-   ═══════════════════════════════════════════════════════════════════════ */
 const charts = { cpuMini: null, ramMini: null, cpuBig: null, ramBig: null };
 const MAX_POINTS = 30;
 
@@ -1170,7 +1664,7 @@ function chartOpts(color) {
 }
 
 function initCharts() {
-  if (typeof Chart === 'undefined') { console.warn('Chart.js not loaded'); return; }
+  if (typeof Chart === 'undefined') return;
   Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
   Chart.defaults.font.size = 11;
   Chart.defaults.color = '#94A3B8';
@@ -1328,7 +1822,7 @@ function renderRunnerGrid() {
     const card = document.createElement('div');
     card.className = 'p-4 rounded-xl bg-biz-light border border-white flex items-center gap-3';
     card.innerHTML =
-      '<div style="width:36px;height:36px;border-radius:10px;background:' + color + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
+      '<div style="width:36px;height:36px;border-radius:10px;background:' + color + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px ' + color + '40;">' +
         '<span style="color:#fff;font-weight:800;font-size:12px;">' + escapeHtml(label.slice(0, 2).toUpperCase()) + '</span>' +
       '</div>' +
       '<div class="min-w-0 flex-1">' +
@@ -1339,9 +1833,6 @@ function renderRunnerGrid() {
   });
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
-   TERMINAL
-   ═══════════════════════════════════════════════════════════════════════ */
 const termTabsEl = $('termTabs');
 const termBodyEl = $('termBody');
 const termEmptyState = $('termEmptyState');
@@ -1637,7 +2128,6 @@ function restoreTerminalTabs() {
   if (target) activateTerminalTab(target.sid);
 }
 
-/* Quick Run */
 function toggleQuickRun(e) {
   if (e) e.stopPropagation();
   const menu = $('quickRunMenu');
@@ -1698,7 +2188,6 @@ function fitActiveTerminal() {
   try { tab.fit.fit(); } catch {}
 }
 
-/* Sessions sidebar */
 function refreshSessions() {
   return api('/api/terminal/sessions').then(r => r.ok ? r.json() : null).then(data => {
     if (!data) return;
@@ -1729,9 +2218,6 @@ function renderSidebarSessions(sessions) {
   });
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
-   FILES
-   ═══════════════════════════════════════════════════════════════════════ */
 function refreshFiles() {
   return api('/api/files').then(r => r.ok ? r.json() : []).then(files => {
     state.files = files;
@@ -1871,9 +2357,6 @@ function runFileInNewTerminal(name) {
   window.location.href = '/terminal';
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
-   CODE EDITOR
-   ═══════════════════════════════════════════════════════════════════════ */
 let editor = null;
 const editorTabsEl = $('editorTabs');
 const editorHost = $('editorHost');
@@ -1883,7 +2366,7 @@ const navDirtyDot = $('navDirtyDot');
 
 function initCodeMirror() {
   if (editor) return;
-  if (typeof CodeMirror === 'undefined') { console.warn('CodeMirror not loaded'); return; }
+  if (typeof CodeMirror === 'undefined') return;
   editor = CodeMirror.fromTextArea(codeArea, {
     lineNumbers: true,
     mode: 'python',
@@ -2165,8 +2648,7 @@ function saveCurrentFile() {
 function newFile() {
   const inputHtml =
     '<label class="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Filename</label>' +
-    '<input id="modalFilename" type="text" autofocus placeholder="hello.py" ' +
-      'class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-biz-blue focus:ring-4 focus:ring-biz-blue/10 outline-none text-sm font-mono transition-all" />' +
+    '<input id="modalFilename" type="text" autofocus placeholder="hello.py" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-biz-blue focus:ring-4 focus:ring-biz-blue/10 outline-none text-sm font-mono transition-all" />' +
     '<div class="mt-3 flex flex-wrap gap-1.5" id="extChips">' +
       ['.py', '.js', '.sh', '.c', '.cpp', '.go', '.md', '.txt'].map(e =>
         '<button type="button" data-ext="' + e + '" class="chip chip-slate">' + e + '</button>'
@@ -2262,17 +2744,32 @@ function persistEditorTabs() {
   saveJSON(STORAGE_EDITOR_TABS, state.editorTabs.map(t => t.name));
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
-   APP SHOP
-   ═══════════════════════════════════════════════════════════════════════ */
 function loadShopCatalog() {
-  return api('/api/shop/catalog').then(r => r.ok ? r.json() : null).then(data => {
+  const params = new URLSearchParams();
+  if (state.shop.filter && state.shop.filter !== 'all') params.set('category', state.shop.filter);
+  if (state.shop.search) params.set('search', state.shop.search);
+  params.set('sort', state.shop.sort);
+
+  return api('/api/shop/catalog?' + params.toString()).then(r => r.ok ? r.json() : null).then(data => {
     if (!data) return;
     state.shop.items = data.items || [];
-    state.shop.categories = data.categories || [];
-    renderShopCategories();
+    state.shop.total = data.total || 0;
+    if (data.categories && data.categories.length) {
+      state.shop.categories = data.categories;
+      renderShopCategories();
+    }
     renderShopGrid();
+    updateShopSubtitle(data);
   }).catch(() => {});
+}
+
+function updateShopSubtitle(data) {
+  const el = $('shopSubtitle');
+  if (!el) return;
+  if (!data) { el.textContent = 'Loading catalog…'; return; }
+  const matched = data.matched != null ? data.matched : (data.items ? data.items.length : 0);
+  const total = data.total || 0;
+  el.textContent = 'Showing ' + matched + ' of ' + total + ' packages · one-click install with verification';
 }
 
 function refreshShopStatus() {
@@ -2304,16 +2801,32 @@ function renderShopCategories() {
   el.innerHTML = '';
   state.shop.categories.forEach(cat => {
     const btn = document.createElement('button');
-    btn.className = 'chip ' + (cat.id === state.shop.filter ? 'chip-blue active-chip' : 'chip-slate');
-    btn.textContent = cat.label;
-    btn.dataset.filter = cat.id;
+    const isActive = cat.id === state.shop.filter;
+    btn.className = 'chip ' + (isActive ? 'chip-blue active-chip' : 'chip-slate');
+    btn.innerHTML = escapeHtml(cat.label) + ' <span style="opacity:0.65;font-weight:700;font-size:10px;">' + (cat.count || 0) + '</span>';
     btn.addEventListener('click', () => {
       state.shop.filter = cat.id;
       renderShopCategories();
-      renderShopGrid();
+      loadShopCatalog();
     });
     el.appendChild(btn);
   });
+}
+
+function resetShopFilters() {
+  state.shop.filter = 'all';
+  state.shop.search = '';
+  state.shop.sort = 'priority';
+  if ($('shopSearch')) $('shopSearch').value = '';
+  if ($('shopSort')) $('shopSort').value = 'priority';
+  renderShopCategories();
+  loadShopCatalog();
+}
+
+function priorityLabel(p) {
+  if (p === 'essential') return 'ESSENTIAL';
+  if (p === 'recommended') return 'RECOMMENDED';
+  return 'OPTIONAL';
 }
 
 function renderShopGrid() {
@@ -2321,16 +2834,7 @@ function renderShopGrid() {
   const empty = $('shopEmpty');
   if (!grid) return;
 
-  const search = state.shop.search.toLowerCase();
-  const filter = state.shop.filter;
-
-  const filtered = state.shop.items.filter(p => {
-    if (search && p.name.toLowerCase().indexOf(search) === -1 && p.description.toLowerCase().indexOf(search) === -1) return false;
-    if (filter !== 'all' && p.category !== filter) return false;
-    return true;
-  });
-
-  if (filtered.length === 0) {
+  if (state.shop.items.length === 0) {
     grid.innerHTML = '';
     if (empty) empty.classList.remove('hidden');
     return;
@@ -2338,67 +2842,174 @@ function renderShopGrid() {
   if (empty) empty.classList.add('hidden');
 
   grid.innerHTML = '';
-  filtered.forEach(pkg => {
+  state.shop.items.forEach(pkg => {
     const status = state.shop.status[pkg.id] || { installed: false };
     const installing = state.shop.installing.has(pkg.id);
+    const selected = state.shop.selected.has(pkg.id);
     const card = document.createElement('div');
     card.className = 'shop-card';
+    if (selected) card.classList.add('selected');
 
     const statusCls = installing ? 'installing' : status.installed ? 'installed' : 'not-installed';
-    const statusLabel = installing ? 'Installing…' : status.installed ? 'Installed' + (status.version ? ' · ' + status.version : '') : 'Not installed';
+    const statusLabel = installing
+      ? 'Installing…'
+      : status.installed
+        ? 'Installed' + (status.version ? ' · v' + status.version : '')
+        : 'Not installed';
 
     const shortName = pkg.name.replace(/[^A-Za-z0-9]/g, '').slice(0, 2).toUpperCase();
+    const sizeWarning = (pkg.sizeBytes || 0) > 100 * 1024 * 1024;
 
     card.innerHTML =
-      '<div class="flex items-start justify-between gap-3 mb-3">' +
+      '<div class="shop-checkbox' + (selected ? ' checked' : '') + '" data-check>' +
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>' +
+      '</div>' +
+      '<div class="flex items-start justify-between gap-3 mb-3 pr-7">' +
         '<div class="pkg-icon" style="background:' + pkg.color + ';">' + escapeHtml(shortName) + '</div>' +
         '<span class="shop-status ' + statusCls + '">' + escapeHtml(statusLabel) + '</span>' +
       '</div>' +
-      '<div class="flex items-center gap-2 mb-2">' +
+      '<div class="flex items-center gap-2 mb-2 flex-wrap">' +
         '<h3 class="text-[15px] font-black text-biz-dark">' + escapeHtml(pkg.name) + '</h3>' +
         '<span class="pkg-cat" style="background:' + pkg.color + '22;color:' + pkg.color + ';">' + escapeHtml(pkg.category) + '</span>' +
       '</div>' +
+      '<div class="flex items-center gap-1.5 mb-3">' +
+        '<span class="pkg-priority ' + pkg.priority + '">' + priorityLabel(pkg.priority) + '</span>' +
+        (sizeWarning ? '<span class="pkg-priority" style="background:#FEE2E2;color:#B91C1C;">' + escapeHtml(pkg.size) + '</span>' : '') +
+      '</div>' +
       '<p class="text-xs text-slate-500 leading-relaxed mb-4 flex-1">' + escapeHtml(pkg.description) + '</p>' +
-      '<div class="flex items-center gap-2 mb-3 text-[10px] text-slate-400 font-mono">' +
-        '<span>' + escapeHtml(pkg.size) + '</span>' +
-        '<span>·</span>' +
+      '<div class="flex items-center gap-2 mb-3 text-[10px] text-slate-400 font-mono flex-wrap">' +
+        (!sizeWarning ? '<span>' + escapeHtml(pkg.size) + '</span><span>·</span>' : '') +
         '<span>' + escapeHtml(pkg.license) + '</span>' +
         (pkg.persistent ? '<span>·</span><span class="text-emerald-600 font-bold">PERSISTENT</span>' : '') +
       '</div>' +
-      '<div class="flex gap-2">' +
+      '<div class="flex gap-2 items-center">' +
         (status.installed
-          ? '<button class="shop-btn remove" data-action="uninstall">' +
-              '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>' +
-              'Remove' +
-            '</button>'
+          ? '<button class="shop-btn remove" data-action="uninstall"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>Remove</button>'
           : '<button class="shop-btn install" data-action="install" ' + (installing ? 'disabled' : '') + '>' +
-              (installing
-                ? '<svg class="spin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>' +
-                'Installing…'
-                : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>' +
-                'Install')
-            + '</button>'
+            (installing
+              ? '<svg class="spin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>Installing…'
+              : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>Install') +
+            '</button>'
         ) +
+        (pkg.homepage ? '<a href="' + escapeHtml(pkg.homepage) + '" target="_blank" rel="noopener" class="shop-btn" style="width:auto;padding:9px 11px;background:#F8FAFC;color:#64748B;border-color:rgba(16,42,67,0.08);" title="Open homepage"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg></a>' : '') +
       '</div>';
 
-    const btn = card.querySelector('.shop-btn');
+    const checkbox = card.querySelector('[data-check]');
+    checkbox.addEventListener('click', e => {
+      e.stopPropagation();
+      togglePackageSelection(pkg.id);
+    });
+
+    const btn = card.querySelector('.shop-btn[data-action]');
     if (btn) {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
         const action = btn.dataset.action;
         if (action === 'install') shopInstall(pkg.id, pkg.name);
         else if (action === 'uninstall') shopUninstall(pkg.id, pkg.name);
       });
     }
+
     grid.appendChild(card);
   });
+}
+
+function toggleBatchMode() {
+  state.shop.batchMode = !state.shop.batchMode;
+  const btn = $('batchToggleBtn');
+  const txt = $('batchToggleText');
+  if (btn && txt) {
+    if (state.shop.batchMode) {
+      btn.className = 'btn-primary px-3.5 py-2 rounded-lg text-xs font-semibold cursor-pointer inline-flex items-center gap-1.5';
+      txt.textContent = 'Exit Batch';
+    } else {
+      btn.className = 'btn-ghost px-3.5 py-2 rounded-lg text-xs font-semibold cursor-pointer inline-flex items-center gap-1.5';
+      txt.textContent = 'Batch Mode';
+      state.shop.selected.clear();
+      renderShopGrid();
+      renderBatchBar();
+    }
+  }
+}
+
+function togglePackageSelection(id) {
+  if (!state.shop.batchMode) return;
+  if (state.shop.selected.has(id)) state.shop.selected.delete(id);
+  else state.shop.selected.add(id);
+  renderShopGrid();
+  renderBatchBar();
+}
+
+function renderBatchBar() {
+  const root = $('batchBarRoot');
+  if (!root) return;
+  const count = state.shop.selected.size;
+
+  if (!state.shop.batchMode || count === 0) {
+    root.innerHTML = '';
+    return;
+  }
+
+  const installed = Array.from(state.shop.selected).filter(id => {
+    const s = state.shop.status[id];
+    return s && s.installed;
+  }).length;
+  const notInstalled = count - installed;
+
+  root.innerHTML =
+    '<div class="batch-bar">' +
+      '<div style="display:flex;align-items:center;gap:10px;">' +
+        '<div style="width:32px;height:32px;border-radius:9px;background:rgba(0,161,224,0.15);display:flex;align-items:center;justify-content:center;">' +
+          '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00A1E0" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' +
+        '</div>' +
+        '<div>' +
+          '<div style="font-size:13px;font-weight:800;color:#fff;">' + count + ' package' + (count === 1 ? '' : 's') + ' selected</div>' +
+          '<div style="font-size:11px;color:#94A3B8;">' + notInstalled + ' to install · ' + installed + ' to remove</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;margin-left:auto;">' +
+        '<button class="bb-ghost" data-action="clear">Clear</button>' +
+        (notInstalled > 0 ? '<button class="bb-primary" data-action="install">Install ' + notInstalled + '</button>' : '') +
+        (installed > 0 ? '<button class="bb-ghost" style="color:#FCA5A5;border-color:rgba(239,68,68,0.3);" data-action="uninstall">Remove ' + installed + '</button>' : '') +
+      '</div>' +
+    '</div>';
+
+  root.querySelector('[data-action="clear"]').addEventListener('click', () => {
+    state.shop.selected.clear();
+    renderShopGrid();
+    renderBatchBar();
+  });
+
+  const installBtn = root.querySelector('[data-action="install"]');
+  if (installBtn) {
+    installBtn.addEventListener('click', () => {
+      const ids = Array.from(state.shop.selected).filter(id => {
+        const s = state.shop.status[id];
+        return !s || !s.installed;
+      });
+      if (ids.length === 0) return;
+      batchInstall(ids);
+    });
+  }
+
+  const uninstallBtn = root.querySelector('[data-action="uninstall"]');
+  if (uninstallBtn) {
+    uninstallBtn.addEventListener('click', () => {
+      const ids = Array.from(state.shop.selected).filter(id => {
+        const s = state.shop.status[id];
+        return s && s.installed;
+      });
+      if (ids.length === 0) return;
+      batchUninstall(ids);
+    });
+  }
 }
 
 function shopInstall(id, name) {
   if (state.shop.installing.has(id)) return;
   state.shop.installing.add(id);
   renderShopGrid();
-
-  const modal = openInstallModal('Install', name, id, 'install', () => {
+  openInstallModal('Install', name, id, 'install', () => {
     state.shop.installing.delete(id);
     renderShopGrid();
     api('/api/shop/status/' + encodeURIComponent(id)).then(r => r.ok ? r.json() : null).then(data => {
@@ -2450,7 +3061,6 @@ function openConfirmUninstall(id, name) {
 function openInstallModal(actionTitle, name, id, action, onComplete) {
   const endpoint = action === 'install' ? '/api/shop/install/' : '/api/shop/uninstall/';
   let es = null;
-
   const body =
     '<div class="flex items-center gap-3 mb-5">' +
       '<div class="w-12 h-12 rounded-xl bg-biz-blue/10 flex items-center justify-center">' +
@@ -2474,7 +3084,7 @@ function openInstallModal(actionTitle, name, id, action, onComplete) {
       '<button id="shopRetryBtn" class="btn-primary px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer hidden">Retry</button>' +
     '</div>';
 
-  const modal = openModal(actionTitle + ' · ' + name, body, {
+  return openModal(actionTitle + ' · ' + name, body, {
     size: 'lg',
     onClose() {
       if (es) { try { es.close(); } catch {} es = null; }
@@ -2499,7 +3109,6 @@ function openInstallModal(actionTitle, name, id, action, onComplete) {
       copyBtn.addEventListener('click', () => {
         navigator.clipboard.writeText(logEl.innerText).then(() => toast('Log copied', 'success', 1200)).catch(() => {});
       });
-
       closeBtn.addEventListener('click', close);
 
       function start() {
@@ -2512,10 +3121,7 @@ function openInstallModal(actionTitle, name, id, action, onComplete) {
         catch (err) { appendLog('Cannot open stream: ' + err.message + '\n', 'log-error'); return; }
 
         es.addEventListener('message', ev => {
-          if (ev.data === '[DONE]') {
-            if (es) { es.close(); es = null; }
-            return;
-          }
+          if (ev.data === '[DONE]') { if (es) { es.close(); es = null; } return; }
           let msg;
           try { msg = JSON.parse(ev.data); } catch { return; }
 
@@ -2560,12 +3166,395 @@ function openInstallModal(actionTitle, name, id, action, onComplete) {
       start();
     }
   });
-  return modal;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
-   COMMAND PALETTE
-   ═══════════════════════════════════════════════════════════════════════ */
+function batchInstall(ids) {
+  const names = ids.map(id => {
+    const it = state.shop.items.find(i => i.id === id);
+    return it ? it.name : id;
+  });
+
+  const preview = names.slice(0, 8).map(n => '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#F8FAFC;border-radius:8px;"><span style="width:5px;height:5px;border-radius:999px;background:#00A1E0;"></span><span style="font-size:12px;font-weight:600;color:#1A2332;">' + escapeHtml(n) + '</span></div>').join('');
+  const more = names.length > 8 ? '<div style="font-size:11px;color:#94A3B8;text-align:center;padding:8px;">+' + (names.length - 8) + ' more</div>' : '';
+
+  openModal('Batch Install',
+    '<p class="text-sm text-slate-600 leading-relaxed mb-4">Install <strong>' + names.length + '</strong> package' + (names.length === 1 ? '' : 's') + ' sequentially. This may take a while.</p>' +
+    '<div style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;" class="mb-6">' + preview + more + '</div>' +
+    '<div class="flex items-center justify-end gap-2">' +
+      '<button class="modal-cancel btn-ghost px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Cancel</button>' +
+      '<button class="modal-confirm btn-primary px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Start Install</button>' +
+    '</div>',
+    {
+      onMount(wrap, close) {
+        wrap.querySelector('.modal-cancel').addEventListener('click', close);
+        wrap.querySelector('.modal-confirm').addEventListener('click', () => {
+          close();
+          runBatchInstall(ids);
+        });
+      }
+    }
+  );
+}
+
+function runBatchInstall(ids) {
+  ids.forEach(id => state.shop.installing.add(id));
+  renderShopGrid();
+
+  const body =
+    '<div class="flex items-center gap-3 mb-5">' +
+      '<div class="w-12 h-12 rounded-xl bg-biz-blue/10 flex items-center justify-center">' +
+        '<svg class="w-6 h-6 text-biz-blue" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
+          '<path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>' +
+        '</svg>' +
+      '</div>' +
+      '<div class="flex-1 min-w-0">' +
+        '<div class="text-sm font-bold text-biz-dark" id="batchTitle">Batch install · ' + ids.length + ' packages</div>' +
+        '<div class="text-xs text-slate-500" id="batchStatus">Starting…</div>' +
+      '</div>' +
+      '<div id="batchSpinner" class="w-6 h-6 rounded-full border-2 border-slate-200 border-t-biz-blue spin"></div>' +
+    '</div>' +
+    '<div class="mb-3">' +
+      '<div class="flex justify-between text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">' +
+        '<span>Progress</span>' +
+        '<span id="batchProgressText">0 / ' + ids.length + '</span>' +
+      '</div>' +
+      '<div class="h-2 bg-slate-100 rounded-full overflow-hidden">' +
+        '<div id="batchProgressBar" class="h-full rounded-full bg-gradient-to-r from-biz-blue to-biz-deep transition-all" style="width:0%;"></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="mb-2 flex items-center justify-between text-[10px] font-bold uppercase tracking-widest">' +
+      '<span class="text-slate-400">Log</span>' +
+      '<button id="batchLogCopy" class="text-biz-blue hover:underline cursor-pointer">Copy</button>' +
+    '</div>' +
+    '<div id="batchLog" class="console-log" style="min-height:220px;"></div>' +
+    '<div class="flex items-center justify-end gap-2 mt-5">' +
+      '<button id="batchCloseBtn" class="btn-ghost px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Close</button>' +
+    '</div>';
+
+  let es = null;
+
+  openModal('Batch Install', body, {
+    size: 'xl',
+    onClose() { if (es) { try { es.close(); } catch {} es = null; } },
+    onMount(wrap, close) {
+      const logEl = wrap.querySelector('#batchLog');
+      const statusEl = wrap.querySelector('#batchStatus');
+      const spinner = wrap.querySelector('#batchSpinner');
+      const progressBar = wrap.querySelector('#batchProgressBar');
+      const progressText = wrap.querySelector('#batchProgressText');
+
+      let completed = 0;
+      let success = 0;
+      let failed = 0;
+
+      function appendLog(text, cls) {
+        const span = document.createElement('span');
+        if (cls) span.className = cls;
+        span.textContent = text;
+        logEl.appendChild(span);
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+
+      wrap.querySelector('#batchLogCopy').addEventListener('click', () => {
+        navigator.clipboard.writeText(logEl.innerText).then(() => toast('Log copied', 'success', 1200)).catch(() => {});
+      });
+      wrap.querySelector('#batchCloseBtn').addEventListener('click', close);
+
+      try {
+        es = new EventSource('/api/shop/install-batch');
+      } catch (err) {
+        appendLog('Cannot open stream: ' + err.message + '\n', 'log-error');
+        return;
+      }
+
+      es.addEventListener('message', ev => {
+        if (ev.data === '[DONE]') { if (es) { es.close(); es = null; } return; }
+        let msg;
+        try { msg = JSON.parse(ev.data); } catch { return; }
+
+        if (msg.type === 'batch-start') {
+          appendLog('▶ Batch install started · ' + msg.total + ' packages\n\n', 'log-info');
+          statusEl.textContent = 'Starting batch…';
+        } else if (msg.type === 'batch-package-start') {
+          appendLog('\n━━━ [' + msg.index + '/' + msg.total + '] ' + msg.name + ' ━━━\n', 'log-info');
+          statusEl.textContent = 'Installing ' + msg.name + ' (' + msg.index + '/' + msg.total + ')';
+        } else if (msg.type === 'batch-step') {
+          appendLog('$ ' + msg.command + '\n', 'log-cmd');
+        } else if (msg.type === 'log' || (!msg.type && msg.line)) {
+          appendLog(msg.line, msg.err ? 'log-error' : '');
+        } else if (msg.type === 'batch-verify') {
+          appendLog('🔍 Verifying…\n', 'log-info');
+        } else if (msg.type === 'batch-package-done') {
+          completed++;
+          success++;
+          const pct = (completed / ids.length) * 100;
+          progressBar.style.width = pct + '%';
+          progressText.textContent = completed + ' / ' + ids.length;
+          const verified = msg.verified ? ' ✓ verified' + (msg.version ? ' v' + msg.version : '') : '';
+          appendLog('✓ ' + (msg.id || '') + ' installed' + verified + '\n', 'log-success');
+          state.shop.installing.delete(msg.id);
+        } else if (msg.type === 'batch-package-error') {
+          completed++;
+          failed++;
+          const pct = (completed / ids.length) * 100;
+          progressBar.style.width = pct + '%';
+          progressText.textContent = completed + ' / ' + ids.length;
+          appendLog('✗ ' + (msg.id || '') + ' failed: ' + msg.message + '\n', 'log-error');
+          state.shop.installing.delete(msg.id);
+        } else if (msg.type === 'batch-done') {
+          appendLog('\n━━━━━━━━━━━━━━━━━━━━\n', 'log-dim');
+          appendLog('✓ Batch complete · ' + msg.success + ' succeeded · ' + msg.fail + ' failed\n', msg.fail > 0 ? 'log-warn' : 'log-success');
+          statusEl.textContent = 'Complete · ' + msg.success + ' ok · ' + msg.fail + ' failed';
+          spinner.classList.add('hidden');
+          toast('Batch install complete', msg.fail > 0 ? 'warn' : 'success');
+          renderShopGrid();
+          renderBatchBar();
+          refreshShopStatus();
+        } else if (msg.type === 'batch-error') {
+          appendLog('\n✗ Batch error: ' + msg.message + '\n', 'log-error');
+          spinner.classList.add('hidden');
+        }
+      });
+
+      es.addEventListener('error', () => {
+        if (es && es.readyState === EventSource.CLOSED) {
+          appendLog('\n[stream closed]\n', 'log-dim');
+          spinner.classList.add('hidden');
+          ids.forEach(id => state.shop.installing.delete(id));
+          renderShopGrid();
+          renderBatchBar();
+        }
+      });
+
+      fetch('/api/shop/install-batch', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids })
+      }).then(res => {
+        if (es) { try { es.close(); } catch {} }
+        es = new EventSource('/api/shop/install-batch');
+        es.close();
+      }).catch(() => {});
+    }
+  });
+}
+
+function batchUninstall(ids) {
+  const names = ids.map(id => {
+    const it = state.shop.items.find(i => i.id === id);
+    return it ? it.name : id;
+  });
+  const preview = names.slice(0, 8).map(n => '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#FEF2F2;border-radius:8px;"><span style="width:5px;height:5px;border-radius:999px;background:#EF4444;"></span><span style="font-size:12px;font-weight:600;color:#1A2332;">' + escapeHtml(n) + '</span></div>').join('');
+  const more = names.length > 8 ? '<div style="font-size:11px;color:#94A3B8;text-align:center;padding:8px;">+' + (names.length - 8) + ' more</div>' : '';
+
+  openModal('Batch Uninstall',
+    '<p class="text-sm text-slate-600 leading-relaxed mb-4">Remove <strong>' + names.length + '</strong> package' + (names.length === 1 ? '' : 's') + ' from the VPS?</p>' +
+    '<div style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;" class="mb-6">' + preview + more + '</div>' +
+    '<div class="flex items-center justify-end gap-2">' +
+      '<button class="modal-cancel btn-ghost px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Cancel</button>' +
+      '<button class="modal-confirm px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer text-white" style="background:linear-gradient(135deg,#EF4444,#B91C1C);">Uninstall All</button>' +
+    '</div>',
+    {
+      onMount(wrap, close) {
+        wrap.querySelector('.modal-cancel').addEventListener('click', close);
+        wrap.querySelector('.modal-confirm').addEventListener('click', () => {
+          close();
+          runBatchUninstall(ids);
+        });
+      }
+    }
+  );
+}
+
+function runBatchUninstall(ids) {
+  ids.forEach(id => state.shop.installing.add(id));
+  renderShopGrid();
+
+  const body =
+    '<div class="flex items-center gap-3 mb-5">' +
+      '<div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center">' +
+        '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
+          '<path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79"/>' +
+        '</svg>' +
+      '</div>' +
+      '<div class="flex-1 min-w-0">' +
+        '<div class="text-sm font-bold text-biz-dark">Batch uninstall · ' + ids.length + ' packages</div>' +
+        '<div class="text-xs text-slate-500" id="batchStatus">Starting…</div>' +
+      '</div>' +
+      '<div id="batchSpinner" class="w-6 h-6 rounded-full border-2 border-slate-200 border-t-biz-blue spin"></div>' +
+    '</div>' +
+    '<div class="mb-3">' +
+      '<div class="flex justify-between text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">' +
+        '<span>Progress</span>' +
+        '<span id="batchProgressText">0 / ' + ids.length + '</span>' +
+      '</div>' +
+      '<div class="h-2 bg-slate-100 rounded-full overflow-hidden">' +
+        '<div id="batchProgressBar" class="h-full rounded-full bg-gradient-to-r from-red-500 to-red-700 transition-all" style="width:0%;"></div>' +
+      '</div>' +
+    '</div>' +
+    '<div id="batchLog" class="console-log" style="min-height:220px;"></div>' +
+    '<div class="flex items-center justify-end gap-2 mt-5">' +
+      '<button id="batchCloseBtn" class="btn-ghost px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Close</button>' +
+    '</div>';
+
+  let es = null;
+
+  openModal('Batch Uninstall', body, {
+    size: 'xl',
+    onClose() { if (es) { try { es.close(); } catch {} es = null; } },
+    onMount(wrap, close) {
+      const logEl = wrap.querySelector('#batchLog');
+      const statusEl = wrap.querySelector('#batchStatus');
+      const spinner = wrap.querySelector('#batchSpinner');
+      const progressBar = wrap.querySelector('#batchProgressBar');
+      const progressText = wrap.querySelector('#batchProgressText');
+      let completed = 0;
+
+      function appendLog(text, cls) {
+        const span = document.createElement('span');
+        if (cls) span.className = cls;
+        span.textContent = text;
+        logEl.appendChild(span);
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+      wrap.querySelector('#batchCloseBtn').addEventListener('click', close);
+
+      fetch('/api/shop/uninstall-batch', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids })
+      }).then(res => {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        function pump() {
+          return reader.read().then(({ done, value }) => {
+            if (done) {
+              spinner.classList.add('hidden');
+              ids.forEach(id => state.shop.installing.delete(id));
+              renderShopGrid();
+              renderBatchBar();
+              refreshShopStatus();
+              return;
+            }
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
+            for (const line of lines) {
+              if (!line.startsWith('data: ')) continue;
+              const payload = line.slice(6).trim();
+              if (payload === '[DONE]') continue;
+              let msg;
+              try { msg = JSON.parse(payload); } catch { continue; }
+              if (msg.type === 'batch-start') {
+                appendLog('▶ Batch uninstall started · ' + msg.total + ' packages\n\n', 'log-info');
+              } else if (msg.type === 'batch-package-start') {
+                appendLog('\n━━━ [' + msg.index + '/' + msg.total + '] ' + msg.name + ' ━━━\n', 'log-info');
+                statusEl.textContent = 'Removing ' + msg.name + ' (' + msg.index + '/' + msg.total + ')';
+              } else if (msg.type === 'batch-step') {
+                appendLog('$ ' + msg.command + '\n', 'log-cmd');
+              } else if (msg.type === 'log') {
+                appendLog(msg.line, msg.err ? 'log-error' : '');
+              } else if (msg.type === 'batch-package-done') {
+                completed++;
+                progressBar.style.width = ((completed / ids.length) * 100) + '%';
+                progressText.textContent = completed + ' / ' + ids.length;
+                appendLog('✓ ' + (msg.id || '') + ' removed\n', 'log-success');
+                state.shop.installing.delete(msg.id);
+              } else if (msg.type === 'batch-package-error') {
+                completed++;
+                progressBar.style.width = ((completed / ids.length) * 100) + '%';
+                progressText.textContent = completed + ' / ' + ids.length;
+                appendLog('✗ ' + (msg.id || '') + ' failed: ' + msg.message + '\n', 'log-error');
+                state.shop.installing.delete(msg.id);
+              } else if (msg.type === 'batch-done') {
+                appendLog('\n✓ Batch complete · ' + msg.success + ' ok · ' + msg.fail + ' failed\n', msg.fail > 0 ? 'log-warn' : 'log-success');
+                statusEl.textContent = 'Complete';
+                spinner.classList.add('hidden');
+                toast('Batch uninstall complete', msg.fail > 0 ? 'warn' : 'success');
+                renderShopGrid();
+                renderBatchBar();
+                refreshShopStatus();
+              } else if (msg.type === 'batch-error') {
+                appendLog('\n✗ ' + msg.message + '\n', 'log-error');
+              }
+            }
+            return pump();
+          }).catch(() => {
+            spinner.classList.add('hidden');
+            ids.forEach(id => state.shop.installing.delete(id));
+            renderShopGrid();
+            renderBatchBar();
+          });
+        }
+        pump();
+      }).catch(err => {
+        appendLog('Failed: ' + err.message + '\n', 'log-error');
+        spinner.classList.add('hidden');
+        ids.forEach(id => state.shop.installing.delete(id));
+        renderShopGrid();
+        renderBatchBar();
+      });
+    }
+  });
+}
+
+function installEssentials() {
+  api('/api/shop/essentials').then(r => r.ok ? r.json() : null).then(data => {
+    if (!data || !data.items || data.items.length === 0) {
+      toast('No essential packages found', 'warn');
+      return;
+    }
+    const installed = data.items.filter(p => state.shop.status[p.id] && state.shop.status[p.id].installed);
+    const pending = data.items.filter(p => !(state.shop.status[p.id] && state.shop.status[p.id].installed));
+
+    if (pending.length === 0) {
+      toast('All ' + data.items.length + ' essential packages are already installed', 'success');
+      return;
+    }
+
+    const list = pending.slice(0, 12).map(p =>
+      '<div style="display:flex;align-items:center;gap:10px;padding:9px 11px;background:#F8FAFC;border-radius:8px;">' +
+        '<span style="width:8px;height:8px;border-radius:999px;background:' + p.color + ';"></span>' +
+        '<span style="flex:1;font-size:12px;font-weight:600;color:#1A2332;">' + escapeHtml(p.name) + '</span>' +
+        '<span style="font-size:10px;font-family:monospace;color:#94A3B8;">' + escapeHtml(p.size) + '</span>' +
+      '</div>'
+    ).join('');
+    const more = pending.length > 12 ? '<div style="font-size:11px;color:#94A3B8;text-align:center;padding:8px;">+' + (pending.length - 12) + ' more</div>' : '';
+
+    openModal('Install Essentials',
+      '<div class="flex items-center gap-3 mb-5">' +
+        '<div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center">' +
+          '<svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
+            '<path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/>' +
+          '</svg>' +
+        '</div>' +
+        '<div>' +
+          '<div class="text-sm font-bold text-biz-dark">Install ' + pending.length + ' essential packages</div>' +
+          '<div class="text-xs text-slate-500">' + installed.length + ' already installed · ~' + Math.round(pending.reduce((s, p) => s + (p.sizeBytes || 0), 0) / 1048576) + ' MB download</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;" class="mb-6">' + list + more + '</div>' +
+      '<div class="flex items-center justify-end gap-2">' +
+        '<button class="modal-cancel btn-ghost px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Cancel</button>' +
+        '<button class="modal-confirm btn-primary px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Install All</button>' +
+      '</div>',
+      {
+        onMount(wrap, close) {
+          wrap.querySelector('.modal-cancel').addEventListener('click', close);
+          wrap.querySelector('.modal-confirm').addEventListener('click', () => {
+            close();
+            runBatchInstall(pending.map(p => p.id));
+          });
+        }
+      }
+    );
+  }).catch(() => toast('Failed to load essentials', 'error'));
+}
+
 function openCommandPalette() {
   const commands = [
     { label: 'Go to Overview', hint: 'Ctrl+1', icon: 'M3 12l9-9 9 9M5 10v10h14V10', action: () => location.href = '/dashboard' },
@@ -2578,6 +3567,7 @@ function openCommandPalette() {
     { label: 'Save Current File', hint: 'Ctrl+S', icon: 'M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z', action: saveCurrentFile },
     { label: 'Refresh Files', hint: '', icon: 'M4 4v6h6M20 20v-6h-6M20 9A9 9 0 005 5.3L4 6M4 15a9 9 0 0015 3.7l1-1', action: refreshFiles },
     { label: 'Refresh Shop Status', hint: '', icon: 'M4 4v6h6', action: refreshShopStatus },
+    { label: 'Install Essentials', hint: '', icon: 'M12 3l2.1 5.1 5.5.4-4.2 3.6 1.3 5.4-4.7-2.9-4.7 2.9 1.3-5.4-4.2-3.6 5.5-.4L12 3z', action: installEssentials },
     { label: 'Show Keyboard Shortcuts', hint: 'Ctrl+/', icon: 'M9 9h.01M15 9h.01M9 15h6', action: showShortcuts },
     { label: 'Sign Out', hint: '', icon: 'M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9', action: logoutConfirm }
   ];
@@ -2662,7 +3652,6 @@ function openCommandPalette() {
 
   wrap.addEventListener('click', e => { if (e.target === wrap) close(); });
   document.addEventListener('keydown', keyHandler);
-
   renderList();
   setTimeout(() => input.focus(), 40);
 }
@@ -2672,19 +3661,23 @@ function showShortcuts() {
     { name: 'Navigation', items: [
       ['Ctrl + 1..5', 'Switch main view'],
       ['Ctrl + K', 'Command palette'],
-      ['Ctrl + /', 'Show shortcuts'],
+      ['Ctrl + /', 'Show shortcuts']
     ]},
     { name: 'Terminal', items: [
       ['Ctrl + Shift + T', 'New terminal tab'],
       ['Ctrl + Shift + W', 'Close active tab'],
-      ['Ctrl + K (in terminal)', 'Clear terminal'],
+      ['Ctrl + K', 'Clear terminal (in terminal view)']
     ]},
     { name: 'Code Editor', items: [
       ['Ctrl + S', 'Save current file'],
       ['Ctrl + Enter', 'Save & run file'],
       ['Ctrl + W', 'Close editor tab'],
-      ['Ctrl + F', 'Find in file'],
+      ['Ctrl + F', 'Find in file']
     ]},
+    { name: 'Shop', items: [
+      ['Click checkbox', 'Select package (batch mode)'],
+      ['Install Essentials', 'One-click install all essential']
+    ]}
   ];
 
   const body = groups.map(g =>
@@ -2723,9 +3716,6 @@ function logoutConfirm() {
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
-   EVENT BINDINGS
-   ═══════════════════════════════════════════════════════════════════════ */
 if ($('cmdkBtn')) $('cmdkBtn').addEventListener('click', openCommandPalette);
 
 if ($('fileSearch')) {
@@ -2737,9 +3727,7 @@ if ($('fileSearch')) {
 
 document.querySelectorAll('#langFilters button').forEach(b => {
   b.addEventListener('click', () => {
-    document.querySelectorAll('#langFilters button').forEach(x => {
-      x.className = 'chip chip-slate';
-    });
+    document.querySelectorAll('#langFilters button').forEach(x => { x.className = 'chip chip-slate'; });
     b.className = 'chip chip-blue active-chip';
     state.fileFilter = b.dataset.filter;
     renderFileExplorer();
@@ -2747,15 +3735,19 @@ document.querySelectorAll('#langFilters button').forEach(b => {
 });
 
 if ($('shopSearch')) {
-  $('shopSearch').addEventListener('input', e => {
-    state.shop.search = e.target.value;
-    renderShopGrid();
+  $('shopSearch').addEventListener('input', debounce(e => {
+    state.shop.search = e.target.value.trim();
+    loadShopCatalog();
+  }, 320));
+}
+
+if ($('shopSort')) {
+  $('shopSort').addEventListener('change', e => {
+    state.shop.sort = e.target.value;
+    loadShopCatalog();
   });
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
-   KEYBOARD SHORTCUTS
-   ═══════════════════════════════════════════════════════════════════════ */
 document.addEventListener('keydown', e => {
   const isMac = navigator.platform.toLowerCase().indexOf('mac') !== -1;
   const mod = isMac ? e.metaKey : e.ctrlKey;
@@ -2805,9 +3797,6 @@ window.addEventListener('beforeunload', e => {
   if (anyDirty) { e.preventDefault(); e.returnValue = ''; }
 });
 
-/* ═══════════════════════════════════════════════════════════════════════
-   RESIZE
-   ═══════════════════════════════════════════════════════════════════════ */
 let resizeTimer = null;
 window.addEventListener('resize', () => {
   clearTimeout(resizeTimer);
@@ -2818,9 +3807,6 @@ window.addEventListener('resize', () => {
   }, 140);
 });
 
-/* ═══════════════════════════════════════════════════════════════════════
-   BOOT
-   ═══════════════════════════════════════════════════════════════════════ */
 async function bootRoute() {
   const viewId = VIEW_MAP[ROUTE] || 'view-dashboard';
   Object.keys(VIEW_MAP).forEach(r => {
@@ -2871,9 +3857,6 @@ async function bootRoute() {
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
-   EXPOSE HANDLERS TO WINDOW (fix inline onclick)
-   ═══════════════════════════════════════════════════════════════════════ */
 window.createTerminalTab = createTerminalTab;
 window.killActiveTab = killActiveTab;
 window.closeTerminalTab = closeTerminalTab;
@@ -2892,8 +3875,9 @@ window.runFileInNewTerminal = runFileInNewTerminal;
 window.toggleQuickRun = toggleQuickRun;
 window.runInActiveTerminal = runInActiveTerminal;
 window.refreshShopStatus = refreshShopStatus;
-window.shopInstall = shopInstall;
-window.shopUninstall = shopUninstall;
+window.installEssentials = installEssentials;
+window.toggleBatchMode = toggleBatchMode;
+window.resetShopFilters = resetShopFilters;
 window.openCommandPalette = openCommandPalette;
 window.showShortcuts = showShortcuts;
 
@@ -2902,7 +3886,6 @@ window.addEventListener('DOMContentLoaded', bootRoute);
 if (document.readyState !== 'loading') {
   bootRoute();
 }
-
 </script>
 
 </body>
