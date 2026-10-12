@@ -113,8 +113,8 @@ function shopEnv() {
   env.HOME = env.HOME || '/root';
   env.DEBIAN_FRONTEND = 'noninteractive';
   env.TERM = 'xterm-256color';
-  env.LANG = 'en_US.UTF-8';
-  env.LC_ALL = 'en_US.UTF-8';
+  env.LANG = 'C.UTF-8';
+  env.LC_ALL = 'C.UTF-8';
   return env;
 }
 
@@ -400,10 +400,7 @@ app.get('/api/metrics', requireAuthApi, (req, res) => {
   });
 });
 
-/* ══════════════════════════════════════════════════════════════════════════
-   WORKSPACES
-   ══════════════════════════════════════════════════════════════════════════ */
-
+/* WORKSPACES */
 function safeWorkspaceName(raw) {
   if (typeof raw !== 'string' || !raw) return null;
   const base = raw.trim().toLowerCase().replace(/\s+/g, '-');
@@ -426,8 +423,7 @@ function listWorkspaces() {
       if (!e.isDirectory()) continue;
       if (e.name.startsWith('.')) continue;
       const p = path.join(WORKSPACES_DIR, e.name);
-      let fileCount = 0;
-      let size = 0;
+      let fileCount = 0, size = 0;
       try {
         const files = fs.readdirSync(p);
         for (const f of files) {
@@ -458,15 +454,7 @@ app.post('/api/workspaces', requireAuthApi, (req, res) => {
   if (fs.existsSync(full)) return res.status(409).json({ error: 'Workspace already exists' });
   try {
     fs.mkdirSync(full, { recursive: true });
-    const readme = [
-      '# ' + name,
-      '',
-      'Created: ' + new Date().toISOString(),
-      '',
-      'Write code here. Files inside this workspace are isolated from other workspaces.',
-      'All files persist on the /data volume.',
-      ''
-    ].join('\n');
+    const readme = ['# ' + name, '', 'Created: ' + new Date().toISOString(), '', 'Write code here. Files inside this workspace are isolated from other workspaces.', 'All files persist on the /data volume.', ''].join('\n');
     fs.writeFileSync(path.join(full, 'README.md'), readme, 'utf8');
     audit('workspace.create', req, { name });
     res.json({ ok: true, workspace: { id: name, name, path: full } });
@@ -510,10 +498,7 @@ app.get('/api/workspaces/:name/stats', requireAuthApi, (req, res) => {
   res.json({ name, fileCount, dirCount, size });
 });
 
-/* ══════════════════════════════════════════════════════════════════════════
-   FILES (workspace-aware)
-   ══════════════════════════════════════════════════════════════════════════ */
-
+/* FILES */
 function resolveWorkspace(req) {
   const ws = req.query.ws;
   if (!ws || ws === 'default') return FILES_DIR;
@@ -611,10 +596,7 @@ app.delete('/api/files/:name', requireAuthApi, (req, res) => {
   }
 });
 
-/* ══════════════════════════════════════════════════════════════════════════
-   TERMINAL
-   ══════════════════════════════════════════════════════════════════════════ */
-
+/* TERMINAL */
 function safeSid(raw) {
   if (typeof raw !== 'string') return null;
   if (!/^[a-zA-Z0-9_-]{6,64}$/.test(raw)) return null;
@@ -649,8 +631,8 @@ function buildChildEnv() {
   delete env.NODE_ENV;
   env.TERM = 'xterm-256color';
   env.COLORTERM = 'truecolor';
-  env.LANG = 'en_US.UTF-8';
-  env.LC_ALL = 'en_US.UTF-8';
+  env.LANG = 'C.UTF-8';
+  env.LC_ALL = 'C.UTF-8';
   env.PYTHONPATH = PYLIB_DIR + (env.PYTHONPATH ? ':' + env.PYTHONPATH : '');
   env.PATH = BIN_DIR + ':' + NPM_DIR + '/bin:' + (env.PATH || '');
   env.NPM_CONFIG_PREFIX = NPM_DIR;
@@ -756,10 +738,7 @@ wss.on('connection', (ws, req) => {
   ws.on('close', () => clearInterval(ping));
 });
 
-/* ══════════════════════════════════════════════════════════════════════════
-   SHOP
-   ══════════════════════════════════════════════════════════════════════════ */
-
+/* SHOP */
 function publicPkg(pkg, status) {
   return {
     id: pkg.id, name: pkg.name, category: pkg.category, color: pkg.color,
@@ -985,10 +964,7 @@ app.post('/api/shop/uninstall-batch', requireAuthApi, (req, res) => {
   runBatch(pkgs, 'uninstall', res, req);
 });
 
-/* ══════════════════════════════════════════════════════════════════════════
-   SSHX — Multi-session remote terminal sharing
-   ══════════════════════════════════════════════════════════════════════════ */
-
+/* SSHX */
 const SSHX_BIN = path.join(BIN_DIR, 'sshx');
 const SSHX_STATE_FILE = path.join(SSHX_DIR, 'sessions.json');
 const sshxProcesses = new Map();
@@ -1005,7 +981,9 @@ function saveSshxState(state) {
 }
 
 function sshxInstalled() {
-  return fs.existsSync(SSHX_BIN) && fs.statSync(SSHX_BIN).mode & 0o111;
+  try {
+    return fs.existsSync(SSHX_BIN) && !!(fs.statSync(SSHX_BIN).mode & 0o111);
+  } catch { return false; }
 }
 
 function checkPidAlive(pid) {
@@ -1043,19 +1021,24 @@ app.get('/api/sshx/install', requireAuthApi, (req, res) => {
   (async () => {
     try {
       sseSend(res, { type: 'start', action: 'install', name: 'sshx' });
-      sseSend(res, { type: 'step', index: 1, total: 2, command: 'Download installer' });
+
+      sseSend(res, { type: 'step', index: 1, total: 3, command: 'Download binary from GitHub Releases' });
       await runStreamingCommand(
-        'cd /tmp && curl -sSfL https://sshx.io/get | sh -s -- --to /tmp/sshx-install 2>&1 | tail -30 || true',
+        `cd /tmp && rm -f sshx.tar.gz sshx && ` +
+        `curl -fsSL https://github.com/ekzhang/sshx/releases/download/v0.2.4/sshx-x86_64-unknown-linux-musl.tar.gz -o sshx.tar.gz`,
         res, req
       );
-      sseSend(res, { type: 'step', index: 2, total: 2, command: 'Install to ' + BIN_DIR });
+
+      sseSend(res, { type: 'step', index: 2, total: 3, command: 'Extract and install to ' + BIN_DIR });
       await runStreamingCommand(
-        `mkdir -p ${q(BIN_DIR)} && ` +
-        `( [ -f /tmp/sshx-install ] && mv /tmp/sshx-install ${q(SSHX_BIN)} || ` +
-        `  ( find /tmp /root /usr/local/bin -maxdepth 3 -name sshx -type f 2>/dev/null | head -n1 | xargs -r -I{} cp {} ${q(SSHX_BIN)} ) ) && ` +
-        `chmod +x ${q(SSHX_BIN)} && ${q(SSHX_BIN)} --version`,
+        `cd /tmp && tar -xzf sshx.tar.gz && chmod +x sshx && ` +
+        `mkdir -p ${q(BIN_DIR)} && mv sshx ${q(SSHX_BIN)} && rm -f sshx.tar.gz`,
         res, req
       );
+
+      sseSend(res, { type: 'step', index: 3, total: 3, command: 'Verify installation' });
+      await runStreamingCommand(`${q(SSHX_BIN)} --version`, res, req);
+
       sseSend(res, { type: 'done', action: 'install', id: 'sshx' });
     } catch (err) {
       sseSend(res, { type: 'error', message: String(err.message || err) });
@@ -1070,10 +1053,11 @@ app.get('/api/sshx/install', requireAuthApi, (req, res) => {
 app.post('/api/sshx/start', requireAuthApi, (req, res) => {
   if (!sshxInstalled()) return res.status(400).json({ error: 'sshx not installed' });
   const body = req.body || {};
-  const name = typeof body.name === 'string' && body.name.trim() ? body.name.trim().slice(0, 40).replace(/[^\w\s.-]/g, '') : null;
+  const name = typeof body.name === 'string' && body.name.trim()
+    ? body.name.trim().slice(0, 40).replace(/[^\w\s.\-]/g, '')
+    : null;
   const wsName = body.ws && body.ws !== 'default' ? safeWorkspaceName(body.ws) : null;
 
-  const state = loadSshxState();
   const id = crypto.randomBytes(6).toString('hex');
 
   const args = [];
@@ -1097,7 +1081,6 @@ app.post('/api/sshx/start', requireAuthApi, (req, res) => {
 
   let buffer = '';
   let resolved = false;
-
   const urlRegex = /(https:\/\/sshx\.io\/s\/[a-zA-Z0-9]+)/;
 
   const handleData = (chunk) => {
@@ -1165,19 +1148,15 @@ app.post('/api/sshx/stop-all', requireAuthApi, (req, res) => {
   res.json({ ok: true, killed: true });
 });
 
-/* ══════════════════════════════════════════════════════════════════════════
-   TAILSCALE
-   ══════════════════════════════════════════════════════════════════════════ */
-
+/* TAILSCALE */
 const TAILSCALE_SOCKET = path.join(TAILSCALE_DIR, 'tailscaled.sock');
 const TAILSCALE_STATE = path.join(TAILSCALE_DIR, 'tailscaled.state');
 const TAILSCALED_PID_FILE = path.join(TAILSCALE_DIR, 'tailscaled.pid');
 
 function whichTailscale() {
-  const r = spawnSync('command', ['-v', 'tailscale'], { shell: true, stdio: 'ignore' });
+  const r = spawnSync('command', ['-v', 'tailscale'], { shell: true, encoding: 'utf8' });
   if (r.status !== 0) return null;
-  const which = spawnSync('command', ['-v', 'tailscale'], { shell: true, encoding: 'utf8' });
-  return String(which.stdout || '').trim() || '/usr/bin/tailscale';
+  return String(r.stdout || '').trim() || '/usr/bin/tailscale';
 }
 
 function tailscaleInstalled() { return !!whichTailscale(); }
@@ -1224,7 +1203,7 @@ async function startTailscaled() {
 app.get('/api/tailscale/status', requireAuthApi, (req, res) => {
   const installed = tailscaleInstalled();
   const running = tailscaledRunning();
-  let ip = null, state = 'unknown', hostname = null, backend = 'unknown';
+  let ip = null, backend = 'unknown', hostname = null;
   if (installed && running) {
     try {
       const r = tsCmd(['status', '--json'], 5000);
@@ -1232,7 +1211,6 @@ app.get('/api/tailscale/status', requireAuthApi, (req, res) => {
         try {
           const j = JSON.parse(r.stdout);
           backend = j.BackendState || 'unknown';
-          state = j.BackendState || 'unknown';
           if (j.Self) {
             hostname = j.Self.HostName || null;
             const ips = j.Self.TailscaleIPs || [];
@@ -1306,10 +1284,11 @@ app.post('/api/tailscale/login-interactive', requireAuthApi, async (req, res) =>
   if (!tailscaledRunning()) return res.status(500).json({ error: 'tailscaled not running' });
 
   const args = ['--socket=' + TAILSCALE_SOCKET, 'up', '--accept-routes', '--accept-dns=false'];
-  if (typeof (req.body || {}).hostname === 'string' && req.body.hostname.trim()) {
-    args.push('--hostname=' + req.body.hostname.trim().slice(0, 40).replace(/[^a-zA-Z0-9-]/g, ''));
+  const body = req.body || {};
+  if (typeof body.hostname === 'string' && body.hostname.trim()) {
+    args.push('--hostname=' + body.hostname.trim().slice(0, 40).replace(/[^a-zA-Z0-9-]/g, ''));
   }
-  if (req.body && req.body.advertiseExitNode) args.push('--advertise-exit-node');
+  if (body.advertiseExitNode) args.push('--advertise-exit-node');
 
   const bin = whichTailscale();
   const child = spawn(bin, args, { env: shopEnv() });
@@ -1383,10 +1362,7 @@ app.post('/api/tailscale/down', requireAuthApi, (req, res) => {
   res.json({ ok: r.status === 0, output: (r.stdout + r.stderr).trim().slice(0, 500) });
 });
 
-/* ══════════════════════════════════════════════════════════════════════════
-   SYSTEM — User/password management
-   ══════════════════════════════════════════════════════════════════════════ */
-
+/* SYSTEM */
 function readPasswdFile() {
   try {
     const content = fs.readFileSync('/etc/passwd', 'utf8');
@@ -1453,10 +1429,8 @@ app.post('/api/system/password', requireAuthApi, (req, res) => {
   }
 
   try {
-    const hash = crypto.createHash('sha512').update(password).digest('base64');
-    const cryptPw = generateCrypt(password);
     const result = spawnSync('chpasswd', [], {
-      input: `${username}:${password}\n`,
+      input: username + ':' + password + '\n',
       encoding: 'utf8',
       env: shopEnv()
     });
@@ -1480,14 +1454,6 @@ app.post('/api/system/password', requireAuthApi, (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
-function generateCrypt(password) {
-  try {
-    const r = spawnSync('openssl', ['passwd', '-6', password], { encoding: 'utf8' });
-    if (r.status === 0) return String(r.stdout || '').trim();
-  } catch {}
-  return null;
-}
 
 app.get('/api/system/info', requireAuthApi, (req, res) => {
   const currentUid = process.getuid ? process.getuid() : 0;
@@ -1524,7 +1490,7 @@ app.get('/api/system/info', requireAuthApi, (req, res) => {
   });
 });
 
-/* Fallback + error */
+/* FALLBACK + ERROR */
 app.use((req, res, next) => {
   if (req.path.startsWith('/api/') || req.path.startsWith('/ws/')) {
     return res.status(404).json({ error: 'Not found' });
