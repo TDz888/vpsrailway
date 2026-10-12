@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#0B1220" />
 <title>VPS Control · Dashboard</title>
-<meta name="description" content="Control plane: terminal, code editor, metrics, and package shop." />
+<meta name="description" content="Unified control plane for terminal, code, metrics, packages, and remote access." />
 <meta name="robots" content="noindex, nofollow" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%2300A1E0'/%3E%3Cpath d='M6 8h12M6 12h12M6 16h8' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E" />
 
@@ -20,7 +20,7 @@ tailwind.config = {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['JetBrains Mono', 'ui-monospace', 'Menlo', 'monospace'],
+        mono: ['JetBrains Mono', 'ui-monospace', 'Menlo', 'monospace']
       },
       colors: {
         biz: { blue: '#00A1E0', deep: '#0077A8', dark: '#0B1220', ink: '#1A2332', light: '#F2F6FA', green: '#22C55E', orange: '#F59E0B', purple: '#8B5CF6' }
@@ -97,11 +97,6 @@ tailwind.config = {
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     border-color: rgba(255,255,255,0.6);
   }
-  .glass-dark {
-    background: rgba(11,18,32,0.72);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-  }
   .card {
     background: #fff;
     border: 1px solid rgba(16,42,67,0.06);
@@ -151,11 +146,9 @@ tailwind.config = {
   .nav-item.active::before {
     content: '';
     position: absolute;
-    left: -14px;
-    top: 50%;
+    left: -14px; top: 50%;
     transform: translateY(-50%);
-    width: 3px;
-    height: 20px;
+    width: 3px; height: 20px;
     background: #00A1E0;
     border-radius: 2px;
     box-shadow: 0 0 12px rgba(0,161,224,0.6);
@@ -179,21 +172,16 @@ tailwind.config = {
     box-shadow: 0 4px 14px rgba(0,161,224,0.28), inset 0 1px 0 rgba(255,255,255,0.18);
     transition: all .25s cubic-bezier(.4,0,.2,1);
   }
-  .btn-primary:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 28px rgba(0,161,224,0.38);
-  }
+  .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(0,161,224,0.38); }
   .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
   .btn-ghost {
-    background: #fff;
-    color: #1A2332;
+    background: #fff; color: #1A2332;
     border: 1px solid rgba(16,42,67,0.10);
     transition: all .25s cubic-bezier(.4,0,.2,1);
   }
   .btn-ghost:hover { border-color: #00A1E0; color: #00A1E0; background: rgba(0,161,224,0.03); }
   .btn-danger {
-    background: #fff;
-    color: #EF4444;
+    background: #fff; color: #EF4444;
     border: 1px solid rgba(239,68,68,0.28);
     transition: all .25s;
   }
@@ -201,12 +189,9 @@ tailwind.config = {
 
   #terminal-shell { background: #0B1220; border-radius: 16px; }
   .term-tab {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    display: inline-flex; align-items: center; gap: 8px;
     padding: 7px 10px 7px 12px;
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 12px; font-weight: 500;
     color: #94A3B8;
     background: rgba(255,255,255,0.02);
     border: 1px solid rgba(255,255,255,0.06);
@@ -221,8 +206,7 @@ tailwind.config = {
   }
   .term-tab:hover { background: rgba(255,255,255,0.05); color: #CBD5E1; }
   .term-tab.active {
-    background: #0B1220;
-    color: #fff;
+    background: #0B1220; color: #fff;
     border-color: rgba(0,161,224,0.4);
     box-shadow: 0 -2px 12px rgba(0,161,224,0.15);
   }
@@ -235,10 +219,7 @@ tailwind.config = {
     border-radius: 1px;
     box-shadow: 0 0 8px rgba(0,161,224,0.8);
   }
-  .term-tab .tab-name {
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    max-width: 140px;
-  }
+  .term-tab .tab-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px; }
   .term-tab .tab-close {
     width: 16px; height: 16px;
     border-radius: 4px;
@@ -248,23 +229,17 @@ tailwind.config = {
     flex-shrink: 0;
   }
   .term-tab .tab-close:hover { opacity: 1; background: rgba(255,80,80,0.28); }
-  .term-tab input.tab-edit {
-    background: transparent; border: none; outline: none;
-    color: #fff; font: inherit;
-    width: 100px; padding: 0;
-  }
+  .term-tab input.tab-edit { background: transparent; border: none; outline: none; color: #fff; font: inherit; width: 100px; padding: 0; }
   .term-status-dot { width: 6px; height: 6px; border-radius: 999px; flex-shrink: 0; }
   .term-status-connecting { background: #F59E0B; animation: pulse-blue 1.4s infinite; }
   .term-status-connected { background: #22C55E; box-shadow: 0 0 8px rgba(34,197,94,0.7); }
-  .term-status-disconnected { background: #EF4444; }
-  .term-status-error { background: #EF4444; }
+  .term-status-disconnected, .term-status-error { background: #EF4444; }
   .xterm-container { position: absolute; inset: 0; padding: 12px 8px 8px 14px; }
   .xterm-container[hidden] { display: none; }
   .xterm .xterm-viewport { background: #0B1220 !important; }
 
   .CodeMirror {
-    height: 100%;
-    font-size: 13.5px;
+    height: 100%; font-size: 13.5px;
     font-family: 'JetBrains Mono', ui-monospace, monospace;
     background: #0B1220 !important;
     color: #E2E8F0;
@@ -315,12 +290,9 @@ tailwind.config = {
   .file-item .file-action.danger:hover { background: rgba(239,68,68,0.15); color: #EF4444; }
 
   .editor-tab {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    display: inline-flex; align-items: center; gap: 8px;
     padding: 8px 10px 8px 12px;
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 12px; font-weight: 500;
     color: #64748B;
     background: transparent;
     border-right: 1px solid rgba(255,255,255,0.05);
@@ -353,13 +325,10 @@ tailwind.config = {
   .editor-tab .tab-close:hover { opacity: 1; background: rgba(255,80,80,0.28); }
 
   .chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    display: inline-flex; align-items: center; gap: 6px;
     padding: 4px 10px;
     border-radius: 999px;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 11px; font-weight: 600;
     transition: all .15s;
     cursor: pointer;
     border: 1px solid transparent;
@@ -449,18 +418,10 @@ tailwind.config = {
     flex-direction: column;
     min-height: 260px;
   }
-  .shop-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 16px 44px rgba(16,42,67,0.11);
-    border-color: rgba(0,161,224,0.22);
-  }
-  .shop-card.selected {
-    border-color: #00A1E0;
-    box-shadow: 0 0 0 3px rgba(0,161,224,0.14), 0 12px 32px rgba(0,161,224,0.14);
-  }
+  .shop-card:hover { transform: translateY(-3px); box-shadow: 0 16px 44px rgba(16,42,67,0.11); border-color: rgba(0,161,224,0.22); }
+  .shop-card.selected { border-color: #00A1E0; box-shadow: 0 0 0 3px rgba(0,161,224,0.14), 0 12px 32px rgba(0,161,224,0.14); }
   .shop-card .pkg-icon {
-    width: 46px;
-    height: 46px;
+    width: 46px; height: 46px;
     border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
     font-weight: 800;
@@ -471,16 +432,14 @@ tailwind.config = {
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.14);
   }
   .shop-card .pkg-cat {
-    font-size: 9px;
-    font-weight: 800;
+    font-size: 9px; font-weight: 800;
     padding: 3px 7px;
     border-radius: 5px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
   .shop-card .pkg-priority {
-    font-size: 9px;
-    font-weight: 800;
+    font-size: 9px; font-weight: 800;
     padding: 3px 7px;
     border-radius: 5px;
     letter-spacing: 0.08em;
@@ -490,11 +449,8 @@ tailwind.config = {
   .pkg-priority.optional { background: #F1F5F9; color: #64748B; }
 
   .shop-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 10.5px;
-    font-weight: 700;
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 10.5px; font-weight: 700;
     padding: 3px 9px;
     border-radius: 999px;
     white-space: nowrap;
@@ -505,42 +461,25 @@ tailwind.config = {
   .shop-status.error { background: rgba(239,68,68,0.12); color: #B91C1C; }
 
   .shop-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
     padding: 9px 12px;
     border-radius: 9px;
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 12px; font-weight: 700;
     cursor: pointer;
     transition: all .2s;
     border: 1px solid transparent;
     width: 100%;
   }
-  .shop-btn.install {
-    background: linear-gradient(135deg, #00A1E0, #0077A8);
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(0,161,224,0.28);
-  }
-  .shop-btn.install:hover:not(:disabled) {
-    box-shadow: 0 8px 22px rgba(0,161,224,0.40);
-    transform: translateY(-1px);
-  }
-  .shop-btn.remove {
-    background: #fff;
-    color: #EF4444;
-    border-color: rgba(239,68,68,0.28);
-  }
+  .shop-btn.install { background: linear-gradient(135deg, #00A1E0, #0077A8); color: #fff; box-shadow: 0 4px 12px rgba(0,161,224,0.28); }
+  .shop-btn.install:hover:not(:disabled) { box-shadow: 0 8px 22px rgba(0,161,224,0.40); transform: translateY(-1px); }
+  .shop-btn.remove { background: #fff; color: #EF4444; border-color: rgba(239,68,68,0.28); }
   .shop-btn.remove:hover:not(:disabled) { background: #FEF2F2; border-color: #EF4444; }
   .shop-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
   .shop-checkbox {
     position: absolute;
-    top: 14px;
-    right: 14px;
-    width: 22px;
-    height: 22px;
+    top: 14px; right: 14px;
+    width: 22px; height: 22px;
     border-radius: 7px;
     border: 2px solid rgba(16,42,67,0.18);
     background: #fff;
@@ -550,11 +489,7 @@ tailwind.config = {
     z-index: 2;
   }
   .shop-checkbox:hover { border-color: #00A1E0; }
-  .shop-checkbox.checked {
-    background: #00A1E0;
-    border-color: #00A1E0;
-    color: #fff;
-  }
+  .shop-checkbox.checked { background: #00A1E0; border-color: #00A1E0; color: #fff; }
   .shop-checkbox svg { opacity: 0; transition: opacity .15s; }
   .shop-checkbox.checked svg { opacity: 1; }
 
@@ -600,15 +535,7 @@ tailwind.config = {
     padding: 16px 20px;
     border-bottom: 1px solid rgba(16,42,67,0.06);
   }
-  .cmdk-input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    font-size: 16px;
-    font-weight: 500;
-    color: #1A2332;
-  }
+  .cmdk-input { flex: 1; background: transparent; border: none; outline: none; font-size: 16px; font-weight: 500; color: #1A2332; }
   .cmdk-input::placeholder { color: #94A3B8; }
   .cmdk-item {
     display: flex; align-items: center; gap: 12px;
@@ -632,8 +559,7 @@ tailwind.config = {
 
   .batch-bar {
     position: fixed;
-    bottom: 20px;
-    left: 50%;
+    bottom: 20px; left: 50%;
     transform: translateX(-50%);
     background: #0B1220;
     color: #fff;
@@ -656,17 +582,151 @@ tailwind.config = {
     transition: all .2s;
     border: 1px solid transparent;
   }
-  .batch-bar .bb-primary {
-    background: linear-gradient(135deg, #00A1E0, #0077A8);
-    color: #fff;
-  }
+  .batch-bar .bb-primary { background: linear-gradient(135deg, #00A1E0, #0077A8); color: #fff; }
   .batch-bar .bb-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(0,161,224,0.4); }
-  .batch-bar .bb-ghost {
-    background: rgba(255,255,255,0.06);
-    color: #CBD5E1;
-    border-color: rgba(255,255,255,0.12);
-  }
+  .batch-bar .bb-ghost { background: rgba(255,255,255,0.06); color: #CBD5E1; border-color: rgba(255,255,255,0.12); }
   .batch-bar .bb-ghost:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+  /* Connection page */
+  .conn-card {
+    background: #fff;
+    border: 1px solid rgba(16,42,67,0.06);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(16,42,67,0.06);
+    transition: box-shadow .28s cubic-bezier(.4,0,.2,1);
+  }
+  .conn-card:hover { box-shadow: 0 16px 44px rgba(16,42,67,0.11); }
+  .conn-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 20px 22px;
+    border-bottom: 1px solid rgba(16,42,67,0.05);
+  }
+  .conn-logo {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    color: #fff;
+    font-size: 15px;
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.15);
+  }
+  .conn-body { padding: 20px 22px; }
+  .conn-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 10.5px; font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+  }
+  .conn-pill.ok { background: rgba(34,197,94,0.12); color: #15803D; }
+  .conn-pill.warn { background: rgba(245,158,11,0.14); color: #B45309; }
+  .conn-pill.off { background: rgba(148,163,184,0.16); color: #475569; }
+  .conn-pill.err { background: rgba(239,68,68,0.12); color: #B91C1C; }
+  .conn-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    background: #F8FAFC;
+    border: 1px solid rgba(16,42,67,0.05);
+    transition: all .18s;
+  }
+  .conn-row:hover { background: #F1F5F9; }
+  .conn-url {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: #00A1E0;
+    word-break: break-all;
+    flex: 1;
+    min-width: 0;
+    text-decoration: none;
+  }
+  .conn-url:hover { text-decoration: underline; }
+
+  /* Setting page */
+  .setting-row {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(16,42,67,0.05);
+  }
+  .setting-row:last-child { border-bottom: none; }
+  .setting-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* Workspace selector */
+  .ws-selector {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid rgba(16,42,67,0.10);
+    cursor: pointer;
+    transition: all .2s;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1A2332;
+    min-width: 140px;
+  }
+  .ws-selector:hover { border-color: #00A1E0; color: #00A1E0; }
+  .ws-selector.open { border-color: #00A1E0; box-shadow: 0 0 0 3px rgba(0,161,224,0.10); }
+  .ws-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    min-width: 260px;
+    max-width: 340px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 20px 60px -12px rgba(16,42,67,0.24);
+    border: 1px solid rgba(16,42,67,0.06);
+    padding: 6px;
+    z-index: 60;
+    animation: toast-in .18s ease-out;
+  }
+  .ws-menu-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 11px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all .15s;
+    font-size: 12.5px;
+    color: #4A5568;
+  }
+  .ws-menu-item:hover { background: rgba(0,161,224,0.08); color: #0B1220; }
+  .ws-menu-item.active { background: rgba(0,161,224,0.12); color: #00A1E0; font-weight: 700; }
+  .ws-menu-item .ws-icon {
+    width: 26px; height: 26px;
+    border-radius: 7px;
+    background: rgba(0,161,224,0.10);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    color: #00A1E0;
+  }
+  .ws-menu-item .ws-meta {
+    flex: 1;
+    min-width: 0;
+  }
+  .ws-menu-item .ws-name {
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: inherit;
+  }
+  .ws-menu-item .ws-sub {
+    font-size: 10px;
+    color: #94A3B8;
+    margin-top: 1px;
+    font-family: 'JetBrains Mono', monospace;
+  }
 
   ::-webkit-scrollbar { width: 9px; height: 9px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -734,7 +794,19 @@ tailwind.config = {
     </div>
 
     <div class="flex items-center gap-2 md:gap-3">
-      <button id="cmdkBtn" title="Command palette (Ctrl+K)" class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/70 border border-slate-200 hover:border-biz-blue hover:bg-white transition-all cursor-pointer text-slate-500 hover:text-biz-blue">
+      <div id="wsSelectorWrap" class="hidden md:block relative">
+        <button id="wsSelector" class="ws-selector">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/>
+          </svg>
+          <span id="wsSelectorName">default</span>
+          <svg class="w-3 h-3 opacity-60 ml-auto" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+          </svg>
+        </button>
+      </div>
+
+      <button id="cmdkBtn" title="Command palette (Ctrl+K)" class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/70 border border-slate-200 hover:border-biz-blue hover:bg-white transition-all cursor-pointer text-slate-500 hover:text-biz-blue">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
         </svg>
@@ -745,13 +817,6 @@ tailwind.config = {
       <div id="headerStatus" class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/60">
         <span id="headerStatusDot" class="w-1.5 h-1.5 rounded-full bg-emerald-500 pulse-dot"></span>
         <span id="headerStatusText" class="text-[11px] font-semibold text-emerald-700">Live</span>
-      </div>
-
-      <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/60 border border-slate-200">
-        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3V6.75a3 3 0 013-3h13.5a3 3 0 013 3v4.5a3 3 0 01-3 3m-13.5 0v3a3 3 0 003 3h10.5a3 3 0 003-3v-3"/>
-        </svg>
-        <span id="headerHost" class="text-[11px] font-semibold text-slate-600 font-mono">—</span>
       </div>
 
       <button id="logoutBtn" title="Sign out" class="p-2 rounded-lg hover:bg-red-50 transition-all cursor-pointer group">
@@ -788,7 +853,7 @@ tailwind.config = {
         <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/>
         </svg>
-        <span>Code Editor</span>
+        <span>Codespace</span>
         <span id="navDirtyDot" class="nav-dot hidden"></span>
       </a>
 
@@ -807,6 +872,24 @@ tailwind.config = {
         <span id="navShopBadge" class="nav-badge hidden">0</span>
       </a>
 
+      <div class="px-3 pt-6 pb-3 text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">Remote Access</div>
+
+      <a href="/connection" data-route="/connection" class="nav-item">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/>
+        </svg>
+        <span>Connection</span>
+        <span id="navConnBadge" class="nav-badge hidden">0</span>
+      </a>
+
+      <a href="/setting" data-route="/setting" class="nav-item">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        <span>Settings</span>
+      </a>
+
       <div class="px-3 pt-6 pb-3 text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] flex items-center justify-between">
         <span>Running Sessions</span>
         <button onclick="refreshSessions()" class="p-1 rounded hover:bg-white/60 transition-all cursor-pointer" title="Refresh">
@@ -817,18 +900,6 @@ tailwind.config = {
       </div>
       <div id="sidebarSessions" class="space-y-0.5 px-1">
         <p class="text-[11px] text-slate-400 italic px-2 py-1">Checking…</p>
-      </div>
-
-      <div class="px-3 pt-6 pb-3 text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] flex items-center justify-between">
-        <span>Recent Files</span>
-        <a href="/code" class="p-1 rounded hover:bg-white/60 transition-all cursor-pointer" title="Open editor">
-          <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
-          </svg>
-        </a>
-      </div>
-      <div id="sidebarFiles" class="space-y-0.5 px-1">
-        <p class="text-[11px] text-slate-400 italic px-2 py-1">No files</p>
       </div>
     </nav>
 
@@ -865,7 +936,7 @@ tailwind.config = {
             Your server, <span class="bg-gradient-to-r from-biz-blue via-biz-blue to-biz-purple bg-clip-text text-transparent">intelligently</span> controlled.
           </h1>
           <p class="mt-5 text-slate-500 text-[15px] md:text-base leading-relaxed max-w-2xl">
-            One control plane for terminal access, code editing, live metrics, and one-click package installation. Sessions persist via tmux.
+            One control plane for terminal, code, metrics, packages, and remote access. Sessions persist via tmux.
           </p>
           <div class="flex flex-wrap gap-3 mt-7">
             <a href="/terminal" class="btn-primary px-5 py-3 rounded-xl text-sm inline-flex items-center gap-2 cursor-pointer no-underline">
@@ -874,11 +945,11 @@ tailwind.config = {
               </svg>
               Open Terminal
             </a>
-            <a href="/shop" class="btn-ghost px-5 py-3 rounded-xl text-sm inline-flex items-center gap-2 cursor-pointer font-semibold no-underline">
+            <a href="/connection" class="btn-ghost px-5 py-3 rounded-xl text-sm inline-flex items-center gap-2 cursor-pointer font-semibold no-underline">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/>
               </svg>
-              Browse Shop
+              Remote Access
             </a>
           </div>
         </div>
@@ -966,9 +1037,9 @@ tailwind.config = {
               </svg>
             </div>
           </div>
-          <div class="text-[11px] text-slate-500 font-bold uppercase tracking-widest">Saved Files</div>
-          <div class="text-3xl font-black text-biz-dark mt-1 tabular-nums" id="fileCount">0</div>
-          <div class="text-[10px] text-slate-400 mt-4">Persisted on volume</div>
+          <div class="text-[11px] text-slate-500 font-bold uppercase tracking-widest">Workspaces</div>
+          <div class="text-3xl font-black text-biz-dark mt-1 tabular-nums" id="wsCount">—</div>
+          <div class="text-[10px] text-slate-400 mt-4">Across all codespaces</div>
         </div>
       </div>
 
@@ -1015,6 +1086,12 @@ tailwind.config = {
           </p>
         </div>
         <div class="flex items-center gap-2 flex-wrap">
+          <div id="termWsPill" class="hidden md:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-biz-blue/8 border border-biz-blue/20 text-[11px] font-bold text-biz-blue">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/>
+            </svg>
+            <span id="termWsLabel">default</span>
+          </div>
           <div class="relative">
             <button onclick="toggleQuickRun(event)" class="btn-ghost px-3.5 py-2 rounded-lg text-xs font-semibold cursor-pointer inline-flex items-center gap-1.5">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
@@ -1072,14 +1149,21 @@ tailwind.config = {
     <section id="view-code" class="view" hidden>
       <div class="mb-4 flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 class="text-2xl md:text-3xl font-black text-biz-dark tracking-tight">Code Editor</h1>
+          <h1 class="text-2xl md:text-3xl font-black text-biz-dark tracking-tight">Codespace</h1>
           <p class="text-sm text-slate-500 mt-1">
+            <span id="codeWsLabel" class="font-semibold text-biz-blue">default</span> ·
             <kbd>Ctrl</kbd> <kbd>S</kbd> save ·
             <kbd>Ctrl</kbd> <kbd>Enter</kbd> run ·
             <kbd>Ctrl</kbd> <kbd>F</kbd> find
           </p>
         </div>
         <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="openWorkspacePanel()" class="btn-ghost px-3.5 py-2 rounded-lg text-xs font-semibold cursor-pointer inline-flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/>
+            </svg>
+            Workspaces
+          </button>
           <button onclick="newFile()" class="btn-ghost px-3.5 py-2 rounded-lg text-xs font-semibold cursor-pointer inline-flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
@@ -1374,6 +1458,298 @@ tailwind.config = {
       </div>
     </section>
 
+    <section id="view-connection" class="view" hidden>
+      <div class="mb-5">
+        <h1 class="text-2xl md:text-3xl font-black text-biz-dark tracking-tight">Remote Access</h1>
+        <p class="text-sm text-slate-500 mt-1">Expose your container to the world via SSHX or join a private Tailscale network.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="conn-card">
+          <div class="conn-header">
+            <div class="conn-logo" style="background: linear-gradient(135deg, #00A1E0, #0077A8);">SX</div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <h3 class="text-[15px] font-black text-biz-dark">SSHX</h3>
+                <span id="sshxStatusPill" class="conn-pill off">Checking…</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-0.5">Share your terminal via a public URL. Multiple concurrent sessions supported.</p>
+            </div>
+          </div>
+
+          <div class="conn-body">
+            <div id="sshxNotInstalled" class="hidden">
+              <p class="text-sm text-slate-600 mb-4">sshx is not installed yet.</p>
+              <button onclick="installSshx()" class="btn-primary w-full px-4 py-2.5 rounded-lg text-xs font-bold inline-flex items-center justify-center gap-2 cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+                </svg>
+                Install sshx
+              </button>
+            </div>
+
+            <div id="sshxInstalled" class="hidden">
+              <div class="flex items-center gap-2 mb-4">
+                <input id="sshxNameInput" type="text" placeholder="Session name (optional)" maxlength="40" class="search-input flex-1 px-3.5 py-2.5 rounded-lg text-sm font-medium" />
+                <button onclick="startSshx()" class="btn-primary px-4 py-2.5 rounded-lg text-xs font-bold inline-flex items-center gap-2 cursor-pointer whitespace-nowrap">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/>
+                  </svg>
+                  Start Session
+                </button>
+              </div>
+
+              <div class="flex items-center justify-between mb-2">
+                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Sessions <span id="sshxSessionCount" class="text-biz-blue"></span></div>
+                <button onclick="stopAllSshx()" class="text-[10px] font-bold text-red-500 hover:underline cursor-pointer">Stop All</button>
+              </div>
+              <div id="sshxSessions" class="space-y-2">
+                <p class="text-xs text-slate-400 italic py-3 text-center">No active sessions.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="conn-card">
+          <div class="conn-header">
+            <div class="conn-logo" style="background: linear-gradient(135deg, #242424, #000);">TS</div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <h3 class="text-[15px] font-black text-biz-dark">Tailscale</h3>
+                <span id="tsStatusPill" class="conn-pill off">Checking…</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-0.5">Join your private tailnet. Access via SSH or Tailscale IP.</p>
+            </div>
+          </div>
+
+          <div class="conn-body">
+            <div id="tsNotInstalled" class="hidden">
+              <p class="text-sm text-slate-600 mb-4">Tailscale is not installed yet.</p>
+              <button onclick="installTailscale()" class="btn-primary w-full px-4 py-2.5 rounded-lg text-xs font-bold inline-flex items-center justify-center gap-2 cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+                </svg>
+                Install Tailscale
+              </button>
+            </div>
+
+            <div id="tsInstalled" class="hidden">
+              <div id="tsDaemonStatus" class="mb-4 p-3 rounded-lg bg-slate-50 border border-slate-100 flex items-center gap-3">
+                <span id="tsDaemonDot" class="w-2 h-2 rounded-full bg-slate-300 flex-shrink-0"></span>
+                <div class="flex-1 min-w-0">
+                  <div id="tsDaemonText" class="text-xs font-semibold text-slate-600">Daemon status unknown</div>
+                </div>
+                <button id="tsDaemonToggle" onclick="toggleTailscaled()" class="text-[10px] font-bold text-biz-blue hover:underline cursor-pointer">Start</button>
+              </div>
+
+              <div id="tsConnected" class="hidden">
+                <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 mb-4">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 pulse-dot"></span>
+                    <span class="text-[11px] font-bold text-emerald-700">Connected to tailnet</span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-2 mt-3">
+                    <div>
+                      <div class="text-[9px] font-bold text-emerald-600/70 uppercase tracking-widest">Hostname</div>
+                      <div id="tsHostname" class="text-xs font-mono font-bold text-biz-dark mt-1 truncate">—</div>
+                    </div>
+                    <div>
+                      <div class="text-[9px] font-bold text-emerald-600/70 uppercase tracking-widest">IP Address</div>
+                      <div id="tsIp" class="text-xs font-mono font-bold text-biz-dark mt-1">—</div>
+                    </div>
+                  </div>
+                  <div class="mt-3 pt-3 border-t border-emerald-200/60 flex items-center gap-2">
+                    <button onclick="tsAction('down')" class="text-[10px] font-bold text-amber-600 hover:underline cursor-pointer">Disconnect</button>
+                    <span class="text-emerald-300">·</span>
+                    <button onclick="tsAction('logout')" class="text-[10px] font-bold text-red-500 hover:underline cursor-pointer">Logout</button>
+                  </div>
+                </div>
+              </div>
+
+              <div id="tsLoginRequired" class="hidden">
+                <div class="flex items-center gap-1 p-1 rounded-xl bg-slate-100 mb-4">
+                  <button onclick="setTsTab('authkey')" id="tsTabAuthkey" class="flex-1 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer bg-white shadow-sm text-biz-blue">Auth Key</button>
+                  <button onclick="setTsTab('interactive')" id="tsTabInteractive" class="flex-1 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer text-slate-500">Interactive</button>
+                </div>
+
+                <div id="tsPanelAuthkey">
+                  <p class="text-xs text-slate-500 mb-3">Generate an auth key at <a href="https://login.tailscale.com/admin/settings/keys" target="_blank" rel="noopener" class="text-biz-blue hover:underline font-semibold">Tailscale Admin → Keys</a>.</p>
+                  <div class="space-y-3">
+                    <input id="tsAuthkeyInput" type="password" placeholder="tskey-auth-xxxxx…" class="search-input w-full px-3.5 py-2.5 rounded-lg text-sm font-mono" />
+                    <input id="tsHostnameInput" type="text" placeholder="Hostname (optional)" maxlength="40" class="search-input w-full px-3.5 py-2.5 rounded-lg text-sm font-medium" />
+                    <label class="flex items-center gap-2 cursor-pointer select-none">
+                      <input id="tsExitNodeChk" type="checkbox" class="w-4 h-4 rounded border-slate-300 text-biz-blue focus:ring-biz-blue/30 cursor-pointer" />
+                      <span class="text-xs text-slate-600 font-medium">Advertise as exit node</span>
+                    </label>
+                    <button onclick="tsLoginAuthkey()" class="btn-primary w-full px-4 py-2.5 rounded-lg text-xs font-bold inline-flex items-center justify-center gap-2 cursor-pointer">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"/>
+                      </svg>
+                      Connect with Auth Key
+                    </button>
+                  </div>
+                </div>
+
+                <div id="tsPanelInteractive" class="hidden">
+                  <p class="text-xs text-slate-500 mb-3">Click connect. A login URL will appear — open it in your browser to authenticate this device.</p>
+                  <input id="tsInteractiveHostname" type="text" placeholder="Hostname (optional)" maxlength="40" class="search-input w-full px-3.5 py-2.5 rounded-lg text-sm font-medium mb-3" />
+                  <label class="flex items-center gap-2 cursor-pointer select-none mb-3">
+                    <input id="tsInteractiveExitNode" type="checkbox" class="w-4 h-4 rounded border-slate-300 text-biz-blue focus:ring-biz-blue/30 cursor-pointer" />
+                    <span class="text-xs text-slate-600 font-medium">Advertise as exit node</span>
+                  </label>
+                  <button onclick="tsLoginInteractive()" class="btn-primary w-full px-4 py-2.5 rounded-lg text-xs font-bold inline-flex items-center justify-center gap-2 cursor-pointer">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/>
+                    </svg>
+                    Generate Login URL
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-5 mt-4">
+        <h3 class="font-bold text-biz-dark text-[15px] mb-3 flex items-center gap-2">
+          <svg class="w-4 h-4 text-biz-blue" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
+          </svg>
+          How to connect
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-600">
+          <div>
+            <div class="font-bold text-biz-dark mb-1.5">Via SSHX (public URL)</div>
+            <p class="leading-relaxed">Start a session → copy the URL → share with anyone. They open in a browser and get a live terminal that mirrors the container. No client install needed.</p>
+          </div>
+          <div>
+            <div class="font-bold text-biz-dark mb-1.5">Via Tailscale (private network)</div>
+            <p class="leading-relaxed">Connect this device to your tailnet → from any other device on the same tailnet run <code class="px-1 rounded bg-slate-100 font-mono">ssh root@&lt;tailscale-ip&gt;</code>. Requires SSH daemon on port 22 (Railway usually blocks this — use SSHX instead).</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-setting" class="view" hidden>
+      <div class="mb-5">
+        <h1 class="text-2xl md:text-3xl font-black text-biz-dark tracking-tight">Settings</h1>
+        <p class="text-sm text-slate-500 mt-1">System info, user password management, and danger zone.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div class="lg:col-span-2 space-y-4">
+          <div class="card p-6">
+            <h3 class="font-bold text-biz-dark text-[15px] mb-1 flex items-center gap-2">
+              <svg class="w-4 h-4 text-biz-blue" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"/>
+              </svg>
+              Password Manager
+            </h3>
+            <p class="text-xs text-slate-500 mb-5">Change password for any user on the container. Uses <code class="px-1 rounded bg-slate-100 font-mono">chpasswd</code>.</p>
+
+            <div class="space-y-4">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">User</label>
+                <select id="pwUserSelect" class="search-input w-full px-3.5 py-2.5 rounded-lg text-sm font-medium cursor-pointer">
+                  <option value="">Loading users…</option>
+                </select>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">New password</label>
+                  <input id="pwNewInput" type="password" placeholder="Min 6 characters" class="search-input w-full px-3.5 py-2.5 rounded-lg text-sm font-mono" />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Confirm password</label>
+                  <input id="pwConfirmInput" type="password" placeholder="Re-enter" class="search-input w-full px-3.5 py-2.5 rounded-lg text-sm font-mono" />
+                </div>
+              </div>
+
+              <div id="pwStrength" class="hidden"></div>
+
+              <div class="flex items-center justify-between gap-3">
+                <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                  </svg>
+                  Password resets on container redeploy
+                </div>
+                <button id="pwSubmitBtn" onclick="changePassword()" class="btn-primary px-5 py-2.5 rounded-lg text-xs font-bold inline-flex items-center gap-2 cursor-pointer">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z"/>
+                  </svg>
+                  Change Password
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card p-6">
+            <h3 class="font-bold text-biz-dark text-[15px] mb-4 flex items-center gap-2">
+              <svg class="w-4 h-4 text-biz-blue" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              Dashboard Password
+            </h3>
+            <p class="text-xs text-slate-500 mb-4">To change the dashboard password, update the <code class="px-1 rounded bg-slate-100 font-mono">DASHBOARD_PASSWORD</code> env variable in Railway and redeploy. All active sessions will be invalidated.</p>
+            <div class="p-3 rounded-lg bg-amber-50 border border-amber-200 flex items-start gap-2">
+              <svg class="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+              </svg>
+              <span class="text-xs text-amber-800 leading-relaxed">Changing this value invalidates every active session cookie. You will be logged out on all devices.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="card p-5">
+            <h3 class="font-bold text-biz-dark text-[15px] mb-4 flex items-center gap-2">
+              <svg class="w-4 h-4 text-biz-blue" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              System Info
+            </h3>
+            <div id="sysInfoList" class="space-y-3 text-xs">
+              <div class="skeleton h-4 w-3/4"></div>
+              <div class="skeleton h-4 w-1/2"></div>
+              <div class="skeleton h-4 w-2/3"></div>
+            </div>
+          </div>
+
+          <div class="card p-5">
+            <h3 class="font-bold text-biz-dark text-[15px] mb-4 flex items-center gap-2">
+              <svg class="w-4 h-4 text-biz-blue" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/>
+              </svg>
+              Workspaces
+            </h3>
+            <div id="settingsWsList" class="space-y-2 text-xs mb-3">
+              <div class="skeleton h-8 w-full"></div>
+              <div class="skeleton h-8 w-full"></div>
+            </div>
+            <button onclick="openWorkspacePanel()" class="w-full btn-ghost px-3 py-2 rounded-lg text-xs font-semibold cursor-pointer">
+              Manage Workspaces
+            </button>
+          </div>
+
+          <div class="card p-5 border-red-100">
+            <h3 class="font-bold text-red-600 text-[15px] mb-3 flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+              </svg>
+              Danger Zone
+            </h3>
+            <p class="text-xs text-slate-500 mb-3 leading-relaxed">Stop all remote access sessions immediately.</p>
+            <button onclick="stopAllSshx()" class="w-full btn-danger px-3 py-2 rounded-lg text-xs font-semibold cursor-pointer">
+              Stop all SSHX sessions
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <footer class="mt-10 pt-6 border-t border-slate-200/60">
       <div class="flex flex-col md:flex-row items-center justify-between gap-4 pb-2">
         <p class="text-xs text-slate-500">© 2026 VPSControl · Built with intelligence.</p>
@@ -1402,20 +1778,25 @@ const VIEW_MAP = {
   '/terminal':  'view-terminal',
   '/code':      'view-code',
   '/metrics':   'view-metrics',
-  '/shop':      'view-shop'
+  '/shop':      'view-shop',
+  '/connection':'view-connection',
+  '/setting':   'view-setting'
 };
 const ROUTE_LABEL = {
   '/dashboard': 'DASHBOARD',
   '/terminal':  'TERMINAL',
-  '/code':      'CODE EDITOR',
+  '/code':      'CODESPACE',
   '/metrics':   'METRICS',
-  '/shop':      'APP SHOP'
+  '/shop':      'APP SHOP',
+  '/connection':'REMOTE ACCESS',
+  '/setting':   'SETTINGS'
 };
-const STORAGE_TABS = 'vps_terminal_tabs_v2';
-const STORAGE_ACTIVE = 'vps_terminal_active_v2';
-const STORAGE_EDITOR_TABS = 'vps_editor_tabs_v2';
-const STORAGE_EDITOR_ACTIVE = 'vps_editor_active_v2';
-const STORAGE_DRAFTS = 'vps_editor_drafts_v2';
+const STORAGE_TABS = 'vps_terminal_tabs_v3';
+const STORAGE_ACTIVE = 'vps_terminal_active_v3';
+const STORAGE_EDITOR_TABS = 'vps_editor_tabs_v3';
+const STORAGE_EDITOR_ACTIVE = 'vps_editor_active_v3';
+const STORAGE_DRAFTS = 'vps_editor_drafts_v3';
+const STORAGE_WS = 'vps_active_workspace_v1';
 
 const state = {
   metrics: { cpu: [], ram: [], tick: 0 },
@@ -1429,25 +1810,20 @@ const state = {
   editorTabs: [],
   activeEditorTab: null,
   drafts: {},
+  workspaces: [],
+  activeWorkspace: localStorage.getItem(STORAGE_WS) || 'default',
+  sshx: { installed: false, sessions: [], version: null },
+  tailscale: { installed: false, running: false, ip: null, hostname: null, backend: 'unknown', loginRequired: false },
+  tsTab: 'authkey',
+  system: { users: [], currentUser: '', isRoot: false, whoami: 'unknown' },
   shop: {
-    items: [],
-    categories: [],
-    filter: 'all',
-    search: '',
-    sort: 'priority',
-    status: {},
-    installing: new Set(),
-    batchMode: false,
-    selected: new Set(),
-    total: 0
+    items: [], categories: [], filter: 'all', search: '', sort: 'priority',
+    status: {}, installing: new Set(), batchMode: false, selected: new Set(), total: 0
   }
 };
 
 function $(id) { return document.getElementById(id); }
-
-function escapeHtml(s) {
-  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
+function escapeHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 function fmtBytes(b) {
   if (!b || b < 1024) return (b || 0) + ' B';
@@ -1455,16 +1831,12 @@ function fmtBytes(b) {
   if (b < 1073741824) return (b / 1048576).toFixed(1) + ' MB';
   return (b / 1073741824).toFixed(2) + ' GB';
 }
-
 function fmtUptime(s) {
-  const d = Math.floor(s / 86400);
-  const h = Math.floor((s % 86400) / 3600);
-  const m = Math.floor((s % 3600) / 60);
+  const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60);
   if (d > 0) return d + 'd ' + h + 'h';
   if (h > 0) return h + 'h ' + m + 'm';
   return m + 'm';
 }
-
 function fmtTimeAgo(dateStr) {
   const d = new Date(dateStr);
   const diff = (Date.now() - d.getTime()) / 1000;
@@ -1473,17 +1845,8 @@ function fmtTimeAgo(dateStr) {
   if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
   return Math.floor(diff / 86400) + 'd ago';
 }
-
-function loadJSON(key, fallback) {
-  try {
-    const v = localStorage.getItem(key);
-    return v ? JSON.parse(v) : fallback;
-  } catch { return fallback; }
-}
-
-function saveJSON(key, value) {
-  try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
-}
+function loadJSON(key, fb) { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fb; } catch { return fb; } }
+function saveJSON(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); } catch {} }
 
 const EXT_META = {
   '.py':   { color: '#3776AB', lang: 'python',      name: 'Python' },
@@ -1503,16 +1866,8 @@ const EXT_META = {
   '.json': { color: '#F59E0B', lang: 'javascript',  name: 'JSON' },
   '.txt':  { color: '#94A3B8', lang: null,          name: 'Text' }
 };
-
-function extOf(name) {
-  const i = String(name || '').lastIndexOf('.');
-  return i >= 0 ? name.slice(i).toLowerCase() : '';
-}
-
-function metaFor(name) {
-  const e = extOf(name);
-  return EXT_META[e] || { color: '#00A1E0', lang: null, name: 'File' };
-}
+function extOf(name) { const i = String(name || '').lastIndexOf('.'); return i >= 0 ? name.slice(i).toLowerCase() : ''; }
+function metaFor(name) { const e = extOf(name); return EXT_META[e] || { color: '#00A1E0', lang: null, name: 'File' }; }
 
 function api(url, opts) {
   opts = opts || {};
@@ -1532,12 +1887,10 @@ function api(url, opts) {
 
 function debounce(fn, ms) {
   let t;
-  return function (...args) {
-    clearTimeout(t);
-    t = setTimeout(() => fn.apply(this, args), ms);
-  };
+  return function (...args) { clearTimeout(t); t = setTimeout(() => fn.apply(this, args), ms); };
 }
 
+let toastStack = [];
 function toast(msg, type, duration) {
   type = type || 'info';
   duration = duration || 2600;
@@ -1558,12 +1911,18 @@ function toast(msg, type, duration) {
   el.style.cssText = 'display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:600;box-shadow:0 18px 48px -12px rgba(16,42,67,0.28);pointer-events:auto;max-width:380px;' + styles[type];
   el.innerHTML = icons[type] + '<span>' + escapeHtml(msg) + '</span>';
   $('toasts').appendChild(el);
+  toastStack.push(el);
+  if (toastStack.length > 5) { const old = toastStack.shift(); if (old && old.parentNode) old.remove(); }
   setTimeout(() => {
     el.style.transition = 'all .3s cubic-bezier(.4,0,.2,1)';
     el.style.opacity = '0';
     el.style.transform = 'translateX(20px)';
   }, duration - 400);
-  setTimeout(() => el.remove(), duration);
+  setTimeout(() => {
+    el.remove();
+    const i = toastStack.indexOf(el);
+    if (i >= 0) toastStack.splice(i, 1);
+  }, duration);
 }
 
 function openModal(title, bodyHtml, opts) {
@@ -1592,14 +1951,28 @@ function openModal(title, bodyHtml, opts) {
     setTimeout(() => wrap.remove(), 180);
     document.removeEventListener('keydown', escHandler);
   }
-  function escHandler(e) {
-    if (e.key === 'Escape') { close(); }
-  }
+  function escHandler(e) { if (e.key === 'Escape') close(); }
   wrap.querySelector('.modal-close').addEventListener('click', close);
   wrap.addEventListener('click', e => { if (e.target === wrap) close(); });
   document.addEventListener('keydown', escHandler);
   if (opts.onMount) opts.onMount(wrap, close);
   return { el: wrap, close };
+}
+
+function openConfirm(title, message, confirmLabel, onConfirm) {
+  openModal(title,
+    '<p class="text-sm text-slate-600 leading-relaxed mb-6">' + message + '</p>' +
+    '<div class="flex items-center justify-end gap-2">' +
+      '<button class="modal-cancel btn-ghost px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Cancel</button>' +
+      '<button class="modal-confirm px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer text-white" style="background:linear-gradient(135deg,#EF4444,#B91C1C);">' + escapeHtml(confirmLabel) + '</button>' +
+    '</div>',
+    {
+      onMount(wrap, close) {
+        wrap.querySelector('.modal-cancel').addEventListener('click', close);
+        wrap.querySelector('.modal-confirm').addEventListener('click', () => { close(); onConfirm(); });
+      }
+    }
+  );
 }
 
 $('logoutBtn').addEventListener('click', () => {
@@ -1619,9 +1992,236 @@ $('menuToggle').addEventListener('click', () => {
 });
 $('sidebarOverlay').addEventListener('click', () => {
   $('sidebar').classList.add('-translate-x-full');
-  $('sidebarOverlay').classList.add('hidden');
+  $('sidebarOverlay').classList.toggle('hidden');
 });
 
+/* WORKSPACE SELECTOR */
+function setActiveWorkspace(name) {
+  state.activeWorkspace = name || 'default';
+  localStorage.setItem(STORAGE_WS, state.activeWorkspace);
+  updateWorkspaceLabels();
+  if (state.editorTabs.length > 0) {
+    const tabsToClose = state.editorTabs.map(t => t.name);
+    state.editorTabs = [];
+    state.activeEditorTab = null;
+    persistEditorTabs();
+    renderEditorTabs();
+    if (editorHost) editorHost.hidden = true;
+    if (editorEmpty) editorEmpty.style.display = 'flex';
+  }
+  refreshFiles();
+  if (ROUTE === '/terminal') {
+    disposeAllTabs();
+    restoreTerminalTabs();
+  }
+}
+
+function updateWorkspaceLabels() {
+  if ($('wsSelectorName')) $('wsSelectorName').textContent = state.activeWorkspace;
+  if ($('termWsLabel')) $('termWsLabel').textContent = state.activeWorkspace;
+  if ($('codeWsLabel')) $('codeWsLabel').textContent = state.activeWorkspace;
+}
+
+function renderWorkspaceMenu() {
+  const menu = document.createElement('div');
+  menu.className = 'ws-menu';
+  let html = '';
+  state.workspaces.forEach(ws => {
+    const isActive = ws.id === state.activeWorkspace;
+    html +=
+      '<div class="ws-menu-item' + (isActive ? ' active' : '') + '" data-ws="' + escapeHtml(ws.id) + '">' +
+        '<div class="ws-icon">' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75"/></svg>' +
+        '</div>' +
+        '<div class="ws-meta">' +
+          '<div class="ws-name">' + escapeHtml(ws.name || ws.id) + '</div>' +
+          '<div class="ws-sub">' + (ws.isDefault ? 'root · /data/files' : ((ws.fileCount || 0) + ' files · ' + fmtBytes(ws.size || 0))) + '</div>' +
+        '</div>' +
+        (isActive ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg>' : '') +
+      '</div>';
+  });
+  html +=
+    '<div style="height:1px;background:rgba(16,42,67,0.06);margin:6px 4px;"></div>' +
+    '<div class="ws-menu-item" data-action="manage" style="color:#00A1E0;">' +
+      '<div class="ws-icon" style="background:rgba(0,161,224,0.14);">' +
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>' +
+      '</div>' +
+      '<div class="ws-meta"><div class="ws-name" style="color:#00A1E0;">Manage workspaces</div></div>' +
+    '</div>';
+  menu.innerHTML = html;
+  return menu;
+}
+
+const wsBtn = $('wsSelector');
+const wsWrap = $('wsSelectorWrap');
+let wsMenuEl = null;
+
+if (wsBtn) {
+  wsBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    if (wsMenuEl) { wsMenuEl.remove(); wsMenuEl = null; wsBtn.classList.remove('open'); return; }
+    wsBtn.classList.add('open');
+    wsMenuEl = renderWorkspaceMenu();
+    wsWrap.appendChild(wsMenuEl);
+    wsMenuEl.querySelectorAll('[data-ws]').forEach(el => {
+      el.addEventListener('click', () => {
+        setActiveWorkspace(el.dataset.ws);
+        wsMenuEl.remove();
+        wsMenuEl = null;
+        wsBtn.classList.remove('open');
+      });
+    });
+    const manage = wsMenuEl.querySelector('[data-action="manage"]');
+    if (manage) manage.addEventListener('click', () => {
+      wsMenuEl.remove();
+      wsMenuEl = null;
+      wsBtn.classList.remove('open');
+      openWorkspacePanel();
+    });
+  });
+}
+
+document.addEventListener('click', e => {
+  if (!wsMenuEl) return;
+  if (!wsWrap.contains(e.target)) {
+    wsMenuEl.remove();
+    wsMenuEl = null;
+    if (wsBtn) wsBtn.classList.remove('open');
+  }
+});
+
+async function loadWorkspaces() {
+  try {
+    const r = await api('/api/workspaces');
+    if (!r.ok) return;
+    const data = await r.json();
+    state.workspaces = data.items || [];
+    const exists = state.workspaces.find(w => w.id === state.activeWorkspace);
+    if (!exists) setActiveWorkspace('default');
+    updateWorkspaceLabels();
+    renderSettingsWorkspaces();
+  } catch {}
+}
+
+function renderSettingsWorkspaces() {
+  const el = $('settingsWsList');
+  if (!el) return;
+  if (!state.workspaces.length) {
+    el.innerHTML = '<p class="text-xs text-slate-400 italic">No workspaces</p>';
+    return;
+  }
+  el.innerHTML = '';
+  state.workspaces.forEach(ws => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;background:#F8FAFC;';
+    row.innerHTML =
+      '<span style="width:6px;height:6px;border-radius:999px;background:' + (ws.isDefault ? '#94A3B8' : '#00A1E0') + ';"></span>' +
+      '<span style="flex:1;font-size:11.5px;font-weight:600;color:#1A2332;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(ws.name) + '</span>' +
+      '<span style="font-size:10px;font-family:monospace;color:#94A3B8;">' + (ws.isDefault ? 'root' : ((ws.fileCount || 0) + ' files')) + '</span>';
+    el.appendChild(row);
+  });
+}
+
+function openWorkspacePanel() {
+  const body =
+    '<div class="mb-5">' +
+      '<label class="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Create new workspace</label>' +
+      '<div class="flex gap-2">' +
+        '<input id="newWsInput" type="text" placeholder="my-project" maxlength="48" class="search-input flex-1 px-3.5 py-2.5 rounded-lg text-sm font-mono" />' +
+        '<button id="newWsBtn" class="btn-primary px-4 py-2.5 rounded-lg text-xs font-bold cursor-pointer whitespace-nowrap">Create</button>' +
+      '</div>' +
+      '<p class="text-[10px] text-slate-400 mt-2">Lowercase letters, numbers, dots, dashes, underscores. Auto-creates a README.md.</p>' +
+    '</div>' +
+    '<div class="border-t border-slate-100 pt-5">' +
+      '<div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">All workspaces</div>' +
+      '<div id="wsPanelList" class="space-y-2"></div>' +
+    '</div>';
+
+  openModal('Workspaces', body, {
+    size: 'lg',
+    onMount(wrap, close) {
+      const input = wrap.querySelector('#newWsInput');
+      const btn = wrap.querySelector('#newWsBtn');
+      const list = wrap.querySelector('#wsPanelList');
+
+      function renderList() {
+        list.innerHTML = '';
+        state.workspaces.forEach(ws => {
+          const isActive = ws.id === state.activeWorkspace;
+          const row = document.createElement('div');
+          row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:11px;background:' + (isActive ? 'rgba(0,161,224,0.08)' : '#F8FAFC') + ';border:1px solid ' + (isActive ? 'rgba(0,161,224,0.24)' : 'rgba(16,42,67,0.05)') + ';';
+          row.innerHTML =
+            '<div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#00A1E0,#0077A8);display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
+              '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75"/></svg>' +
+            '</div>' +
+            '<div style="flex:1;min-width:0;">' +
+              '<div style="font-size:13px;font-weight:800;color:#1A2332;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(ws.name) + (ws.isDefault ? ' <span style="font-size:9px;font-weight:800;padding:2px 5px;border-radius:4px;background:#E2E8F0;color:#475569;margin-left:4px;">ROOT</span>' : '') + '</div>' +
+              '<div style="font-size:11px;color:#94A3B8;font-family:monospace;margin-top:2px;">' + (ws.isDefault ? '/data/files' : ((ws.fileCount || 0) + ' files · ' + fmtBytes(ws.size || 0))) + '</div>' +
+            '</div>' +
+            (isActive
+              ? '<span style="font-size:10px;font-weight:800;color:#00A1E0;padding:3px 8px;border-radius:6px;background:rgba(0,161,224,0.14);">ACTIVE</span>'
+              : '<button data-switch="' + escapeHtml(ws.id) + '" style="font-size:10px;font-weight:800;color:#00A1E0;padding:4px 10px;border-radius:6px;background:white;border:1px solid rgba(0,161,224,0.28);cursor:pointer;">Switch</button>') +
+            (!ws.isDefault ? '<button data-del="' + escapeHtml(ws.id) + '" style="width:28px;height:28px;border-radius:7px;background:white;border:1px solid rgba(239,68,68,0.24);display:flex;align-items:center;justify-content:center;cursor:pointer;" title="Delete"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18"/></svg></button>' : '') +
+          '';
+          list.appendChild(row);
+        });
+
+        list.querySelectorAll('[data-switch]').forEach(b => {
+          b.addEventListener('click', () => {
+            setActiveWorkspace(b.dataset.switch);
+            close();
+            toast('Switched to ' + b.dataset.switch, 'success');
+          });
+        });
+        list.querySelectorAll('[data-del]').forEach(b => {
+          b.addEventListener('click', () => {
+            const name = b.dataset.del;
+            openConfirm('Delete workspace', 'Delete <strong>' + escapeHtml(name) + '</strong> and all its files? This cannot be undone.', 'Delete', async () => {
+              try {
+                const r = await api('/api/workspaces/' + encodeURIComponent(name), { method: 'DELETE' });
+                if (r.ok) {
+                  toast('Deleted ' + name, 'warn');
+                  if (state.activeWorkspace === name) setActiveWorkspace('default');
+                  await loadWorkspaces();
+                  renderList();
+                } else {
+                  const d = await r.json().catch(() => ({}));
+                  toast(d.error || 'Delete failed', 'error');
+                }
+              } catch { toast('Delete failed', 'error'); }
+            });
+          });
+        });
+      }
+
+      async function create() {
+        const name = input.value.trim();
+        if (!name) { input.focus(); return; }
+        btn.disabled = true;
+        try {
+          const r = await api('/api/workspaces', { method: 'POST', body: { name } });
+          const d = await r.json().catch(() => ({}));
+          if (r.ok) {
+            toast('Created ' + name, 'success');
+            input.value = '';
+            await loadWorkspaces();
+            renderList();
+          } else {
+            toast(d.error || 'Create failed', 'error');
+          }
+        } catch { toast('Create failed', 'error'); }
+        finally { btn.disabled = false; }
+      }
+
+      btn.addEventListener('click', create);
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); create(); } });
+      renderList();
+      setTimeout(() => input.focus(), 100);
+    }
+  });
+}
+
+/* METRICS */
 const charts = { cpuMini: null, ramMini: null, cpuBig: null, ramBig: null };
 const MAX_POINTS = 30;
 
@@ -1649,17 +2249,10 @@ function chartOpts(color) {
     interaction: { intersect: false, mode: 'index' },
     scales: {
       x: { display: false },
-      y: {
-        beginAtZero: true, max: 100,
-        grid: { color: 'rgba(16,42,67,0.05)' },
-        border: { display: false },
-        ticks: { color: '#94A3B8', font: { size: 10 }, callback: v => v + '%', maxTicksLimit: 5 }
-      }
+      y: { beginAtZero: true, max: 100, grid: { color: 'rgba(16,42,67,0.05)' }, border: { display: false },
+           ticks: { color: '#94A3B8', font: { size: 10 }, callback: v => v + '%', maxTicksLimit: 5 } }
     },
-    elements: {
-      point: { radius: 0, hoverRadius: 4, hoverBorderWidth: 2 },
-      line: { tension: 0.4, borderWidth: 2.5, capBezierPoints: true }
-    }
+    elements: { point: { radius: 0, hoverRadius: 4, hoverBorderWidth: 2 }, line: { tension: 0.4, borderWidth: 2.5, capBezierPoints: true } }
   };
 }
 
@@ -1670,35 +2263,20 @@ function initCharts() {
   Chart.defaults.color = '#94A3B8';
 
   const cm1 = $('cpuMiniChart');
-  if (cm1 && !charts.cpuMini) {
-    const c1 = cm1.getContext('2d');
-    charts.cpuMini = new Chart(c1, { type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: '#00A1E0', backgroundColor: makeGradient(c1, '#00A1E0'), fill: true }] }, options: chartOpts('#00A1E0') });
-  }
+  if (cm1 && !charts.cpuMini) { const c1 = cm1.getContext('2d'); charts.cpuMini = new Chart(c1, { type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: '#00A1E0', backgroundColor: makeGradient(c1, '#00A1E0'), fill: true }] }, options: chartOpts('#00A1E0') }); }
   const rm1 = $('ramMiniChart');
-  if (rm1 && !charts.ramMini) {
-    const c2 = rm1.getContext('2d');
-    charts.ramMini = new Chart(c2, { type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: '#8B5CF6', backgroundColor: makeGradient(c2, '#8B5CF6'), fill: true }] }, options: chartOpts('#8B5CF6') });
-  }
+  if (rm1 && !charts.ramMini) { const c2 = rm1.getContext('2d'); charts.ramMini = new Chart(c2, { type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: '#8B5CF6', backgroundColor: makeGradient(c2, '#8B5CF6'), fill: true }] }, options: chartOpts('#8B5CF6') }); }
   const cb1 = $('cpuBigChart');
-  if (cb1 && !charts.cpuBig) {
-    const c3 = cb1.getContext('2d');
-    charts.cpuBig = new Chart(c3, { type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: '#00A1E0', backgroundColor: makeGradient(c3, '#00A1E0'), fill: true }] }, options: chartOpts('#00A1E0') });
-  }
+  if (cb1 && !charts.cpuBig) { const c3 = cb1.getContext('2d'); charts.cpuBig = new Chart(c3, { type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: '#00A1E0', backgroundColor: makeGradient(c3, '#00A1E0'), fill: true }] }, options: chartOpts('#00A1E0') }); }
   const rb1 = $('ramBigChart');
-  if (rb1 && !charts.ramBig) {
-    const c4 = rb1.getContext('2d');
-    charts.ramBig = new Chart(c4, { type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: '#8B5CF6', backgroundColor: makeGradient(c4, '#8B5CF6'), fill: true }] }, options: chartOpts('#8B5CF6') });
-  }
+  if (rb1 && !charts.ramBig) { const c4 = rb1.getContext('2d'); charts.ramBig = new Chart(c4, { type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: '#8B5CF6', backgroundColor: makeGradient(c4, '#8B5CF6'), fill: true }] }, options: chartOpts('#8B5CF6') }); }
 }
 
 function pushChart(chart, value) {
   if (!chart) return;
   chart.data.labels.push('');
   chart.data.datasets[0].data.push(value);
-  if (chart.data.labels.length > MAX_POINTS) {
-    chart.data.labels.shift();
-    chart.data.datasets[0].data.shift();
-  }
+  if (chart.data.labels.length > MAX_POINTS) { chart.data.labels.shift(); chart.data.datasets[0].data.shift(); }
   chart.update('none');
 }
 
@@ -1710,11 +2288,6 @@ function pollMetrics() {
     const cpu = Math.round(m.cpu.usage * 10) / 10;
     const ram = Math.round(m.mem.percent * 10) / 10;
 
-    state.metrics.cpu.push(cpu);
-    state.metrics.ram.push(ram);
-    if (state.metrics.cpu.length > 200) state.metrics.cpu.shift();
-    if (state.metrics.ram.length > 200) state.metrics.ram.shift();
-
     if ($('cpuVal')) $('cpuVal').textContent = cpu.toFixed(1);
     if ($('ramVal')) $('ramVal').textContent = ram.toFixed(1);
     if ($('cpuBar')) $('cpuBar').style.width = cpu + '%';
@@ -1722,6 +2295,7 @@ function pollMetrics() {
     if ($('cpuSub')) $('cpuSub').textContent = m.cpu.cores + ' vCPU · load ' + m.cpu.load1.toFixed(2);
     if ($('ramSub')) $('ramSub').textContent = fmtBytes(m.mem.used) + ' / ' + fmtBytes(m.mem.total);
     if ($('uptimeVal')) $('uptimeVal').textContent = fmtUptime(m.uptime);
+    if ($('wsCount')) $('wsCount').textContent = m.workspaces != null ? m.workspaces : '—';
 
     const cpuPill = $('cpuPill');
     if (cpuPill) {
@@ -1729,7 +2303,6 @@ function pollMetrics() {
       else if (cpu > 60) { cpuPill.textContent = 'BUSY'; cpuPill.className = 'text-[10px] font-bold px-2 py-1 rounded-full bg-amber-50 text-amber-700'; }
       else { cpuPill.textContent = 'HEALTHY'; cpuPill.className = 'text-[10px] font-bold px-2 py-1 rounded-full bg-emerald-50 text-emerald-700'; }
     }
-
     const ramPill = $('ramPill');
     if (ramPill) {
       if (ram > 85) { ramPill.textContent = 'HIGH'; ramPill.className = 'text-[10px] font-bold px-2 py-1 rounded-full bg-red-50 text-red-700'; }
@@ -1752,13 +2325,9 @@ function pollMetrics() {
       $('infoCpuModel').textContent = (m.cpu.model || '—').split('@')[0].trim();
       $('infoCpuModel').title = m.cpu.model || '';
     }
-    if ($('headerHost')) $('headerHost').textContent = m.hostname;
 
     if (m.tmux !== state.tmux) { state.tmux = m.tmux; updateTmuxBadge(); }
-    if (Array.isArray(m.runners)) {
-      state.runners = m.runners;
-      renderRunnerGrid();
-    }
+    if (Array.isArray(m.runners)) { state.runners = m.runners; renderRunnerGrid(); }
 
     const hDot = $('headerStatusDot');
     const hTxt = $('headerStatusText');
@@ -1777,11 +2346,8 @@ function pollMetrics() {
       }
     }
 
-    pushChart(charts.cpuMini, cpu);
-    pushChart(charts.ramMini, ram);
-    pushChart(charts.cpuBig, cpu);
-    pushChart(charts.ramBig, ram);
-
+    pushChart(charts.cpuMini, cpu); pushChart(charts.ramMini, ram);
+    pushChart(charts.cpuBig, cpu); pushChart(charts.ramBig, ram);
     state.metrics.tick++;
   }).catch(() => {});
 }
@@ -1800,18 +2366,9 @@ function renderRunnerGrid() {
   const el = $('runnerGrid');
   if (!el) return;
   const runners = state.runners || [];
-  if (!runners.length) {
-    el.innerHTML = '<p class="col-span-full text-xs text-slate-400 italic">No runtimes detected.</p>';
-    return;
-  }
-  const labels = {
-    '.py': 'Python', '.pyw': 'Python', '.js': 'Node.js', '.mjs': 'Node.js', '.cjs': 'Node.js',
-    '.sh': 'Bash', '.bash': 'Bash', '.c': 'C', '.cpp': 'C++', '.cc': 'C++', '.cxx': 'C++', '.go': 'Go'
-  };
-  const colors = {
-    '.py': '#3776AB', '.pyw': '#3776AB', '.js': '#F7DF1E', '.mjs': '#F7DF1E', '.cjs': '#F7DF1E',
-    '.sh': '#4EAA25', '.bash': '#4EAA25', '.c': '#00599C', '.cpp': '#00599C', '.cc': '#00599C', '.cxx': '#00599C', '.go': '#00ADD8'
-  };
+  if (!runners.length) { el.innerHTML = '<p class="col-span-full text-xs text-slate-400 italic">No runtimes detected.</p>'; return; }
+  const labels = { '.py': 'Python', '.pyw': 'Python', '.js': 'Node.js', '.mjs': 'Node.js', '.cjs': 'Node.js', '.sh': 'Bash', '.bash': 'Bash', '.c': 'C', '.cpp': 'C++', '.cc': 'C++', '.cxx': 'C++', '.go': 'Go' };
+  const colors = { '.py': '#3776AB', '.pyw': '#3776AB', '.js': '#F7DF1E', '.mjs': '#F7DF1E', '.cjs': '#F7DF1E', '.sh': '#4EAA25', '.bash': '#4EAA25', '.c': '#00599C', '.cpp': '#00599C', '.cc': '#00599C', '.cxx': '#00599C', '.go': '#00ADD8' };
   const seen = new Set();
   el.innerHTML = '';
   runners.forEach(ext => {
@@ -1833,15 +2390,14 @@ function renderRunnerGrid() {
   });
 }
 
+/* TERMINAL */
 const termTabsEl = $('termTabs');
 const termBodyEl = $('termBody');
 const termEmptyState = $('termEmptyState');
 const navTerminalCount = $('navTerminalCount');
 
 function genSid() {
-  if (window.crypto && window.crypto.randomUUID) {
-    return window.crypto.randomUUID().replace(/-/g, '').slice(0, 16);
-  }
+  if (window.crypto && window.crypto.randomUUID) return window.crypto.randomUUID().replace(/-/g, '').slice(0, 16);
   const arr = new Uint8Array(8);
   window.crypto.getRandomValues(arr);
   let out = '';
@@ -1860,6 +2416,21 @@ function xtermTheme() {
     brightYellow: '#FBBF24', brightBlue: '#38BDF8', brightMagenta: '#C084FC',
     brightCyan: '#67E8F9', brightWhite: '#FFFFFF'
   };
+}
+
+function makeXterm() {
+  const term = new window.Terminal({
+    cursorBlink: true, cursorStyle: 'block',
+    fontSize: 13.5,
+    fontFamily: '"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace',
+    fontWeight: '400', fontWeightBold: '600',
+    lineHeight: 1.35, scrollback: 8000, allowTransparency: true, theme: xtermTheme()
+  });
+  const fit = new FitAddon.FitAddon();
+  term.loadAddon(fit);
+  try { term.loadAddon(new WebLinksAddon.WebLinksAddon()); } catch {}
+  try { term.loadAddon(new WebglAddon.WebglAddon()); } catch {}
+  return { term, fit };
 }
 
 function makeTermTab(sid, name, onActivate, onClose, onRename) {
@@ -1881,23 +2452,6 @@ function makeTermTab(sid, name, onActivate, onClose, onRename) {
   return el;
 }
 
-function makeXterm() {
-  const term = new window.Terminal({
-    cursorBlink: true, cursorStyle: 'block',
-    fontSize: 13.5,
-    fontFamily: '"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace',
-    fontWeight: '400', fontWeightBold: '600',
-    lineHeight: 1.35, scrollback: 8000,
-    allowTransparency: true,
-    theme: xtermTheme()
-  });
-  const fit = new FitAddon.FitAddon();
-  term.loadAddon(fit);
-  try { term.loadAddon(new WebLinksAddon.WebLinksAddon()); } catch {}
-  try { term.loadAddon(new WebglAddon.WebglAddon()); } catch {}
-  return { term, fit };
-}
-
 function bindXtermEvents(tab) {
   tab.term.onData(data => {
     if (tab.ws && tab.ws.readyState === WebSocket.OPEN) {
@@ -1914,7 +2468,6 @@ function bindXtermEvents(tab) {
 function createTerminalTab(opt) {
   opt = opt || {};
   if (!termBodyEl) return null;
-
   const sid = opt.sid || genSid();
   const name = opt.name || ('Session ' + (state.tabs.length + 1));
 
@@ -1927,20 +2480,10 @@ function createTerminalTab(opt) {
   const x = makeXterm();
   x.term.open(container);
 
-  const tab = {
-    sid, name,
-    term: x.term, fit: x.fit,
-    ws: null, status: 'connecting',
-    container, retry: 1000, retryTimer: null
-  };
+  const tab = { sid, name, term: x.term, fit: x.fit, ws: null, status: 'connecting', container, retry: 1000, retryTimer: null };
   state.tabs.push(tab);
 
-  const tabEl = makeTermTab(
-    sid, name,
-    () => activateTerminalTab(sid),
-    () => closeTerminalTab(sid),
-    el => startRenameTab(tab, el)
-  );
+  const tabEl = makeTermTab(sid, name, () => activateTerminalTab(sid), () => closeTerminalTab(sid), el => startRenameTab(tab, el));
   termTabsEl.appendChild(tabEl);
   tab.tabEl = tabEl;
 
@@ -1956,11 +2499,11 @@ function createTerminalTab(opt) {
 function connectTerminalTab(tab) {
   if (tab.ws) { try { tab.ws.close(); } catch {} }
   clearTimeout(tab.retryTimer);
-
   const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
   const cols = tab.term.cols || 80;
   const rows = tab.term.rows || 24;
-  const url = proto + '//' + location.host + '/ws/terminal?sid=' + encodeURIComponent(tab.sid) + '&cols=' + cols + '&rows=' + rows;
+  const wsParam = state.activeWorkspace && state.activeWorkspace !== 'default' ? '&ws=' + encodeURIComponent(state.activeWorkspace) : '';
+  const url = proto + '//' + location.host + '/ws/terminal?sid=' + encodeURIComponent(tab.sid) + '&cols=' + cols + '&rows=' + rows + wsParam;
 
   setTerminalStatus(tab, 'connecting');
   const ws = new WebSocket(url);
@@ -1969,9 +2512,7 @@ function connectTerminalTab(tab) {
   ws.onopen = () => {
     setTerminalStatus(tab, 'connected');
     tab.retry = 1000;
-    if (tab.sid === state.activeSid) {
-      setTimeout(() => { try { tab.fit.fit(); } catch {} tab.term.focus(); }, 40);
-    }
+    if (tab.sid === state.activeSid) setTimeout(() => { try { tab.fit.fit(); } catch {} tab.term.focus(); }, 40);
   };
 
   ws.onmessage = ev => {
@@ -1979,10 +2520,7 @@ function connectTerminalTab(tab) {
       if (ev.data.indexOf('{"type":"control"') === 0) {
         try {
           const msg = JSON.parse(ev.data);
-          if (msg.event === 'ready' && typeof msg.tmux === 'boolean') {
-            state.tmux = msg.tmux;
-            updateTmuxBadge();
-          }
+          if (msg.event === 'ready' && typeof msg.tmux === 'boolean') { state.tmux = msg.tmux; updateTmuxBadge(); }
         } catch {}
         return;
       }
@@ -1995,17 +2533,10 @@ function connectTerminalTab(tab) {
   };
 
   ws.onclose = ev => {
-    if (ev.code === 1008) {
-      setTerminalStatus(tab, 'error');
-      tab.term.writeln('\r\n\x1b[1;31m[unauthorized — session expired]\x1b[0m\r\n');
-      return;
-    }
+    if (ev.code === 1008) { setTerminalStatus(tab, 'error'); tab.term.writeln('\r\n\x1b[1;31m[unauthorized — session expired]\x1b[0m\r\n'); return; }
     setTerminalStatus(tab, 'disconnected');
     tab.term.writeln('\r\n\x1b[33m[disconnected — reconnecting…]\x1b[0m\r\n');
-    tab.retryTimer = setTimeout(() => {
-      tab.retry = Math.min(tab.retry * 1.7, 30000);
-      if (state.tabs.indexOf(tab) !== -1) connectTerminalTab(tab);
-    }, tab.retry);
+    tab.retryTimer = setTimeout(() => { tab.retry = Math.min(tab.retry * 1.7, 30000); if (state.tabs.indexOf(tab) !== -1) connectTerminalTab(tab); }, tab.retry);
   };
 }
 
@@ -2020,10 +2551,7 @@ function activateTerminalTab(sid) {
   if (!tab) return;
   state.activeSid = sid;
   localStorage.setItem(STORAGE_ACTIVE, sid);
-  state.tabs.forEach(t => {
-    t.container.hidden = t.sid !== sid;
-    if (t.tabEl) t.tabEl.classList.toggle('active', t.sid === sid);
-  });
+  state.tabs.forEach(t => { t.container.hidden = t.sid !== sid; if (t.tabEl) t.tabEl.classList.toggle('active', t.sid === sid); });
   setTimeout(() => { try { tab.fit.fit(); } catch {} tab.term.focus(); }, 40);
   updateEmptyState();
 }
@@ -2062,28 +2590,20 @@ function closeTerminalTab(sid) {
   const idx = state.tabs.findIndex(t => t.sid === sid);
   if (idx === -1) return;
   const tab = state.tabs[idx];
-
-  if (tab.status === 'connected') {
-    if (!confirm('Close "' + tab.name + '"? Running processes in this session will be terminated.')) return;
-  }
-
+  if (tab.status === 'connected' && !confirm('Close "' + tab.name + '"? Running processes will be terminated.')) return;
   api('/api/terminal/' + encodeURIComponent(sid), { method: 'DELETE' }).catch(() => {});
-
   clearTimeout(tab.retryTimer);
   try { tab.ws && tab.ws.close(); } catch {}
   try { tab.term.dispose(); } catch {}
   tab.container.remove();
   if (tab.tabEl) tab.tabEl.remove();
   state.tabs.splice(idx, 1);
-
   if (state.activeSid === sid) {
     state.activeSid = null;
     if (state.tabs.length > 0) {
       const next = state.tabs[Math.min(idx, state.tabs.length - 1)];
       activateTerminalTab(next.sid);
-    } else {
-      localStorage.removeItem(STORAGE_ACTIVE);
-    }
+    } else localStorage.removeItem(STORAGE_ACTIVE);
   }
   saveTerminalTabs();
   updateNavBadge();
@@ -2093,6 +2613,20 @@ function closeTerminalTab(sid) {
 function killActiveTab() {
   if (!state.activeSid) { toast('No active terminal', 'warn'); return; }
   closeTerminalTab(state.activeSid);
+}
+
+function disposeAllTabs() {
+  state.tabs.forEach(tab => {
+    clearTimeout(tab.retryTimer);
+    try { tab.ws && tab.ws.close(); } catch {}
+    try { tab.term.dispose(); } catch {}
+  });
+  state.tabs = [];
+  state.activeSid = null;
+  if (termTabsEl) termTabsEl.innerHTML = '';
+  if (termBodyEl) termBodyEl.querySelectorAll('.xterm-container').forEach(el => el.remove());
+  updateNavBadge();
+  updateEmptyState();
 }
 
 function updateNavBadge() {
@@ -2108,17 +2642,13 @@ function updateEmptyState() {
 }
 
 function saveTerminalTabs() {
-  const meta = state.tabs.map(t => ({ sid: t.sid, name: t.name }));
-  saveJSON(STORAGE_TABS, meta);
+  saveJSON(STORAGE_TABS, state.tabs.map(t => ({ sid: t.sid, name: t.name })));
 }
 
 function restoreTerminalTabs() {
   if (state.tabs.length > 0) return;
   const saved = loadJSON(STORAGE_TABS, []);
-  if (!Array.isArray(saved) || saved.length === 0) {
-    createTerminalTab({ name: 'main' });
-    return;
-  }
+  if (!Array.isArray(saved) || saved.length === 0) { createTerminalTab({ name: 'main' }); return; }
   saved.forEach(item => {
     if (!item || !/^[a-zA-Z0-9_-]{6,64}$/.test(item.sid || '')) return;
     createTerminalTab({ sid: item.sid, name: item.name || item.sid });
@@ -2132,12 +2662,8 @@ function toggleQuickRun(e) {
   if (e) e.stopPropagation();
   const menu = $('quickRunMenu');
   if (!menu) return;
-  if (menu.classList.contains('hidden')) {
-    renderQuickRun();
-    menu.classList.remove('hidden');
-  } else {
-    menu.classList.add('hidden');
-  }
+  if (menu.classList.contains('hidden')) { renderQuickRun(); menu.classList.remove('hidden'); }
+  else menu.classList.add('hidden');
 }
 
 document.addEventListener('click', e => {
@@ -2164,10 +2690,7 @@ function renderQuickRun() {
       '<span class="lang-badge" style="background:' + meta.color + '22;color:' + meta.color + ';">' + escapeHtml(f.run.lang) + '</span>' +
       '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:#1A2332;font-family:\'JetBrains Mono\',monospace;font-size:11px;">' + escapeHtml(f.name) + '</span>' +
       '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.4"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg>';
-    el.addEventListener('click', () => {
-      runInActiveTerminal(f.name);
-      $('quickRunMenu').classList.add('hidden');
-    });
+    el.addEventListener('click', () => { runInActiveTerminal(f.name); $('quickRunMenu').classList.add('hidden'); });
     list.appendChild(el);
   });
 }
@@ -2200,10 +2723,7 @@ function refreshSessions() {
 function renderSidebarSessions(sessions) {
   const el = $('sidebarSessions');
   if (!el) return;
-  if (!sessions.length) {
-    el.innerHTML = '<p style="font-size:11px;color:#94A3B8;font-style:italic;padding:4px 8px;">No active sessions</p>';
-    return;
-  }
+  if (!sessions.length) { el.innerHTML = '<p style="font-size:11px;color:#94A3B8;font-style:italic;padding:4px 8px;">No active sessions</p>'; return; }
   el.innerHTML = '';
   sessions.forEach(sid => {
     const row = document.createElement('a');
@@ -2218,45 +2738,26 @@ function renderSidebarSessions(sessions) {
   });
 }
 
+/* FILES */
+function withWs(url) {
+  if (!state.activeWorkspace || state.activeWorkspace === 'default') return url;
+  const sep = url.includes('?') ? '&' : '?';
+  return url + sep + 'ws=' + encodeURIComponent(state.activeWorkspace);
+}
+
 function refreshFiles() {
-  return api('/api/files').then(r => r.ok ? r.json() : []).then(files => {
+  return api(withWs('/api/files')).then(r => r.ok ? r.json() : []).then(files => {
     state.files = files;
-    if ($('fileCount')) $('fileCount').textContent = files.length;
-    renderSidebarFiles(files);
     renderFileExplorer();
     renderQuickRun();
   }).catch(() => {});
 }
 
-function renderSidebarFiles(files) {
-  const el = $('sidebarFiles');
-  if (!el) return;
-  if (!files.length) {
-    el.innerHTML = '<p style="font-size:11px;color:#94A3B8;font-style:italic;padding:4px 8px;">No files</p>';
-    return;
-  }
-  el.innerHTML = '';
-  files.slice(0, 6).forEach(f => {
-    const meta = metaFor(f.name);
-    const row = document.createElement('a');
-    row.href = '/code';
-    row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;font-size:11.5px;color:#4A5568;transition:all .15s;text-decoration:none;';
-    row.innerHTML =
-      '<span style="width:6px;height:6px;border-radius:999px;background:' + meta.color + ';flex-shrink:0;"></span>' +
-      '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:\'JetBrains Mono\',monospace;">' + escapeHtml(f.name) + '</span>';
-    row.addEventListener('mouseover', () => { row.style.background = 'rgba(0,161,224,0.06)'; });
-    row.addEventListener('mouseout', () => { row.style.background = 'transparent'; });
-    el.appendChild(row);
-  });
-}
-
 function renderFileExplorer() {
   const el = $('fileListExplorer');
   if (!el) return;
-
   const search = state.fileSearch.toLowerCase();
   const filter = state.fileFilter;
-
   const filtered = state.files.filter(f => {
     if (search && f.name.toLowerCase().indexOf(search) === -1) return false;
     if (filter !== 'all') {
@@ -2271,7 +2772,6 @@ function renderFileExplorer() {
   });
 
   if ($('fileListCount')) $('fileListCount').textContent = filtered.length + ' file' + (filtered.length === 1 ? '' : 's');
-
   if (filtered.length === 0) {
     el.innerHTML = '<p style="font-size:11.5px;color:#94A3B8;font-style:italic;text-align:center;padding:24px 12px;">' +
       (state.files.length === 0 ? 'No files yet. Click "New File".' : 'No matches.') + '</p>';
@@ -2285,7 +2785,6 @@ function renderFileExplorer() {
     row.className = 'file-item';
     if (state.activeEditorTab === f.name) row.classList.add('active');
     row.dataset.name = f.name;
-
     row.innerHTML =
       '<span class="ext-dot" style="background:' + meta.color + ';"></span>' +
       '<span class="file-name" title="' + escapeHtml(f.name) + '">' + escapeHtml(f.name) + '</span>' +
@@ -2305,32 +2804,18 @@ function renderFileExplorer() {
       }
       openFile(f.name);
     });
-
     el.appendChild(row);
   });
 }
 
 function deleteFilePrompt(name) {
-  openModal('Delete File',
-    '<p class="text-sm text-slate-600 leading-relaxed mb-6">Are you sure you want to delete <code class="px-1.5 py-0.5 rounded bg-slate-100 font-mono text-xs">' + escapeHtml(name) + '</code>? This cannot be undone.</p>' +
-    '<div class="flex items-center justify-end gap-2">' +
-      '<button class="modal-cancel btn-ghost px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Cancel</button>' +
-      '<button class="modal-confirm px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer text-white" style="background:linear-gradient(135deg,#EF4444,#B91C1C);">Delete</button>' +
-    '</div>',
-    {
-      onMount(wrap, close) {
-        wrap.querySelector('.modal-cancel').addEventListener('click', close);
-        wrap.querySelector('.modal-confirm').addEventListener('click', () => {
-          close();
-          api('/api/files/' + encodeURIComponent(name), { method: 'DELETE' }).then(() => {
-            toast('Deleted ' + name, 'warn');
-            closeEditorTab(name, true);
-            refreshFiles();
-          }).catch(() => toast('Delete failed', 'error'));
-        });
-      }
-    }
-  );
+  openConfirm('Delete file', 'Are you sure you want to delete <code class="px-1.5 py-0.5 rounded bg-slate-100 font-mono text-xs">' + escapeHtml(name) + '</code>? This cannot be undone.', 'Delete', () => {
+    api(withWs('/api/files/' + encodeURIComponent(name)), { method: 'DELETE' }).then(() => {
+      toast('Deleted ' + name, 'warn');
+      closeEditorTab(name, true);
+      refreshFiles();
+    }).catch(() => toast('Delete failed', 'error'));
+  });
 }
 
 function runFileInNewTerminal(name) {
@@ -2340,23 +2825,17 @@ function runFileInNewTerminal(name) {
   const tab = createTerminalTab({ name: runName });
   if (!tab) return;
   let tries = 0;
-  const waitForOpen = setInterval(() => {
+  const iv = setInterval(() => {
     tries++;
     if (tab.ws && tab.ws.readyState === WebSocket.OPEN) {
-      clearInterval(waitForOpen);
-      setTimeout(() => {
-        try {
-          tab.ws.send(JSON.stringify({ type: 'run', file: name }));
-          toast('Running ' + name, 'success', 1800);
-        } catch {}
-      }, 350);
-    } else if (tries > 60) {
-      clearInterval(waitForOpen);
-    }
+      clearInterval(iv);
+      setTimeout(() => { try { tab.ws.send(JSON.stringify({ type: 'run', file: name })); toast('Running ' + name, 'success', 1800); } catch {} }, 350);
+    } else if (tries > 60) clearInterval(iv);
   }, 120);
   window.location.href = '/terminal';
 }
 
+/* EDITOR */
 let editor = null;
 const editorTabsEl = $('editorTabs');
 const editorHost = $('editorHost');
@@ -2368,33 +2847,20 @@ function initCodeMirror() {
   if (editor) return;
   if (typeof CodeMirror === 'undefined') return;
   editor = CodeMirror.fromTextArea(codeArea, {
-    lineNumbers: true,
-    mode: 'python',
-    theme: 'material-darker',
-    indentUnit: 4,
-    tabSize: 4,
-    autoCloseBrackets: true,
-    matchBrackets: true,
-    lineWrapping: true,
-    styleActiveLine: true
+    lineNumbers: true, mode: 'python', theme: 'material-darker',
+    indentUnit: 4, tabSize: 4, autoCloseBrackets: true, matchBrackets: true,
+    lineWrapping: true, styleActiveLine: true
   });
-
   editor.on('change', () => {
     const tab = getActiveEditorTab();
     if (!tab) return;
     const current = editor.getValue();
-    if (current !== tab.original) {
-      tab.dirty = true;
-      saveDraft(tab.name, current);
-    } else {
-      tab.dirty = false;
-      clearDraft(tab.name);
-    }
+    if (current !== tab.original) { tab.dirty = true; saveDraft(tab.name, current); }
+    else { tab.dirty = false; clearDraft(tab.name); }
     updateEditorTabAppearance();
     updateStatusBar();
     updateDirtyIndicators();
   });
-
   editor.on('cursorActivity', () => updateStatusBar());
   updateStatusBar();
 }
@@ -2443,23 +2909,16 @@ function saveDraft(name, content) {
   state.drafts[name] = content;
   saveJSON(STORAGE_DRAFTS, state.drafts);
 }
-
 function clearDraft(name) {
   delete state.drafts[name];
   saveJSON(STORAGE_DRAFTS, state.drafts);
 }
-
-function loadDrafts() {
-  state.drafts = loadJSON(STORAGE_DRAFTS, {});
-}
+function loadDrafts() { state.drafts = loadJSON(STORAGE_DRAFTS, {}); }
 
 function openFile(name, opts) {
   opts = opts || {};
-  if (state.editorTabs.find(t => t.name === name)) {
-    activateEditorTab(name);
-    return Promise.resolve();
-  }
-  return api('/api/files/' + encodeURIComponent(name)).then(r => {
+  if (state.editorTabs.find(t => t.name === name)) { activateEditorTab(name); return Promise.resolve(); }
+  return api(withWs('/api/files/' + encodeURIComponent(name))).then(r => {
     if (!r.ok) throw new Error('Load failed');
     return r.json();
   }).then(data => {
@@ -2469,9 +2928,7 @@ function openFile(name, opts) {
     activateEditorTab(name);
     persistEditorTabs();
     if (!opts.silent) toast('Opened ' + name, 'info', 1400);
-  }).catch(() => {
-    if (!opts.silent) toast('Load failed', 'error');
-  });
+  }).catch(() => { if (!opts.silent) toast('Load failed', 'error'); });
 }
 
 function activateEditorTab(name) {
@@ -2479,27 +2936,19 @@ function activateEditorTab(name) {
   if (!tab) return;
   state.activeEditorTab = name;
   localStorage.setItem(STORAGE_EDITOR_ACTIVE, name);
-
   if (editorHost) editorHost.hidden = false;
   if (editorEmpty) editorEmpty.style.display = 'none';
-
   initCodeMirror();
   if (!editor) return;
 
   let content = tab.content;
   const draft = state.drafts[name];
-  if (draft !== undefined && draft !== tab.content) {
-    content = draft;
-    tab.dirty = true;
-    tab.content = draft;
-  }
+  if (draft !== undefined && draft !== tab.content) { content = draft; tab.dirty = true; tab.content = draft; }
 
   editor.setValue(content);
   editor.clearHistory();
-
   const meta = metaFor(name);
   editor.setOption('mode', meta.lang || 'null');
-
   setTimeout(() => { try { editor.refresh(); editor.focus(); } catch {} }, 50);
 
   updateEditorTabAppearance();
@@ -2515,9 +2964,8 @@ function closeEditorTab(name, skipConfirm) {
   const idx = state.editorTabs.findIndex(t => t.name === name);
   if (idx === -1) return;
   const tab = state.editorTabs[idx];
-
   if (tab.dirty && !skipConfirm) {
-    openModal('Unsaved Changes',
+    openModal('Unsaved changes',
       '<p class="text-sm text-slate-600 leading-relaxed mb-6">Save changes to <code class="px-1.5 py-0.5 rounded bg-slate-100 font-mono text-xs">' + escapeHtml(name) + '</code> before closing?</p>' +
       '<div class="flex items-center justify-end gap-2">' +
         '<button class="modal-cancel btn-ghost px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Cancel</button>' +
@@ -2542,7 +2990,6 @@ function doCloseEditorTab(idx) {
   if (!tab) return;
   clearDraft(tab.name);
   state.editorTabs.splice(idx, 1);
-
   if (state.activeEditorTab === tab.name) {
     state.activeEditorTab = null;
     if (state.editorTabs.length > 0) {
@@ -2564,7 +3011,6 @@ function renderEditorTabs() {
   if (!editorTabsEl) return;
   editorTabsEl.innerHTML = '';
   if (state.editorTabs.length === 0) return;
-
   state.editorTabs.forEach(tab => {
     const meta = metaFor(tab.name);
     const el = document.createElement('div');
@@ -2574,13 +3020,8 @@ function renderEditorTabs() {
       '<span style="width:6px;height:6px;border-radius:999px;background:' + meta.color + ';flex-shrink:0;"></span>' +
       '<span class="tab-name" title="' + escapeHtml(tab.name) + '">' + escapeHtml(tab.name) + '</span>' +
       '<span class="tab-dot" style="display:' + (tab.dirty ? 'block' : 'none') + ';"></span>' +
-      '<span class="tab-close" title="Close">' +
-        '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
-      '</span>';
-    el.addEventListener('click', e => {
-      if (e.target.closest('.tab-close')) return;
-      activateEditorTab(tab.name);
-    });
+      '<span class="tab-close" title="Close"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>';
+    el.addEventListener('click', e => { if (e.target.closest('.tab-close')) return; activateEditorTab(tab.name); });
     el.querySelector('.tab-close').addEventListener('click', e => { e.stopPropagation(); closeEditorTab(tab.name); });
     editorTabsEl.appendChild(el);
   });
@@ -2598,28 +3039,17 @@ function updateFileInfoPanel(tab) {
     ['actionRun', 'actionDownload', 'actionDuplicate', 'actionDelete'].forEach(id => { if ($(id)) $(id).disabled = true; });
     return;
   }
-
   const meta = metaFor(tab.name);
   const file = state.files.find(f => f.name === tab.name);
-
   if ($('infoName')) $('infoName').textContent = tab.name;
   if ($('infoLang')) $('infoLang').textContent = meta.name;
   if ($('infoExtIcon')) $('infoExtIcon').style.background = meta.color + '1c';
   if ($('infoMtime')) $('infoMtime').textContent = file ? fmtTimeAgo(file.mtime) : '—';
-
   if (file && file.run) {
-    if ($('infoRunnable')) {
-      $('infoRunnable').textContent = file.run.lang;
-      $('infoRunnable').className = 'font-semibold';
-      $('infoRunnable').style.color = meta.color;
-    }
+    if ($('infoRunnable')) { $('infoRunnable').textContent = file.run.lang; $('infoRunnable').className = 'font-semibold'; $('infoRunnable').style.color = meta.color; }
     if ($('actionRun')) $('actionRun').disabled = false;
   } else {
-    if ($('infoRunnable')) {
-      $('infoRunnable').textContent = 'No';
-      $('infoRunnable').className = 'font-semibold text-slate-400';
-      $('infoRunnable').style.color = '';
-    }
+    if ($('infoRunnable')) { $('infoRunnable').textContent = 'No'; $('infoRunnable').className = 'font-semibold text-slate-400'; $('infoRunnable').style.color = ''; }
     if ($('actionRun')) $('actionRun').disabled = true;
   }
   ['actionDownload', 'actionDuplicate', 'actionDelete'].forEach(id => { if ($(id)) $(id).disabled = false; });
@@ -2627,15 +3057,12 @@ function updateFileInfoPanel(tab) {
 
 function saveCurrentFile() {
   const tab = getActiveEditorTab();
-  if (!tab) return Promise.resolve();
-  if (!editor) return Promise.resolve();
+  if (!tab || !editor) return Promise.resolve();
   const content = editor.getValue();
-  return api('/api/files', { method: 'POST', body: { name: tab.name, content } })
+  return api(withWs('/api/files'), { method: 'POST', body: { name: tab.name, content } })
     .then(r => { if (!r.ok) throw new Error('Save failed'); return r.json(); })
     .then(() => {
-      tab.original = content;
-      tab.content = content;
-      tab.dirty = false;
+      tab.original = content; tab.content = content; tab.dirty = false;
       clearDraft(tab.name);
       updateEditorTabAppearance();
       updateDirtyIndicators();
@@ -2650,24 +3077,20 @@ function newFile() {
     '<label class="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Filename</label>' +
     '<input id="modalFilename" type="text" autofocus placeholder="hello.py" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-biz-blue focus:ring-4 focus:ring-biz-blue/10 outline-none text-sm font-mono transition-all" />' +
     '<div class="mt-3 flex flex-wrap gap-1.5" id="extChips">' +
-      ['.py', '.js', '.sh', '.c', '.cpp', '.go', '.md', '.txt'].map(e =>
-        '<button type="button" data-ext="' + e + '" class="chip chip-slate">' + e + '</button>'
-      ).join('') +
+      ['.py', '.js', '.sh', '.c', '.cpp', '.go', '.md', '.txt'].map(e => '<button type="button" data-ext="' + e + '" class="chip chip-slate">' + e + '</button>').join('') +
     '</div>' +
     '<div class="flex items-center justify-end gap-2 mt-6">' +
       '<button class="modal-cancel btn-ghost px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Cancel</button>' +
       '<button class="modal-create btn-primary px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Create</button>' +
     '</div>';
-
-  openModal('New File', inputHtml, {
+  openModal('New file', inputHtml, {
     onMount(wrap, close) {
       const input = wrap.querySelector('#modalFilename');
       wrap.querySelector('.modal-cancel').addEventListener('click', close);
       wrap.querySelectorAll('#extChips button').forEach(b => {
         b.addEventListener('click', () => {
           const v = input.value.replace(/\.[^.]*$/, '');
-          if (v) input.value = v + b.dataset.ext;
-          else input.value = 'untitled' + b.dataset.ext;
+          input.value = v ? v + b.dataset.ext : 'untitled' + b.dataset.ext;
           input.focus();
         });
       });
@@ -2676,12 +3099,9 @@ function newFile() {
         if (!name) { input.focus(); return; }
         if (!/\.[a-zA-Z0-9]+$/.test(name)) name += '.py';
         close();
-        api('/api/files', { method: 'POST', body: { name, content: '' } })
+        api(withWs('/api/files'), { method: 'POST', body: { name, content: '' } })
           .then(r => { if (!r.ok) throw new Error(); return r.json(); })
-          .then(() => {
-            toast('Created ' + name, 'success');
-            return refreshFiles();
-          })
+          .then(() => { toast('Created ' + name, 'success'); return refreshFiles(); })
           .then(() => openFile(name))
           .catch(() => toast('Could not create file', 'error'));
       }
@@ -2694,15 +3114,11 @@ function newFile() {
 function downloadCurrentFile() {
   const tab = getActiveEditorTab();
   if (!tab || !editor) return;
-  const content = editor.getValue();
-  const blob = new Blob([content], { type: 'text/plain' });
+  const blob = new Blob([editor.getValue()], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = tab.name;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  a.href = url; a.download = tab.name;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
   toast('Downloaded ' + tab.name, 'success');
 }
@@ -2714,11 +3130,8 @@ function duplicateCurrentFile() {
   const ext = extOf(tab.name);
   let copyName = base + '_copy' + ext;
   let i = 2;
-  while (state.files.find(f => f.name === copyName)) {
-    copyName = base + '_copy' + i + ext;
-    i++;
-  }
-  api('/api/files', { method: 'POST', body: { name: copyName, content: editor.getValue() } })
+  while (state.files.find(f => f.name === copyName)) { copyName = base + '_copy' + i + ext; i++; }
+  api(withWs('/api/files'), { method: 'POST', body: { name: copyName, content: editor.getValue() } })
     .then(r => { if (!r.ok) throw new Error(); return r.json(); })
     .then(() => { toast('Duplicated as ' + copyName, 'success'); return refreshFiles(); })
     .then(() => openFile(copyName))
@@ -2744,12 +3157,12 @@ function persistEditorTabs() {
   saveJSON(STORAGE_EDITOR_TABS, state.editorTabs.map(t => t.name));
 }
 
+/* SHOP */
 function loadShopCatalog() {
   const params = new URLSearchParams();
   if (state.shop.filter && state.shop.filter !== 'all') params.set('category', state.shop.filter);
   if (state.shop.search) params.set('search', state.shop.search);
   params.set('sort', state.shop.sort);
-
   return api('/api/shop/catalog?' + params.toString()).then(r => r.ok ? r.json() : null).then(data => {
     if (!data) return;
     state.shop.items = data.items || [];
@@ -2775,24 +3188,16 @@ function updateShopSubtitle(data) {
 function refreshShopStatus() {
   toast('Refreshing status…', 'info', 1400);
   return api('/api/shop/status').then(r => r.ok ? r.json() : null).then(data => {
-    if (data) {
-      state.shop.status = data;
-      renderShopGrid();
-      updateShopBadge();
-    }
+    if (data) { state.shop.status = data; renderShopGrid(); updateShopBadge(); }
   }).catch(() => toast('Failed to refresh status', 'error'));
 }
 
 function updateShopBadge() {
   const badge = $('navShopBadge');
   if (!badge) return;
-  const installedCount = Object.values(state.shop.status).filter(s => s && s.installed).length;
-  if (installedCount > 0) {
-    badge.textContent = installedCount;
-    badge.classList.remove('hidden');
-  } else {
-    badge.classList.add('hidden');
-  }
+  const n = Object.values(state.shop.status).filter(s => s && s.installed).length;
+  if (n > 0) { badge.textContent = n; badge.classList.remove('hidden'); }
+  else badge.classList.add('hidden');
 }
 
 function renderShopCategories() {
@@ -2804,19 +3209,13 @@ function renderShopCategories() {
     const isActive = cat.id === state.shop.filter;
     btn.className = 'chip ' + (isActive ? 'chip-blue active-chip' : 'chip-slate');
     btn.innerHTML = escapeHtml(cat.label) + ' <span style="opacity:0.65;font-weight:700;font-size:10px;">' + (cat.count || 0) + '</span>';
-    btn.addEventListener('click', () => {
-      state.shop.filter = cat.id;
-      renderShopCategories();
-      loadShopCatalog();
-    });
+    btn.addEventListener('click', () => { state.shop.filter = cat.id; renderShopCategories(); loadShopCatalog(); });
     el.appendChild(btn);
   });
 }
 
 function resetShopFilters() {
-  state.shop.filter = 'all';
-  state.shop.search = '';
-  state.shop.sort = 'priority';
+  state.shop.filter = 'all'; state.shop.search = ''; state.shop.sort = 'priority';
   if ($('shopSearch')) $('shopSearch').value = '';
   if ($('shopSort')) $('shopSort').value = 'priority';
   renderShopCategories();
@@ -2833,15 +3232,14 @@ function renderShopGrid() {
   const grid = $('shopGrid');
   const empty = $('shopEmpty');
   if (!grid) return;
-
   if (state.shop.items.length === 0) {
     grid.innerHTML = '';
     if (empty) empty.classList.remove('hidden');
     return;
   }
   if (empty) empty.classList.add('hidden');
-
   grid.innerHTML = '';
+
   state.shop.items.forEach(pkg => {
     const status = state.shop.status[pkg.id] || { installed: false };
     const installing = state.shop.installing.has(pkg.id);
@@ -2851,19 +3249,12 @@ function renderShopGrid() {
     if (selected) card.classList.add('selected');
 
     const statusCls = installing ? 'installing' : status.installed ? 'installed' : 'not-installed';
-    const statusLabel = installing
-      ? 'Installing…'
-      : status.installed
-        ? 'Installed' + (status.version ? ' · v' + status.version : '')
-        : 'Not installed';
-
+    const statusLabel = installing ? 'Installing…' : status.installed ? 'Installed' + (status.version ? ' · v' + status.version : '') : 'Not installed';
     const shortName = pkg.name.replace(/[^A-Za-z0-9]/g, '').slice(0, 2).toUpperCase();
     const sizeWarning = (pkg.sizeBytes || 0) > 100 * 1024 * 1024;
 
     card.innerHTML =
-      '<div class="shop-checkbox' + (selected ? ' checked' : '') + '" data-check>' +
-        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>' +
-      '</div>' +
+      '<div class="shop-checkbox' + (selected ? ' checked' : '') + '" data-check><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>' +
       '<div class="flex items-start justify-between gap-3 mb-3 pr-7">' +
         '<div class="pkg-icon" style="background:' + pkg.color + ';">' + escapeHtml(shortName) + '</div>' +
         '<span class="shop-status ' + statusCls + '">' + escapeHtml(statusLabel) + '</span>' +
@@ -2895,10 +3286,7 @@ function renderShopGrid() {
       '</div>';
 
     const checkbox = card.querySelector('[data-check]');
-    checkbox.addEventListener('click', e => {
-      e.stopPropagation();
-      togglePackageSelection(pkg.id);
-    });
+    checkbox.addEventListener('click', e => { e.stopPropagation(); togglePackageSelection(pkg.id); });
 
     const btn = card.querySelector('.shop-btn[data-action]');
     if (btn) {
@@ -2909,7 +3297,6 @@ function renderShopGrid() {
         else if (action === 'uninstall') shopUninstall(pkg.id, pkg.name);
       });
     }
-
     grid.appendChild(card);
   });
 }
@@ -2919,16 +3306,8 @@ function toggleBatchMode() {
   const btn = $('batchToggleBtn');
   const txt = $('batchToggleText');
   if (btn && txt) {
-    if (state.shop.batchMode) {
-      btn.className = 'btn-primary px-3.5 py-2 rounded-lg text-xs font-semibold cursor-pointer inline-flex items-center gap-1.5';
-      txt.textContent = 'Exit Batch';
-    } else {
-      btn.className = 'btn-ghost px-3.5 py-2 rounded-lg text-xs font-semibold cursor-pointer inline-flex items-center gap-1.5';
-      txt.textContent = 'Batch Mode';
-      state.shop.selected.clear();
-      renderShopGrid();
-      renderBatchBar();
-    }
+    if (state.shop.batchMode) { btn.className = 'btn-primary px-3.5 py-2 rounded-lg text-xs font-semibold cursor-pointer inline-flex items-center gap-1.5'; txt.textContent = 'Exit Batch'; }
+    else { btn.className = 'btn-ghost px-3.5 py-2 rounded-lg text-xs font-semibold cursor-pointer inline-flex items-center gap-1.5'; txt.textContent = 'Batch Mode'; state.shop.selected.clear(); renderShopGrid(); renderBatchBar(); }
   }
 }
 
@@ -2944,16 +3323,9 @@ function renderBatchBar() {
   const root = $('batchBarRoot');
   if (!root) return;
   const count = state.shop.selected.size;
+  if (!state.shop.batchMode || count === 0) { root.innerHTML = ''; return; }
 
-  if (!state.shop.batchMode || count === 0) {
-    root.innerHTML = '';
-    return;
-  }
-
-  const installed = Array.from(state.shop.selected).filter(id => {
-    const s = state.shop.status[id];
-    return s && s.installed;
-  }).length;
+  const installed = Array.from(state.shop.selected).filter(id => state.shop.status[id] && state.shop.status[id].installed).length;
   const notInstalled = count - installed;
 
   root.innerHTML =
@@ -2974,31 +3346,19 @@ function renderBatchBar() {
       '</div>' +
     '</div>';
 
-  root.querySelector('[data-action="clear"]').addEventListener('click', () => {
-    state.shop.selected.clear();
-    renderShopGrid();
-    renderBatchBar();
-  });
-
+  root.querySelector('[data-action="clear"]').addEventListener('click', () => { state.shop.selected.clear(); renderShopGrid(); renderBatchBar(); });
   const installBtn = root.querySelector('[data-action="install"]');
   if (installBtn) {
     installBtn.addEventListener('click', () => {
-      const ids = Array.from(state.shop.selected).filter(id => {
-        const s = state.shop.status[id];
-        return !s || !s.installed;
-      });
+      const ids = Array.from(state.shop.selected).filter(id => { const s = state.shop.status[id]; return !s || !s.installed; });
       if (ids.length === 0) return;
       batchInstall(ids);
     });
   }
-
   const uninstallBtn = root.querySelector('[data-action="uninstall"]');
   if (uninstallBtn) {
     uninstallBtn.addEventListener('click', () => {
-      const ids = Array.from(state.shop.selected).filter(id => {
-        const s = state.shop.status[id];
-        return s && s.installed;
-      });
+      const ids = Array.from(state.shop.selected).filter(id => { const s = state.shop.status[id]; return s && s.installed; });
       if (ids.length === 0) return;
       batchUninstall(ids);
     });
@@ -3013,49 +3373,24 @@ function shopInstall(id, name) {
     state.shop.installing.delete(id);
     renderShopGrid();
     api('/api/shop/status/' + encodeURIComponent(id)).then(r => r.ok ? r.json() : null).then(data => {
-      if (data) {
-        state.shop.status[id] = data;
-        renderShopGrid();
-        updateShopBadge();
-      }
+      if (data) { state.shop.status[id] = data; renderShopGrid(); updateShopBadge(); }
     }).catch(() => {});
   });
 }
 
 function shopUninstall(id, name) {
   if (state.shop.installing.has(id)) return;
-  openConfirmUninstall(id, name);
-}
-
-function openConfirmUninstall(id, name) {
-  openModal('Uninstall ' + name,
-    '<p class="text-sm text-slate-600 leading-relaxed mb-6">Remove <code class="px-1.5 py-0.5 rounded bg-slate-100 font-mono text-xs">' + escapeHtml(name) + '</code> from the VPS? Persistent packages will be fully removed from the volume.</p>' +
-    '<div class="flex items-center justify-end gap-2">' +
-      '<button class="modal-cancel btn-ghost px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Cancel</button>' +
-      '<button class="modal-confirm px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer text-white" style="background:linear-gradient(135deg,#EF4444,#B91C1C);">Uninstall</button>' +
-    '</div>',
-    {
-      onMount(wrap, close) {
-        wrap.querySelector('.modal-cancel').addEventListener('click', close);
-        wrap.querySelector('.modal-confirm').addEventListener('click', () => {
-          close();
-          state.shop.installing.add(id);
-          renderShopGrid();
-          openInstallModal('Uninstall', name, id, 'uninstall', () => {
-            state.shop.installing.delete(id);
-            renderShopGrid();
-            api('/api/shop/status/' + encodeURIComponent(id)).then(r => r.ok ? r.json() : null).then(data => {
-              if (data) {
-                state.shop.status[id] = data;
-                renderShopGrid();
-                updateShopBadge();
-              }
-            }).catch(() => {});
-          });
-        });
-      }
-    }
-  );
+  openConfirm('Uninstall ' + name, 'Remove <code class="px-1.5 py-0.5 rounded bg-slate-100 font-mono text-xs">' + escapeHtml(name) + '</code> from the VPS? Persistent packages will be fully removed from the volume.', 'Uninstall', () => {
+    state.shop.installing.add(id);
+    renderShopGrid();
+    openInstallModal('Uninstall', name, id, 'uninstall', () => {
+      state.shop.installing.delete(id);
+      renderShopGrid();
+      api('/api/shop/status/' + encodeURIComponent(id)).then(r => r.ok ? r.json() : null).then(data => {
+        if (data) { state.shop.status[id] = data; renderShopGrid(); updateShopBadge(); }
+      }).catch(() => {});
+    });
+  });
 }
 
 function openInstallModal(actionTitle, name, id, action, onComplete) {
@@ -3064,9 +3399,7 @@ function openInstallModal(actionTitle, name, id, action, onComplete) {
   const body =
     '<div class="flex items-center gap-3 mb-5">' +
       '<div class="w-12 h-12 rounded-xl bg-biz-blue/10 flex items-center justify-center">' +
-        '<svg class="w-6 h-6 text-biz-blue" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
-          '<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z"/>' +
-        '</svg>' +
+        '<svg class="w-6 h-6 text-biz-blue" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z"/></svg>' +
       '</div>' +
       '<div class="flex-1 min-w-0">' +
         '<div class="text-sm font-bold text-biz-dark truncate">' + escapeHtml(name) + '</div>' +
@@ -3086,9 +3419,7 @@ function openInstallModal(actionTitle, name, id, action, onComplete) {
 
   return openModal(actionTitle + ' · ' + name, body, {
     size: 'lg',
-    onClose() {
-      if (es) { try { es.close(); } catch {} es = null; }
-    },
+    onClose() { if (es) { try { es.close(); } catch {} es = null; } },
     onMount(wrap, close) {
       const logEl = wrap.querySelector('#shopLog');
       const statusEl = wrap.querySelector('#shopModalStatus');
@@ -3098,14 +3429,12 @@ function openInstallModal(actionTitle, name, id, action, onComplete) {
       const copyBtn = wrap.querySelector('#shopLogCopy');
 
       function appendLog(text, cls) {
-        if (!logEl) return;
         const span = document.createElement('span');
         if (cls) span.className = cls;
         span.textContent = text;
         logEl.appendChild(span);
         logEl.scrollTop = logEl.scrollHeight;
       }
-
       copyBtn.addEventListener('click', () => {
         navigator.clipboard.writeText(logEl.innerText).then(() => toast('Log copied', 'success', 1200)).catch(() => {});
       });
@@ -3116,7 +3445,6 @@ function openInstallModal(actionTitle, name, id, action, onComplete) {
         retryBtn.classList.add('hidden');
         spinner.classList.remove('hidden');
         statusEl.textContent = 'Connecting…';
-
         try { es = new EventSource(endpoint + encodeURIComponent(id)); }
         catch (err) { appendLog('Cannot open stream: ' + err.message + '\n', 'log-error'); return; }
 
@@ -3162,23 +3490,18 @@ function openInstallModal(actionTitle, name, id, action, onComplete) {
         });
       }
 
-      retryBtn.addEventListener('click', () => start());
+      retryBtn.addEventListener('click', start);
       start();
     }
   });
 }
 
 function batchInstall(ids) {
-  const names = ids.map(id => {
-    const it = state.shop.items.find(i => i.id === id);
-    return it ? it.name : id;
-  });
-
+  const names = ids.map(id => { const it = state.shop.items.find(i => i.id === id); return it ? it.name : id; });
   const preview = names.slice(0, 8).map(n => '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#F8FAFC;border-radius:8px;"><span style="width:5px;height:5px;border-radius:999px;background:#00A1E0;"></span><span style="font-size:12px;font-weight:600;color:#1A2332;">' + escapeHtml(n) + '</span></div>').join('');
   const more = names.length > 8 ? '<div style="font-size:11px;color:#94A3B8;text-align:center;padding:8px;">+' + (names.length - 8) + ' more</div>' : '';
-
   openModal('Batch Install',
-    '<p class="text-sm text-slate-600 leading-relaxed mb-4">Install <strong>' + names.length + '</strong> package' + (names.length === 1 ? '' : 's') + ' sequentially. This may take a while.</p>' +
+    '<p class="text-sm text-slate-600 leading-relaxed mb-4">Install <strong>' + names.length + '</strong> package' + (names.length === 1 ? '' : 's') + ' sequentially.</p>' +
     '<div style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;" class="mb-6">' + preview + more + '</div>' +
     '<div class="flex items-center justify-end gap-2">' +
       '<button class="modal-cancel btn-ghost px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Cancel</button>' +
@@ -3187,39 +3510,59 @@ function batchInstall(ids) {
     {
       onMount(wrap, close) {
         wrap.querySelector('.modal-cancel').addEventListener('click', close);
-        wrap.querySelector('.modal-confirm').addEventListener('click', () => {
-          close();
-          runBatchInstall(ids);
-        });
+        wrap.querySelector('.modal-confirm').addEventListener('click', () => { close(); runBatch(ids, 'install'); });
       }
     }
   );
 }
 
-function runBatchInstall(ids) {
+function batchUninstall(ids) {
+  const names = ids.map(id => { const it = state.shop.items.find(i => i.id === id); return it ? it.name : id; });
+  const preview = names.slice(0, 8).map(n => '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#FEF2F2;border-radius:8px;"><span style="width:5px;height:5px;border-radius:999px;background:#EF4444;"></span><span style="font-size:12px;font-weight:600;color:#1A2332;">' + escapeHtml(n) + '</span></div>').join('');
+  const more = names.length > 8 ? '<div style="font-size:11px;color:#94A3B8;text-align:center;padding:8px;">+' + (names.length - 8) + ' more</div>' : '';
+  openModal('Batch Uninstall',
+    '<p class="text-sm text-slate-600 leading-relaxed mb-4">Remove <strong>' + names.length + '</strong> package' + (names.length === 1 ? '' : 's') + ' from the VPS?</p>' +
+    '<div style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;" class="mb-6">' + preview + more + '</div>' +
+    '<div class="flex items-center justify-end gap-2">' +
+      '<button class="modal-cancel btn-ghost px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Cancel</button>' +
+      '<button class="modal-confirm px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer text-white" style="background:linear-gradient(135deg,#EF4444,#B91C1C);">Uninstall All</button>' +
+    '</div>',
+    {
+      onMount(wrap, close) {
+        wrap.querySelector('.modal-cancel').addEventListener('click', close);
+        wrap.querySelector('.modal-confirm').addEventListener('click', () => { close(); runBatch(ids, 'uninstall'); });
+      }
+    }
+  );
+}
+
+function runBatch(ids, action) {
   ids.forEach(id => state.shop.installing.add(id));
   renderShopGrid();
 
+  const isInstall = action === 'install';
+  const gradient = isInstall ? 'linear-gradient(135deg, #00A1E0, #0077A8)' : 'linear-gradient(135deg, #EF4444, #B91C1C)';
+  const progressGrad = isInstall ? 'linear-gradient(90deg, #00A1E0, #0077A8)' : 'linear-gradient(90deg, #EF4444, #B91C1C)';
+
   const body =
     '<div class="flex items-center gap-3 mb-5">' +
-      '<div class="w-12 h-12 rounded-xl bg-biz-blue/10 flex items-center justify-center">' +
-        '<svg class="w-6 h-6 text-biz-blue" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
-          '<path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>' +
+      '<div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:' + (isInstall ? '#EBF8FF' : '#FEF2F2') + ';">' +
+        '<svg class="w-6 h-6" style="color:' + (isInstall ? '#00A1E0' : '#EF4444') + '" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
+          (isInstall ? '<path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>' : '<path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79"/>') +
         '</svg>' +
       '</div>' +
       '<div class="flex-1 min-w-0">' +
-        '<div class="text-sm font-bold text-biz-dark" id="batchTitle">Batch install · ' + ids.length + ' packages</div>' +
+        '<div class="text-sm font-bold text-biz-dark">' + (isInstall ? 'Batch install' : 'Batch uninstall') + ' · ' + ids.length + ' packages</div>' +
         '<div class="text-xs text-slate-500" id="batchStatus">Starting…</div>' +
       '</div>' +
-      '<div id="batchSpinner" class="w-6 h-6 rounded-full border-2 border-slate-200 border-t-biz-blue spin"></div>' +
+      '<div id="batchSpinner" class="w-6 h-6 rounded-full border-2 border-slate-200 spin" style="border-top-color:' + (isInstall ? '#00A1E0' : '#EF4444') + ';"></div>' +
     '</div>' +
     '<div class="mb-3">' +
       '<div class="flex justify-between text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">' +
-        '<span>Progress</span>' +
-        '<span id="batchProgressText">0 / ' + ids.length + '</span>' +
+        '<span>Progress</span><span id="batchProgressText">0 / ' + ids.length + '</span>' +
       '</div>' +
       '<div class="h-2 bg-slate-100 rounded-full overflow-hidden">' +
-        '<div id="batchProgressBar" class="h-full rounded-full bg-gradient-to-r from-biz-blue to-biz-deep transition-all" style="width:0%;"></div>' +
+        '<div id="batchProgressBar" class="h-full rounded-full transition-all" style="width:0%;background:' + progressGrad + ';"></div>' +
       '</div>' +
     '</div>' +
     '<div class="mb-2 flex items-center justify-between text-[10px] font-bold uppercase tracking-widest">' +
@@ -3231,11 +3574,16 @@ function runBatchInstall(ids) {
       '<button id="batchCloseBtn" class="btn-ghost px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Close</button>' +
     '</div>';
 
-  let es = null;
+  let aborted = false;
+  let reader = null;
 
-  openModal('Batch Install', body, {
+  openModal('Batch ' + (isInstall ? 'Install' : 'Uninstall'), body, {
     size: 'xl',
-    onClose() { if (es) { try { es.close(); } catch {} es = null; } },
+    onClose() {
+      aborted = true;
+      if (reader) { try { reader.cancel(); } catch {} }
+      ids.forEach(id => state.shop.installing.delete(id));
+    },
     onMount(wrap, close) {
       const logEl = wrap.querySelector('#batchLog');
       const statusEl = wrap.querySelector('#batchStatus');
@@ -3243,9 +3591,7 @@ function runBatchInstall(ids) {
       const progressBar = wrap.querySelector('#batchProgressBar');
       const progressText = wrap.querySelector('#batchProgressText');
 
-      let completed = 0;
-      let success = 0;
-      let failed = 0;
+      let completed = 0, success = 0, failed = 0;
 
       function appendLog(text, cls) {
         const span = document.createElement('span');
@@ -3258,180 +3604,31 @@ function runBatchInstall(ids) {
       wrap.querySelector('#batchLogCopy').addEventListener('click', () => {
         navigator.clipboard.writeText(logEl.innerText).then(() => toast('Log copied', 'success', 1200)).catch(() => {});
       });
-      wrap.querySelector('#batchCloseBtn').addEventListener('click', close);
-
-      try {
-        es = new EventSource('/api/shop/install-batch');
-      } catch (err) {
-        appendLog('Cannot open stream: ' + err.message + '\n', 'log-error');
-        return;
-      }
-
-      es.addEventListener('message', ev => {
-        if (ev.data === '[DONE]') { if (es) { es.close(); es = null; } return; }
-        let msg;
-        try { msg = JSON.parse(ev.data); } catch { return; }
-
-        if (msg.type === 'batch-start') {
-          appendLog('▶ Batch install started · ' + msg.total + ' packages\n\n', 'log-info');
-          statusEl.textContent = 'Starting batch…';
-        } else if (msg.type === 'batch-package-start') {
-          appendLog('\n━━━ [' + msg.index + '/' + msg.total + '] ' + msg.name + ' ━━━\n', 'log-info');
-          statusEl.textContent = 'Installing ' + msg.name + ' (' + msg.index + '/' + msg.total + ')';
-        } else if (msg.type === 'batch-step') {
-          appendLog('$ ' + msg.command + '\n', 'log-cmd');
-        } else if (msg.type === 'log' || (!msg.type && msg.line)) {
-          appendLog(msg.line, msg.err ? 'log-error' : '');
-        } else if (msg.type === 'batch-verify') {
-          appendLog('🔍 Verifying…\n', 'log-info');
-        } else if (msg.type === 'batch-package-done') {
-          completed++;
-          success++;
-          const pct = (completed / ids.length) * 100;
-          progressBar.style.width = pct + '%';
-          progressText.textContent = completed + ' / ' + ids.length;
-          const verified = msg.verified ? ' ✓ verified' + (msg.version ? ' v' + msg.version : '') : '';
-          appendLog('✓ ' + (msg.id || '') + ' installed' + verified + '\n', 'log-success');
-          state.shop.installing.delete(msg.id);
-        } else if (msg.type === 'batch-package-error') {
-          completed++;
-          failed++;
-          const pct = (completed / ids.length) * 100;
-          progressBar.style.width = pct + '%';
-          progressText.textContent = completed + ' / ' + ids.length;
-          appendLog('✗ ' + (msg.id || '') + ' failed: ' + msg.message + '\n', 'log-error');
-          state.shop.installing.delete(msg.id);
-        } else if (msg.type === 'batch-done') {
-          appendLog('\n━━━━━━━━━━━━━━━━━━━━\n', 'log-dim');
-          appendLog('✓ Batch complete · ' + msg.success + ' succeeded · ' + msg.fail + ' failed\n', msg.fail > 0 ? 'log-warn' : 'log-success');
-          statusEl.textContent = 'Complete · ' + msg.success + ' ok · ' + msg.fail + ' failed';
-          spinner.classList.add('hidden');
-          toast('Batch install complete', msg.fail > 0 ? 'warn' : 'success');
-          renderShopGrid();
-          renderBatchBar();
-          refreshShopStatus();
-        } else if (msg.type === 'batch-error') {
-          appendLog('\n✗ Batch error: ' + msg.message + '\n', 'log-error');
-          spinner.classList.add('hidden');
+      wrap.querySelector('#batchCloseBtn').addEventListener('click', () => {
+        if (spinner && !spinner.classList.contains('hidden')) {
+          openConfirm('Stop batch', 'Batch operation is still running. Stop it?', 'Stop', () => { aborted = true; close(); });
+          return;
         }
+        close();
       });
 
-      es.addEventListener('error', () => {
-        if (es && es.readyState === EventSource.CLOSED) {
-          appendLog('\n[stream closed]\n', 'log-dim');
-          spinner.classList.add('hidden');
-          ids.forEach(id => state.shop.installing.delete(id));
-          renderShopGrid();
-          renderBatchBar();
-        }
-      });
+      const endpoint = isInstall ? '/api/shop/install-batch' : '/api/shop/uninstall-batch';
 
-      fetch('/api/shop/install-batch', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids })
-      }).then(res => {
-        if (es) { try { es.close(); } catch {} }
-        es = new EventSource('/api/shop/install-batch');
-        es.close();
-      }).catch(() => {});
-    }
-  });
-}
-
-function batchUninstall(ids) {
-  const names = ids.map(id => {
-    const it = state.shop.items.find(i => i.id === id);
-    return it ? it.name : id;
-  });
-  const preview = names.slice(0, 8).map(n => '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#FEF2F2;border-radius:8px;"><span style="width:5px;height:5px;border-radius:999px;background:#EF4444;"></span><span style="font-size:12px;font-weight:600;color:#1A2332;">' + escapeHtml(n) + '</span></div>').join('');
-  const more = names.length > 8 ? '<div style="font-size:11px;color:#94A3B8;text-align:center;padding:8px;">+' + (names.length - 8) + ' more</div>' : '';
-
-  openModal('Batch Uninstall',
-    '<p class="text-sm text-slate-600 leading-relaxed mb-4">Remove <strong>' + names.length + '</strong> package' + (names.length === 1 ? '' : 's') + ' from the VPS?</p>' +
-    '<div style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;" class="mb-6">' + preview + more + '</div>' +
-    '<div class="flex items-center justify-end gap-2">' +
-      '<button class="modal-cancel btn-ghost px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Cancel</button>' +
-      '<button class="modal-confirm px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer text-white" style="background:linear-gradient(135deg,#EF4444,#B91C1C);">Uninstall All</button>' +
-    '</div>',
-    {
-      onMount(wrap, close) {
-        wrap.querySelector('.modal-cancel').addEventListener('click', close);
-        wrap.querySelector('.modal-confirm').addEventListener('click', () => {
-          close();
-          runBatchUninstall(ids);
-        });
-      }
-    }
-  );
-}
-
-function runBatchUninstall(ids) {
-  ids.forEach(id => state.shop.installing.add(id));
-  renderShopGrid();
-
-  const body =
-    '<div class="flex items-center gap-3 mb-5">' +
-      '<div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center">' +
-        '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
-          '<path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79"/>' +
-        '</svg>' +
-      '</div>' +
-      '<div class="flex-1 min-w-0">' +
-        '<div class="text-sm font-bold text-biz-dark">Batch uninstall · ' + ids.length + ' packages</div>' +
-        '<div class="text-xs text-slate-500" id="batchStatus">Starting…</div>' +
-      '</div>' +
-      '<div id="batchSpinner" class="w-6 h-6 rounded-full border-2 border-slate-200 border-t-biz-blue spin"></div>' +
-    '</div>' +
-    '<div class="mb-3">' +
-      '<div class="flex justify-between text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">' +
-        '<span>Progress</span>' +
-        '<span id="batchProgressText">0 / ' + ids.length + '</span>' +
-      '</div>' +
-      '<div class="h-2 bg-slate-100 rounded-full overflow-hidden">' +
-        '<div id="batchProgressBar" class="h-full rounded-full bg-gradient-to-r from-red-500 to-red-700 transition-all" style="width:0%;"></div>' +
-      '</div>' +
-    '</div>' +
-    '<div id="batchLog" class="console-log" style="min-height:220px;"></div>' +
-    '<div class="flex items-center justify-end gap-2 mt-5">' +
-      '<button id="batchCloseBtn" class="btn-ghost px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Close</button>' +
-    '</div>';
-
-  let es = null;
-
-  openModal('Batch Uninstall', body, {
-    size: 'xl',
-    onClose() { if (es) { try { es.close(); } catch {} es = null; } },
-    onMount(wrap, close) {
-      const logEl = wrap.querySelector('#batchLog');
-      const statusEl = wrap.querySelector('#batchStatus');
-      const spinner = wrap.querySelector('#batchSpinner');
-      const progressBar = wrap.querySelector('#batchProgressBar');
-      const progressText = wrap.querySelector('#batchProgressText');
-      let completed = 0;
-
-      function appendLog(text, cls) {
-        const span = document.createElement('span');
-        if (cls) span.className = cls;
-        span.textContent = text;
-        logEl.appendChild(span);
-        logEl.scrollTop = logEl.scrollHeight;
-      }
-      wrap.querySelector('#batchCloseBtn').addEventListener('click', close);
-
-      fetch('/api/shop/uninstall-batch', {
+      fetch(endpoint, {
         method: 'POST',
         credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ids })
       }).then(res => {
         if (!res.ok) throw new Error('HTTP ' + res.status);
-        const reader = res.body.getReader();
+        const rdr = res.body.getReader();
+        reader = rdr;
         const decoder = new TextDecoder();
         let buffer = '';
+
         function pump() {
-          return reader.read().then(({ done, value }) => {
+          return rdr.read().then(({ done, value }) => {
+            if (aborted) return;
             if (done) {
               spinner.classList.add('hidden');
               ids.forEach(id => state.shop.installing.delete(id));
@@ -3449,37 +3646,43 @@ function runBatchUninstall(ids) {
               if (payload === '[DONE]') continue;
               let msg;
               try { msg = JSON.parse(payload); } catch { continue; }
+
               if (msg.type === 'batch-start') {
-                appendLog('▶ Batch uninstall started · ' + msg.total + ' packages\n\n', 'log-info');
+                appendLog('▶ Batch ' + action + ' started · ' + msg.total + ' packages\n\n', 'log-info');
               } else if (msg.type === 'batch-package-start') {
                 appendLog('\n━━━ [' + msg.index + '/' + msg.total + '] ' + msg.name + ' ━━━\n', 'log-info');
-                statusEl.textContent = 'Removing ' + msg.name + ' (' + msg.index + '/' + msg.total + ')';
+                statusEl.textContent = (isInstall ? 'Installing ' : 'Removing ') + msg.name + ' (' + msg.index + '/' + msg.total + ')';
               } else if (msg.type === 'batch-step') {
                 appendLog('$ ' + msg.command + '\n', 'log-cmd');
-              } else if (msg.type === 'log') {
+              } else if (msg.type === 'log' || (!msg.type && msg.line)) {
                 appendLog(msg.line, msg.err ? 'log-error' : '');
+              } else if (msg.type === 'batch-verify') {
+                appendLog('🔍 Verifying…\n', 'log-info');
               } else if (msg.type === 'batch-package-done') {
-                completed++;
+                completed++; success++;
                 progressBar.style.width = ((completed / ids.length) * 100) + '%';
                 progressText.textContent = completed + ' / ' + ids.length;
-                appendLog('✓ ' + (msg.id || '') + ' removed\n', 'log-success');
+                const v = msg.verified ? ' ✓' + (msg.version ? ' v' + msg.version : '') : '';
+                appendLog('✓ ' + (msg.id || '') + (isInstall ? ' installed' : ' removed') + v + '\n', 'log-success');
                 state.shop.installing.delete(msg.id);
               } else if (msg.type === 'batch-package-error') {
-                completed++;
+                completed++; failed++;
                 progressBar.style.width = ((completed / ids.length) * 100) + '%';
                 progressText.textContent = completed + ' / ' + ids.length;
                 appendLog('✗ ' + (msg.id || '') + ' failed: ' + msg.message + '\n', 'log-error');
                 state.shop.installing.delete(msg.id);
               } else if (msg.type === 'batch-done') {
-                appendLog('\n✓ Batch complete · ' + msg.success + ' ok · ' + msg.fail + ' failed\n', msg.fail > 0 ? 'log-warn' : 'log-success');
-                statusEl.textContent = 'Complete';
+                appendLog('\n━━━━━━━━━━━━━━━━━━━━\n', 'log-dim');
+                appendLog('✓ Batch complete · ' + msg.success + ' succeeded · ' + msg.fail + ' failed\n', msg.fail > 0 ? 'log-warn' : 'log-success');
+                statusEl.textContent = 'Complete · ' + msg.success + ' ok · ' + msg.fail + ' failed';
                 spinner.classList.add('hidden');
-                toast('Batch uninstall complete', msg.fail > 0 ? 'warn' : 'success');
+                toast('Batch ' + action + ' complete', msg.fail > 0 ? 'warn' : 'success');
                 renderShopGrid();
                 renderBatchBar();
                 refreshShopStatus();
               } else if (msg.type === 'batch-error') {
-                appendLog('\n✗ ' + msg.message + '\n', 'log-error');
+                appendLog('\n✗ Batch error: ' + msg.message + '\n', 'log-error');
+                spinner.classList.add('hidden');
               }
             }
             return pump();
@@ -3504,17 +3707,10 @@ function runBatchUninstall(ids) {
 
 function installEssentials() {
   api('/api/shop/essentials').then(r => r.ok ? r.json() : null).then(data => {
-    if (!data || !data.items || data.items.length === 0) {
-      toast('No essential packages found', 'warn');
-      return;
-    }
+    if (!data || !data.items || data.items.length === 0) { toast('No essential packages found', 'warn'); return; }
     const installed = data.items.filter(p => state.shop.status[p.id] && state.shop.status[p.id].installed);
     const pending = data.items.filter(p => !(state.shop.status[p.id] && state.shop.status[p.id].installed));
-
-    if (pending.length === 0) {
-      toast('All ' + data.items.length + ' essential packages are already installed', 'success');
-      return;
-    }
+    if (pending.length === 0) { toast('All ' + data.items.length + ' essential packages are already installed', 'success'); return; }
 
     const list = pending.slice(0, 12).map(p =>
       '<div style="display:flex;align-items:center;gap:10px;padding:9px 11px;background:#F8FAFC;border-radius:8px;">' +
@@ -3528,9 +3724,7 @@ function installEssentials() {
     openModal('Install Essentials',
       '<div class="flex items-center gap-3 mb-5">' +
         '<div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center">' +
-          '<svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
-            '<path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/>' +
-          '</svg>' +
+          '<svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>' +
         '</div>' +
         '<div>' +
           '<div class="text-sm font-bold text-biz-dark">Install ' + pending.length + ' essential packages</div>' +
@@ -3545,29 +3739,537 @@ function installEssentials() {
       {
         onMount(wrap, close) {
           wrap.querySelector('.modal-cancel').addEventListener('click', close);
-          wrap.querySelector('.modal-confirm').addEventListener('click', () => {
-            close();
-            runBatchInstall(pending.map(p => p.id));
-          });
+          wrap.querySelector('.modal-confirm').addEventListener('click', () => { close(); runBatch(pending.map(p => p.id), 'install'); });
         }
       }
     );
   }).catch(() => toast('Failed to load essentials', 'error'));
 }
 
+/* ═══════════════════════════════════════════════════════════════════════
+   CONNECTION — SSHX
+   ═══════════════════════════════════════════════════════════════════════ */
+function renderSshx() {
+  const st = state.sshx;
+  const pill = $('sshxStatusPill');
+  if (pill) {
+    if (!st.installed) { pill.textContent = 'Not installed'; pill.className = 'conn-pill off'; }
+    else if (st.sessions.length > 0) { pill.textContent = st.sessions.length + ' active'; pill.className = 'conn-pill ok'; }
+    else { pill.textContent = 'Ready'; pill.className = 'conn-pill ok'; }
+  }
+  const ni = $('sshxNotInstalled');
+  const ins = $('sshxInstalled');
+  if (ni) ni.classList.toggle('hidden', st.installed);
+  if (ins) ins.classList.toggle('hidden', !st.installed);
+
+  const navBadge = $('navConnBadge');
+  if (navBadge) {
+    const count = (st.installed && st.sessions.length > 0 ? st.sessions.length : 0) + (state.tailscale.ip ? 1 : 0);
+    if (count > 0) { navBadge.textContent = count; navBadge.classList.remove('hidden'); }
+    else navBadge.classList.add('hidden');
+  }
+
+  const list = $('sshxSessions');
+  const cnt = $('sshxSessionCount');
+  if (cnt) cnt.textContent = st.sessions.length ? '(' + st.sessions.length + ')' : '';
+  if (!list) return;
+  if (!st.sessions.length) {
+    list.innerHTML = '<p class="text-xs text-slate-400 italic py-3 text-center">No active sessions.</p>';
+    return;
+  }
+  list.innerHTML = '';
+  st.sessions.forEach(s => {
+    const row = document.createElement('div');
+    row.className = 'conn-row';
+    row.innerHTML =
+      '<span style="width:8px;height:8px;border-radius:999px;background:#22C55E;box-shadow:0 0 8px rgba(34,197,94,0.7);flex-shrink:0;"></span>' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div style="font-size:12px;font-weight:700;color:#1A2332;margin-bottom:2px;">' + escapeHtml(s.name) + '</div>' +
+        (s.url ? '<a class="conn-url" href="' + escapeHtml(s.url) + '" target="_blank" rel="noopener">' + escapeHtml(s.url) + '</a>' : '<div style="font-size:11px;color:#94A3B8;font-style:italic;">Starting…</div>') +
+      '</div>' +
+      '<div style="display:flex;gap:4px;flex-shrink:0;">' +
+        (s.url ? '<button class="file-action" data-copy="' + escapeHtml(s.url) + '" title="Copy URL"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3"/></svg></button>' : '') +
+        '<button class="file-action danger" data-stop="' + escapeHtml(s.id) + '" title="Stop"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>' +
+      '</div>';
+    const copyBtn = row.querySelector('[data-copy]');
+    if (copyBtn) copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(copyBtn.dataset.copy).then(() => toast('URL copied', 'success', 1500)).catch(() => {});
+    });
+    const stopBtn = row.querySelector('[data-stop]');
+    if (stopBtn) stopBtn.addEventListener('click', () => stopSshx(stopBtn.dataset.stop));
+    list.appendChild(row);
+  });
+}
+
+async function loadSshxStatus() {
+  try {
+    const r = await api('/api/sshx/status');
+    if (!r.ok) return;
+    const data = await r.json();
+    state.sshx = { installed: !!data.installed, sessions: data.sessions || [], version: data.version };
+    renderSshx();
+  } catch {}
+}
+
+function installSshx() {
+  const body =
+    '<div class="flex items-center gap-3 mb-5">' +
+      '<div class="w-12 h-12 rounded-xl bg-biz-blue/10 flex items-center justify-center"><svg class="w-6 h-6 text-biz-blue" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg></div>' +
+      '<div><div class="text-sm font-bold text-biz-dark">Installing sshx</div><div class="text-xs text-slate-500" id="sshxInstallStatus">Starting…</div></div>' +
+      '<div id="sshxInstallSpinner" class="w-6 h-6 rounded-full border-2 border-slate-200 border-t-biz-blue spin ml-auto"></div>' +
+    '</div>' +
+    '<div class="mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">Log</div>' +
+    '<div id="sshxInstallLog" class="console-log" style="min-height:200px;"></div>' +
+    '<div class="flex items-center justify-end mt-5"><button class="btn-ghost px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer" id="sshxInstallClose">Close</button></div>';
+
+  let es = null;
+  openModal('Install sshx', body, {
+    size: 'lg',
+    onClose() { if (es) { try { es.close(); } catch {} es = null; } },
+    onMount(wrap, close) {
+      const logEl = wrap.querySelector('#sshxInstallLog');
+      const statusEl = wrap.querySelector('#sshxInstallStatus');
+      const spinner = wrap.querySelector('#sshxInstallSpinner');
+      function append(text, cls) {
+        const s = document.createElement('span');
+        if (cls) s.className = cls;
+        s.textContent = text;
+        logEl.appendChild(s);
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+      wrap.querySelector('#sshxInstallClose').addEventListener('click', close);
+      try { es = new EventSource('/api/sshx/install'); }
+      catch (err) { append('Cannot open stream: ' + err.message + '\n', 'log-error'); return; }
+      es.addEventListener('message', ev => {
+        if (ev.data === '[DONE]') { if (es) { es.close(); es = null; } return; }
+        let msg;
+        try { msg = JSON.parse(ev.data); } catch { return; }
+        if (msg.type === 'start') { append('▶ Install sshx\n', 'log-info'); statusEl.textContent = 'Downloading…'; }
+        else if (msg.type === 'step') { append('\n$ ' + msg.command + '\n', 'log-cmd'); }
+        else if (msg.type === 'log') { append(msg.line, msg.err ? 'log-error' : ''); }
+        else if (msg.type === 'done') {
+          append('\n✓ Installed successfully\n', 'log-success');
+          statusEl.textContent = 'Installed';
+          spinner.classList.add('hidden');
+          toast('sshx installed', 'success');
+          loadSshxStatus();
+        } else if (msg.type === 'error') {
+          append('\n✗ ' + msg.message + '\n', 'log-error');
+          statusEl.textContent = 'Failed';
+          spinner.classList.add('hidden');
+        }
+      });
+      es.addEventListener('error', () => {
+        if (es && es.readyState === EventSource.CLOSED) {
+          spinner.classList.add('hidden');
+          loadSshxStatus();
+        }
+      });
+    }
+  });
+}
+
+async function startSshx() {
+  const input = $('sshxNameInput');
+  const name = input ? input.value.trim() : '';
+  const btn = document.activeElement;
+  if (btn) btn.disabled = true;
+  toast('Starting sshx session…', 'info', 1800);
+  try {
+    const body = { name };
+    if (state.activeWorkspace && state.activeWorkspace !== 'default') body.ws = state.activeWorkspace;
+    const r = await api('/api/sshx/start', { method: 'POST', body });
+    const data = await r.json().catch(() => ({}));
+    if (r.ok && data.session) {
+      toast('Session started', 'success');
+      if (input) input.value = '';
+      await loadSshxStatus();
+    } else {
+      toast(data.error || 'Failed to start', 'error', 6000);
+    }
+  } catch (err) {
+    toast('Failed to start: ' + err.message, 'error', 6000);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+async function stopSshx(id) {
+  try {
+    const r = await api('/api/sshx/stop/' + encodeURIComponent(id), { method: 'POST' });
+    if (r.ok) { toast('Session stopped', 'warn'); await loadSshxStatus(); }
+    else toast('Stop failed', 'error');
+  } catch { toast('Stop failed', 'error'); }
+}
+
+function stopAllSshx() {
+  openConfirm('Stop all SSHX', 'Stop all SSHX sessions immediately? Remote clients will be disconnected.', 'Stop All', async () => {
+    try {
+      const r = await api('/api/sshx/stop-all', { method: 'POST' });
+      if (r.ok) { toast('All sessions stopped', 'warn'); await loadSshxStatus(); }
+      else toast('Failed', 'error');
+    } catch { toast('Failed', 'error'); }
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CONNECTION — TAILSCALE
+   ═══════════════════════════════════════════════════════════════════════ */
+function renderTailscale() {
+  const st = state.tailscale;
+  const pill = $('tsStatusPill');
+  if (pill) {
+    if (!st.installed) { pill.textContent = 'Not installed'; pill.className = 'conn-pill off'; }
+    else if (!st.running) { pill.textContent = 'Daemon stopped'; pill.className = 'conn-pill warn'; }
+    else if (st.backend === 'Running') { pill.textContent = 'Connected'; pill.className = 'conn-pill ok'; }
+    else { pill.textContent = 'Login required'; pill.className = 'conn-pill warn'; }
+  }
+
+  const ni = $('tsNotInstalled');
+  const ins = $('tsInstalled');
+  if (ni) ni.classList.toggle('hidden', st.installed);
+  if (ins) ins.classList.toggle('hidden', !st.installed);
+  if (!st.installed) return;
+
+  const dot = $('tsDaemonDot');
+  const txt = $('tsDaemonText');
+  const toggle = $('tsDaemonToggle');
+  if (dot && txt && toggle) {
+    if (st.running) {
+      dot.style.background = '#22C55E';
+      dot.style.boxShadow = '0 0 8px rgba(34,197,94,0.7)';
+      txt.textContent = 'tailscaled running';
+      txt.style.color = '#15803D';
+      toggle.textContent = 'Stop';
+    } else {
+      dot.style.background = '#94A3B8';
+      dot.style.boxShadow = '';
+      txt.textContent = 'tailscaled stopped';
+      txt.style.color = '#64748B';
+      toggle.textContent = 'Start';
+    }
+  }
+
+  const connected = st.backend === 'Running';
+  const loginRequired = st.running && !connected;
+
+  const ce = $('tsConnected');
+  const le = $('tsLoginRequired');
+  if (ce) ce.classList.toggle('hidden', !connected);
+  if (le) le.classList.toggle('hidden', !loginRequired);
+
+  if (connected) {
+    if ($('tsHostname')) $('tsHostname').textContent = st.hostname || '—';
+    if ($('tsIp')) $('tsIp').textContent = st.ip || '—';
+  }
+}
+
+async function loadTailscaleStatus() {
+  try {
+    const r = await api('/api/tailscale/status');
+    if (!r.ok) return;
+    const data = await r.json();
+    state.tailscale = {
+      installed: !!data.installed,
+      running: !!data.running,
+      ip: data.ip || null,
+      hostname: data.hostname || null,
+      backend: data.backend || 'unknown',
+      loginRequired: !!data.loginRequired
+    };
+    renderTailscale();
+    renderSshx();
+  } catch {}
+}
+
+function installTailscale() {
+  const body =
+    '<div class="flex items-center gap-3 mb-5">' +
+      '<div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center"><svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg></div>' +
+      '<div><div class="text-sm font-bold text-biz-dark">Installing Tailscale</div><div class="text-xs text-slate-500" id="tsInstallStatus">Starting…</div></div>' +
+      '<div id="tsInstallSpinner" class="w-6 h-6 rounded-full border-2 border-slate-200 border-t-slate-700 spin ml-auto"></div>' +
+    '</div>' +
+    '<div class="mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">Log</div>' +
+    '<div id="tsInstallLog" class="console-log" style="min-height:200px;"></div>' +
+    '<div class="flex items-center justify-end mt-5"><button class="btn-ghost px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer" id="tsInstallClose">Close</button></div>';
+
+  let es = null;
+  openModal('Install Tailscale', body, {
+    size: 'lg',
+    onClose() { if (es) { try { es.close(); } catch {} es = null; } },
+    onMount(wrap, close) {
+      const logEl = wrap.querySelector('#tsInstallLog');
+      const statusEl = wrap.querySelector('#tsInstallStatus');
+      const spinner = wrap.querySelector('#tsInstallSpinner');
+      function append(text, cls) {
+        const s = document.createElement('span');
+        if (cls) s.className = cls;
+        s.textContent = text;
+        logEl.appendChild(s);
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+      wrap.querySelector('#tsInstallClose').addEventListener('click', close);
+      try { es = new EventSource('/api/tailscale/install'); }
+      catch (err) { append('Cannot open stream: ' + err.message + '\n', 'log-error'); return; }
+      es.addEventListener('message', ev => {
+        if (ev.data === '[DONE]') { if (es) { es.close(); es = null; } return; }
+        let msg;
+        try { msg = JSON.parse(ev.data); } catch { return; }
+        if (msg.type === 'start') { append('▶ Install Tailscale\n', 'log-info'); statusEl.textContent = 'Adding repo…'; }
+        else if (msg.type === 'step') { append('\n$ ' + msg.command + '\n', 'log-cmd'); }
+        else if (msg.type === 'log') { append(msg.line, msg.err ? 'log-error' : ''); }
+        else if (msg.type === 'done') {
+          append('\n✓ Installed successfully\n', 'log-success');
+          statusEl.textContent = 'Installed';
+          spinner.classList.add('hidden');
+          toast('Tailscale installed', 'success');
+          loadTailscaleStatus();
+        } else if (msg.type === 'error') {
+          append('\n✗ ' + msg.message + '\n', 'log-error');
+          statusEl.textContent = 'Failed';
+          spinner.classList.add('hidden');
+        }
+      });
+      es.addEventListener('error', () => {
+        if (es && es.readyState === EventSource.CLOSED) {
+          spinner.classList.add('hidden');
+          loadTailscaleStatus();
+        }
+      });
+    }
+  });
+}
+
+async function toggleTailscaled() {
+  const running = state.tailscale.running;
+  try {
+    const r = await api(running ? '/api/tailscale/stop-daemon' : '/api/tailscale/start-daemon', { method: 'POST' });
+    if (r.ok) {
+      toast(running ? 'Daemon stopped' : 'Daemon started', 'success');
+      setTimeout(loadTailscaleStatus, 1500);
+    } else {
+      const d = await r.json().catch(() => ({}));
+      toast(d.error || 'Action failed', 'error');
+    }
+  } catch { toast('Action failed', 'error'); }
+}
+
+function setTsTab(tab) {
+  state.tsTab = tab;
+  const t1 = $('tsTabAuthkey'), t2 = $('tsTabInteractive');
+  const p1 = $('tsPanelAuthkey'), p2 = $('tsPanelInteractive');
+  if (!t1 || !t2 || !p1 || !p2) return;
+  if (tab === 'authkey') {
+    t1.className = 'flex-1 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer bg-white shadow-sm text-biz-blue';
+    t2.className = 'flex-1 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer text-slate-500';
+    p1.classList.remove('hidden');
+    p2.classList.add('hidden');
+  } else {
+    t2.className = 'flex-1 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer bg-white shadow-sm text-biz-blue';
+    t1.className = 'flex-1 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer text-slate-500';
+    p2.classList.remove('hidden');
+    p1.classList.add('hidden');
+  }
+}
+
+async function tsLoginAuthkey() {
+  const authkey = $('tsAuthkeyInput').value.trim();
+  const hostname = $('tsHostnameInput').value.trim();
+  const exitNode = $('tsExitNodeChk').checked;
+  if (!authkey) { toast('Enter an auth key', 'error'); return; }
+  toast('Connecting…', 'info');
+  try {
+    const r = await api('/api/tailscale/login-authkey', { method: 'POST', body: { authkey, hostname, advertiseExitNode: exitNode } });
+    const d = await r.json().catch(() => ({}));
+    if (r.ok) { toast('Connected to tailnet', 'success'); $('tsAuthkeyInput').value = ''; setTimeout(loadTailscaleStatus, 1500); }
+    else toast(d.error || 'Login failed', 'error', 7000);
+  } catch { toast('Login failed', 'error'); }
+}
+
+async function tsLoginInteractive() {
+  const hostname = $('tsInteractiveHostname').value.trim();
+  const exitNode = $('tsInteractiveExitNode').checked;
+  const btn = document.activeElement;
+  if (btn) btn.disabled = true;
+  toast('Generating login URL…', 'info');
+  try {
+    const r = await api('/api/tailscale/login-interactive', { method: 'POST', body: { hostname, advertiseExitNode: exitNode } });
+    const d = await r.json().catch(() => ({}));
+    if (r.ok && d.url) {
+      const body =
+        '<p class="text-sm text-slate-600 leading-relaxed mb-4">Open this URL in your browser to authenticate this device:</p>' +
+        '<div class="p-4 rounded-xl bg-biz-blue/8 border border-biz-blue/20 mb-4">' +
+          '<a href="' + escapeHtml(d.url) + '" target="_blank" rel="noopener" class="text-biz-blue font-mono text-sm break-all hover:underline">' + escapeHtml(d.url) + '</a>' +
+        '</div>' +
+        '<p class="text-xs text-slate-500 mb-5">After logging in, click Refresh Status below.</p>' +
+        '<div class="flex items-center justify-end gap-2">' +
+          '<button id="tsCopyUrl" class="btn-ghost px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Copy URL</button>' +
+          '<button id="tsRefreshUrl" class="btn-primary px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Refresh Status</button>' +
+        '</div>';
+      openModal('Tailscale Login', body, {
+        onMount(w, cl) {
+          w.querySelector('#tsCopyUrl').addEventListener('click', () => {
+            navigator.clipboard.writeText(d.url).then(() => toast('URL copied', 'success', 1500)).catch(() => {});
+          });
+          w.querySelector('#tsRefreshUrl').addEventListener('click', () => { cl(); setTimeout(loadTailscaleStatus, 1500); });
+        }
+      });
+    } else {
+      toast(d.error || 'Failed to generate URL', 'error', 7000);
+    }
+  } catch { toast('Failed', 'error'); }
+  finally { if (btn) btn.disabled = false; }
+}
+
+function tsAction(action) {
+  const labels = { down: 'Disconnect from tailnet?', logout: 'Logout from tailnet? You will need to re-authenticate.' };
+  openConfirm('Tailscale', labels[action] || 'Continue?', 'Confirm', async () => {
+    try {
+      const r = await api('/api/tailscale/' + action, { method: 'POST' });
+      if (r.ok) { toast('Done', 'success'); setTimeout(loadTailscaleStatus, 1000); }
+      else { const d = await r.json().catch(() => ({})); toast(d.error || 'Failed', 'error'); }
+    } catch { toast('Failed', 'error'); }
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SETTINGS
+   ═══════════════════════════════════════════════════════════════════════ */
+async function loadSystemInfo() {
+  try {
+    const r = await api('/api/system/info');
+    if (!r.ok) return;
+    const d = await r.json();
+    state.system.isRoot = !!d.isRoot;
+    state.system.whoami = d.user || 'unknown';
+
+    const el = $('sysInfoList');
+    if (el) {
+      const rows = [
+        ['Current user', d.user || '—'],
+        ['UID', String(d.uid != null ? d.uid : '—')],
+        ['Root', d.isRoot ? 'Yes' : 'No'],
+        ['Hostname', d.hostname || '—'],
+        ['SSH daemon', d.sshd && d.sshd.running ? 'Running' : 'Not running'],
+        ['Node', d.version && d.version.node ? d.version.node : '—'],
+        ['Platform', d.version ? (d.version.platform + '/' + d.version.arch) : '—']
+      ];
+      el.innerHTML = rows.map(rr =>
+        '<div style="display:flex;justify-content:space-between;gap:12px;">' +
+          '<span style="color:#94A3B8;font-weight:600;">' + escapeHtml(rr[0]) + '</span>' +
+          '<span style="font-family:monospace;font-weight:700;color:#1A2332;text-align:right;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(rr[1]) + '</span>' +
+        '</div>'
+      ).join('');
+    }
+  } catch {}
+}
+
+async function loadSystemUsers() {
+  try {
+    const r = await api('/api/system/users');
+    if (!r.ok) return;
+    const d = await r.json();
+    state.system.users = d.users || [];
+    state.system.currentUser = d.currentUser || '';
+    state.system.isRoot = !!d.isRoot;
+    state.system.whoami = d.whoami || 'unknown';
+
+    const sel = $('pwUserSelect');
+    if (!sel) return;
+    const eligible = state.system.users.filter(u => u.canChangePassword);
+    eligible.sort((a, b) => {
+      if (a.isRoot) return -1;
+      if (b.isRoot) return 1;
+      if (a.isCurrent) return -1;
+      if (b.isCurrent) return 1;
+      return a.uid - b.uid;
+    });
+    sel.innerHTML = '';
+    eligible.forEach(u => {
+      const opt = document.createElement('option');
+      opt.value = u.name;
+      let label = u.name + ' (uid ' + u.uid + ')';
+      if (u.isRoot) label += ' · root';
+      if (u.isCurrent) label += ' · you';
+      opt.textContent = label;
+      sel.appendChild(opt);
+    });
+  } catch {}
+}
+
+function pwStrength(pw) {
+  let score = 0;
+  if (pw.length >= 6) score++;
+  if (pw.length >= 10) score++;
+  if (pw.length >= 14) score++;
+  if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score++;
+  if (/\d/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  if (score <= 2) return { level: 'weak', text: 'Weak', color: '#EF4444' };
+  if (score <= 4) return { level: 'medium', text: 'Medium', color: '#F59E0B' };
+  return { level: 'strong', text: 'Strong', color: '#22C55E' };
+}
+
+const pwNewInput = $('pwNewInput');
+if (pwNewInput) {
+  pwNewInput.addEventListener('input', () => {
+    const el = $('pwStrength');
+    if (!el) return;
+    const pw = pwNewInput.value;
+    if (!pw) { el.classList.add('hidden'); return; }
+    const s = pwStrength(pw);
+    el.classList.remove('hidden');
+    el.innerHTML =
+      '<div class="flex items-center gap-2">' +
+        '<div style="flex:1;height:4px;background:#E2E8F0;border-radius:2px;overflow:hidden;">' +
+          '<div style="width:' + (s.level === 'weak' ? '33' : s.level === 'medium' ? '66' : '100') + '%;height:100%;background:' + s.color + ';transition:all .3s;"></div>' +
+        '</div>' +
+        '<span style="font-size:10px;font-weight:800;color:' + s.color + ';text-transform:uppercase;letter-spacing:0.06em;">' + s.text + '</span>' +
+      '</div>';
+  });
+}
+
+async function changePassword() {
+  const username = $('pwUserSelect').value;
+  const password = $('pwNewInput').value;
+  const confirm = $('pwConfirmInput').value;
+  if (!username) { toast('Select a user', 'error'); return; }
+  if (!password || password.length < 6) { toast('Password must be ≥ 6 characters', 'error'); return; }
+  if (password !== confirm) { toast('Passwords do not match', 'error'); return; }
+
+  const btn = $('pwSubmitBtn');
+  if (btn) btn.disabled = true;
+  try {
+    const r = await api('/api/system/password', { method: 'POST', body: { username, password, confirm } });
+    const d = await r.json().catch(() => ({}));
+    if (r.ok) {
+      toast('Password changed for ' + username, 'success');
+      $('pwNewInput').value = '';
+      $('pwConfirmInput').value = '';
+      $('pwStrength').classList.add('hidden');
+    } else {
+      toast(d.error || 'Change failed', 'error', 6000);
+    }
+  } catch { toast('Change failed', 'error'); }
+  finally { if (btn) btn.disabled = false; }
+}
+
+/* COMMAND PALETTE */
 function openCommandPalette() {
   const commands = [
     { label: 'Go to Overview', hint: 'Ctrl+1', icon: 'M3 12l9-9 9 9M5 10v10h14V10', action: () => location.href = '/dashboard' },
     { label: 'Go to Terminal', hint: 'Ctrl+2', icon: 'M6 9l3 3-3 3M13 15h5', action: () => location.href = '/terminal' },
-    { label: 'Go to Code Editor', hint: 'Ctrl+3', icon: 'M8 6l-5 6 5 6M16 6l5 6-5 6', action: () => location.href = '/code' },
+    { label: 'Go to Codespace', hint: 'Ctrl+3', icon: 'M8 6l-5 6 5 6M16 6l5 6-5 6', action: () => location.href = '/code' },
     { label: 'Go to Metrics', hint: 'Ctrl+4', icon: 'M4 20V10M10 20V4M16 20v-8M22 20V8', action: () => location.href = '/metrics' },
     { label: 'Go to App Shop', hint: 'Ctrl+5', icon: 'M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6z', action: () => location.href = '/shop' },
+    { label: 'Go to Connection', hint: 'Ctrl+6', icon: 'M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757', action: () => location.href = '/connection' },
+    { label: 'Go to Settings', hint: 'Ctrl+7', icon: 'M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.732c.062.305.29.542.586.624.295.081.612.024.842-.153l.586-.452a1.125 1.125 0 011.415.059l.774.774c.4.4.428 1.036.059 1.415l-.452.586c-.177.23-.234.547-.153.842.082.296.319.524.624.586l.732.149c.542.09.94.56.94 1.11v1.093c0 .55-.398 1.02-.94 1.11l-.732.149c-.305.062-.542.29-.624.586-.081.295-.024.612.153.842l.452.586c.369.379.341 1.015-.059 1.415l-.774.774a1.125 1.125 0 01-1.415.059l-.586-.452c-.23-.177-.547-.234-.842-.153-.296.082-.524.319-.586.624l-.149.732c-.09.542-.56.94-1.11.94h-1.093c-.55 0-1.02-.398-1.11-.94l-.149-.732c-.062-.305-.29-.542-.586-.624-.295-.081-.612-.024-.842.153l-.586.452a1.125 1.125 0 01-1.415-.059l-.774-.774a1.125 1.125 0 01-.059-1.415l.452-.586c.177-.23.234-.547.153-.842-.082-.296-.319-.524-.624-.586l-.732-.149c-.542-.09-.94-.56-.94-1.11v-1.093c0-.55.398-1.02.94-1.11l.732-.149c.305-.062.542-.29.624-.586.081-.295.024-.612-.153-.842l-.452-.586a1.125 1.125 0 01.059-1.415l.774-.774c.4-.4 1.036-.428 1.415-.059l.586.452c.23.177.547.234.842.153.296-.082.524-.319.586-.624l.149-.732z', action: () => location.href = '/setting' },
     { label: 'New Terminal Tab', hint: 'Ctrl+Shift+T', icon: 'M12 5v14M5 12h14', action: () => { location.href = '/terminal'; setTimeout(() => createTerminalTab(), 500); } },
     { label: 'New File', hint: '', icon: 'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z', action: () => { location.href = '/code'; setTimeout(() => newFile(), 500); } },
     { label: 'Save Current File', hint: 'Ctrl+S', icon: 'M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z', action: saveCurrentFile },
     { label: 'Refresh Files', hint: '', icon: 'M4 4v6h6M20 20v-6h-6M20 9A9 9 0 005 5.3L4 6M4 15a9 9 0 0015 3.7l1-1', action: refreshFiles },
-    { label: 'Refresh Shop Status', hint: '', icon: 'M4 4v6h6', action: refreshShopStatus },
     { label: 'Install Essentials', hint: '', icon: 'M12 3l2.1 5.1 5.5.4-4.2 3.6 1.3 5.4-4.7-2.9-4.7 2.9 1.3-5.4-4.2-3.6 5.5-.4L12 3z', action: installEssentials },
+    { label: 'Manage Workspaces', hint: '', icon: 'M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15', action: openWorkspacePanel },
     { label: 'Show Keyboard Shortcuts', hint: 'Ctrl+/', icon: 'M9 9h.01M15 9h.01M9 15h6', action: showShortcuts },
     { label: 'Sign Out', hint: '', icon: 'M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9', action: logoutConfirm }
   ];
@@ -3577,13 +4279,11 @@ function openCommandPalette() {
   wrap.innerHTML =
     '<div class="cmdk-card">' +
       '<div class="cmdk-input-wrap">' +
-        '<svg class="w-5 h-5 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
-          '<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>' +
-        '</svg>' +
+        '<svg class="w-5 h-5 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>' +
         '<input id="cmdkInput" class="cmdk-input" placeholder="Type a command or search…" autocomplete="off" />' +
         '<kbd>Esc</kbd>' +
       '</div>' +
-      '<div id="cmdkList" class="py-2" style="max-height: 400px; overflow-y: auto;"></div>' +
+      '<div id="cmdkList" class="py-2" style="max-height:400px;overflow-y:auto;"></div>' +
     '</div>';
   document.body.appendChild(wrap);
 
@@ -3594,62 +4294,34 @@ function openCommandPalette() {
 
   function renderList() {
     list.innerHTML = '';
-    if (filtered.length === 0) {
-      list.innerHTML = '<div style="padding:24px;text-align:center;font-size:12px;color:#94A3B8;">No commands match.</div>';
-      return;
-    }
+    if (filtered.length === 0) { list.innerHTML = '<div style="padding:24px;text-align:center;font-size:12px;color:#94A3B8;">No commands match.</div>'; return; }
     filtered.forEach((cmd, i) => {
       const item = document.createElement('div');
       item.className = 'cmdk-item' + (i === selected ? ' selected' : '');
-      item.innerHTML =
-        '<div class="cmdk-icon">' +
-          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
-            '<path stroke-linecap="round" stroke-linejoin="round" d="' + cmd.icon + '"/>' +
-          '</svg>' +
-        '</div>' +
+      item.innerHTML = '<div class="cmdk-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="' + cmd.icon + '"/></svg></div>' +
         '<div class="cmdk-label">' + escapeHtml(cmd.label) + '</div>' +
         (cmd.hint ? '<div class="cmdk-hint">' + escapeHtml(cmd.hint) + '</div>' : '');
       item.addEventListener('click', () => { close(); try { cmd.action(); } catch {} });
       list.appendChild(item);
     });
   }
-
   function close() {
     wrap.style.opacity = '0';
     wrap.style.transition = 'opacity .16s';
     setTimeout(() => wrap.remove(), 160);
     document.removeEventListener('keydown', keyHandler);
   }
-
   function keyHandler(e) {
     if (e.key === 'Escape') { e.preventDefault(); close(); return; }
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      selected = Math.min(selected + 1, filtered.length - 1);
-      renderList();
-      const sel = list.querySelector('.cmdk-item.selected');
-      if (sel) sel.scrollIntoView({ block: 'nearest' });
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      selected = Math.max(selected - 1, 0);
-      renderList();
-      const sel = list.querySelector('.cmdk-item.selected');
-      if (sel) sel.scrollIntoView({ block: 'nearest' });
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      const cmd = filtered[selected];
-      if (cmd) { close(); try { cmd.action(); } catch {} }
-    }
+    if (e.key === 'ArrowDown') { e.preventDefault(); selected = Math.min(selected + 1, filtered.length - 1); renderList(); const s = list.querySelector('.cmdk-item.selected'); if (s) s.scrollIntoView({ block: 'nearest' }); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); selected = Math.max(selected - 1, 0); renderList(); const s = list.querySelector('.cmdk-item.selected'); if (s) s.scrollIntoView({ block: 'nearest' }); }
+    else if (e.key === 'Enter') { e.preventDefault(); const cmd = filtered[selected]; if (cmd) { close(); try { cmd.action(); } catch {} } }
   }
-
   input.addEventListener('input', () => {
     const q = input.value.toLowerCase().trim();
-    if (!q) filtered = commands.slice();
-    else filtered = commands.filter(c => c.label.toLowerCase().indexOf(q) !== -1);
-    selected = 0;
-    renderList();
+    filtered = !q ? commands.slice() : commands.filter(c => c.label.toLowerCase().indexOf(q) !== -1);
+    selected = 0; renderList();
   });
-
   wrap.addEventListener('click', e => { if (e.target === wrap) close(); });
   document.addEventListener('keydown', keyHandler);
   renderList();
@@ -3659,16 +4331,16 @@ function openCommandPalette() {
 function showShortcuts() {
   const groups = [
     { name: 'Navigation', items: [
-      ['Ctrl + 1..5', 'Switch main view'],
+      ['Ctrl + 1..7', 'Switch main view'],
       ['Ctrl + K', 'Command palette'],
       ['Ctrl + /', 'Show shortcuts']
     ]},
     { name: 'Terminal', items: [
       ['Ctrl + Shift + T', 'New terminal tab'],
       ['Ctrl + Shift + W', 'Close active tab'],
-      ['Ctrl + K', 'Clear terminal (in terminal view)']
+      ['Ctrl + K', 'Clear terminal']
     ]},
-    { name: 'Code Editor', items: [
+    { name: 'Codespace', items: [
       ['Ctrl + S', 'Save current file'],
       ['Ctrl + Enter', 'Save & run file'],
       ['Ctrl + W', 'Close editor tab'],
@@ -3679,51 +4351,27 @@ function showShortcuts() {
       ['Install Essentials', 'One-click install all essential']
     ]}
   ];
-
   const body = groups.map(g =>
     '<div class="mb-5">' +
       '<div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">' + g.name + '</div>' +
       '<div class="space-y-2">' +
         g.items.map(([keys, label]) =>
-          '<div class="flex items-center justify-between text-xs">' +
-            '<span class="text-slate-600">' + escapeHtml(label) + '</span>' +
-            '<span class="font-mono text-[10px] font-bold text-biz-blue">' + escapeHtml(keys) + '</span>' +
-          '</div>'
+          '<div class="flex items-center justify-between text-xs"><span class="text-slate-600">' + escapeHtml(label) + '</span><span class="font-mono text-[10px] font-bold text-biz-blue">' + escapeHtml(keys) + '</span></div>'
         ).join('') +
       '</div>' +
     '</div>'
   ).join('');
-
   openModal('Keyboard Shortcuts', body);
 }
 
 function logoutConfirm() {
-  openModal('Sign Out',
-    '<p class="text-sm text-slate-600 leading-relaxed mb-6">Sign out and clear session cookie?</p>' +
-    '<div class="flex items-center justify-end gap-2">' +
-      '<button class="modal-cancel btn-ghost px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">Cancel</button>' +
-      '<button class="modal-confirm px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer text-white" style="background:linear-gradient(135deg,#EF4444,#B91C1C);">Sign Out</button>' +
-    '</div>',
-    {
-      onMount(wrap, close) {
-        wrap.querySelector('.modal-cancel').addEventListener('click', close);
-        wrap.querySelector('.modal-confirm').addEventListener('click', () => {
-          close();
-          $('logoutBtn').click();
-        });
-      }
-    }
-  );
+  openConfirm('Sign Out', 'Sign out and clear session cookie?', 'Sign Out', () => $('logoutBtn').click());
 }
 
+/* EVENT BINDINGS */
 if ($('cmdkBtn')) $('cmdkBtn').addEventListener('click', openCommandPalette);
 
-if ($('fileSearch')) {
-  $('fileSearch').addEventListener('input', e => {
-    state.fileSearch = e.target.value;
-    renderFileExplorer();
-  });
-}
+if ($('fileSearch')) $('fileSearch').addEventListener('input', e => { state.fileSearch = e.target.value; renderFileExplorer(); });
 
 document.querySelectorAll('#langFilters button').forEach(b => {
   b.addEventListener('click', () => {
@@ -3734,23 +4382,14 @@ document.querySelectorAll('#langFilters button').forEach(b => {
   });
 });
 
-if ($('shopSearch')) {
-  $('shopSearch').addEventListener('input', debounce(e => {
-    state.shop.search = e.target.value.trim();
-    loadShopCatalog();
-  }, 320));
-}
-
-if ($('shopSort')) {
-  $('shopSort').addEventListener('change', e => {
-    state.shop.sort = e.target.value;
-    loadShopCatalog();
-  });
-}
+if ($('shopSearch')) $('shopSearch').addEventListener('input', debounce(e => { state.shop.search = e.target.value.trim(); loadShopCatalog(); }, 320));
+if ($('shopSort')) $('shopSort').addEventListener('change', e => { state.shop.sort = e.target.value; loadShopCatalog(); });
 
 document.addEventListener('keydown', e => {
   const isMac = navigator.platform.toLowerCase().indexOf('mac') !== -1;
   const mod = isMac ? e.metaKey : e.ctrlKey;
+  const tag = (e.target && e.target.tagName) || '';
+  const inInput = tag === 'INPUT' || tag === 'TEXTAREA' || (e.target && e.target.isContentEditable);
 
   if (mod && e.shiftKey && e.key.toLowerCase() === 't') {
     e.preventDefault();
@@ -3762,7 +4401,7 @@ document.addEventListener('keydown', e => {
     if (ROUTE === '/terminal' && state.activeSid) { e.preventDefault(); closeTerminalTab(state.activeSid); }
     return;
   }
-  if (mod && !e.shiftKey && e.key.toLowerCase() === 'k' && ROUTE !== '/terminal') {
+  if (mod && !e.shiftKey && e.key.toLowerCase() === 'k' && ROUTE !== '/terminal' && !inInput) {
     e.preventDefault();
     openCommandPalette();
     return;
@@ -3784,17 +4423,16 @@ document.addEventListener('keydown', e => {
     if (ROUTE === '/code' && state.activeEditorTab) { e.preventDefault(); closeEditorTab(state.activeEditorTab); }
     return;
   }
-  if (mod && !e.shiftKey && ['1','2','3','4','5'].indexOf(e.key) !== -1) {
+  if (mod && !e.shiftKey && ['1','2','3','4','5','6','7'].indexOf(e.key) !== -1) {
     e.preventDefault();
-    const routes = ['/dashboard', '/terminal', '/code', '/metrics', '/shop'];
+    const routes = ['/dashboard', '/terminal', '/code', '/metrics', '/shop', '/connection', '/setting'];
     location.href = routes[parseInt(e.key, 10) - 1];
     return;
   }
 });
 
 window.addEventListener('beforeunload', e => {
-  const anyDirty = state.editorTabs.some(t => t.dirty);
-  if (anyDirty) { e.preventDefault(); e.returnValue = ''; }
+  if (state.editorTabs.some(t => t.dirty)) { e.preventDefault(); e.returnValue = ''; }
 });
 
 let resizeTimer = null;
@@ -3807,6 +4445,7 @@ window.addEventListener('resize', () => {
   }, 140);
 });
 
+/* BOOT */
 async function bootRoute() {
   const viewId = VIEW_MAP[ROUTE] || 'view-dashboard';
   Object.keys(VIEW_MAP).forEach(r => {
@@ -3814,15 +4453,28 @@ async function bootRoute() {
     if (el) el.hidden = VIEW_MAP[r] !== viewId;
   });
 
+  updateWorkspaceLabels();
+  await loadWorkspaces();
   initCharts();
   loadDrafts();
 
-  try { await refreshFiles(); } catch (e) { console.warn('refreshFiles failed', e); }
+  try { await refreshFiles(); } catch {}
   refreshSessions();
 
   if (ROUTE === '/shop') {
-    try { await loadShopCatalog(); } catch (e) {}
+    try { await loadShopCatalog(); } catch {}
     refreshShopStatus();
+  }
+
+  if (ROUTE === '/connection') {
+    await loadSshxStatus();
+    await loadTailscaleStatus();
+    setTsTab(state.tsTab);
+  }
+
+  if (ROUTE === '/setting') {
+    await loadSystemInfo();
+    await loadSystemUsers();
   }
 
   pollMetrics();
@@ -3830,10 +4482,7 @@ async function bootRoute() {
   metricsTimer = setInterval(pollMetrics, 2000);
 
   if (ROUTE === '/terminal') {
-    setTimeout(() => {
-      restoreTerminalTabs();
-      fitActiveTerminal();
-    }, 60);
+    setTimeout(() => { restoreTerminalTabs(); fitActiveTerminal(); }, 60);
   }
 
   if (ROUTE === '/code') {
@@ -3843,16 +4492,14 @@ async function bootRoute() {
         const openList = loadJSON(STORAGE_EDITOR_TABS, []);
         const toOpen = [];
         if (activeName) toOpen.push(activeName);
-        if (Array.isArray(openList)) {
-          openList.forEach(n => { if (n && toOpen.indexOf(n) === -1) toOpen.push(n); });
-        }
+        if (Array.isArray(openList)) openList.forEach(n => { if (n && toOpen.indexOf(n) === -1) toOpen.push(n); });
         for (const n of toOpen) {
-          try { await openFile(n, { silent: true }); } catch (e) {}
+          try { await openFile(n, { silent: true }); } catch {}
         }
         if (!state.activeEditorTab && state.files.length > 0) {
-          try { await openFile(state.files[0].name, { silent: true }); } catch (e) {}
+          try { await openFile(state.files[0].name, { silent: true }); } catch {}
         }
-      } catch (e) { console.warn('editor boot error', e); }
+      } catch {}
     }, 80);
   }
 }
@@ -3880,12 +4527,22 @@ window.toggleBatchMode = toggleBatchMode;
 window.resetShopFilters = resetShopFilters;
 window.openCommandPalette = openCommandPalette;
 window.showShortcuts = showShortcuts;
+window.openWorkspacePanel = openWorkspacePanel;
+window.installSshx = installSshx;
+window.startSshx = startSshx;
+window.stopSshx = stopSshx;
+window.stopAllSshx = stopAllSshx;
+window.installTailscale = installTailscale;
+window.toggleTailscaled = toggleTailscaled;
+window.setTsTab = setTsTab;
+window.tsLoginAuthkey = tsLoginAuthkey;
+window.tsLoginInteractive = tsLoginInteractive;
+window.tsAction = tsAction;
+window.changePassword = changePassword;
 
-window.addEventListener('DOMContentLoaded', bootRoute);
+if (document.readyState !== 'loading') bootRoute();
+else window.addEventListener('DOMContentLoaded', bootRoute);
 
-if (document.readyState !== 'loading') {
-  bootRoute();
-}
 </script>
 
 </body>
