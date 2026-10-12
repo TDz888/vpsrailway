@@ -1022,17 +1022,15 @@ app.get('/api/sshx/install', requireAuthApi, (req, res) => {
     try {
       sseSend(res, { type: 'start', action: 'install', name: 'sshx' });
 
-      sseSend(res, { type: 'step', index: 1, total: 3, command: 'Download binary from GitHub Releases' });
-      await runStreamingCommand(
-        `cd /tmp && rm -f sshx.tar.gz sshx && ` +
-        `curl -fsSL https://github.com/ekzhang/sshx/releases/download/v0.2.4/sshx-x86_64-unknown-linux-musl.tar.gz -o sshx.tar.gz`,
-        res, req
-      );
+      sseSend(res, { type: 'step', index: 1, total: 3, command: 'Run official installer' });
+      await runStreamingCommand('curl -sSf https://sshx.io/get | sh', res, req);
 
-      sseSend(res, { type: 'step', index: 2, total: 3, command: 'Extract and install to ' + BIN_DIR });
+      sseSend(res, { type: 'step', index: 2, total: 3, command: 'Persist binary to ' + BIN_DIR });
       await runStreamingCommand(
-        `cd /tmp && tar -xzf sshx.tar.gz && chmod +x sshx && ` +
-        `mkdir -p ${q(BIN_DIR)} && mv sshx ${q(SSHX_BIN)} && rm -f sshx.tar.gz`,
+        `if [ -x /usr/local/bin/sshx ]; then ` +
+        `mkdir -p ${q(BIN_DIR)} && cp -f /usr/local/bin/sshx ${q(SSHX_BIN)} && chmod +x ${q(SSHX_BIN)}; ` +
+        `elif [ -x ${q(SSHX_BIN)} ]; then chmod +x ${q(SSHX_BIN)}; ` +
+        `else echo "sshx binary not found after install" >&2; exit 1; fi`,
         res, req
       );
 
